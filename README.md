@@ -18,7 +18,8 @@
 *  `Expression` is a sub-interface of Node which contains two classes: `NumberNode` and `BinaryOperation`. 
 	* `NumberNode` is a Node representing one number. 
 	* `BinaryOperation` is a node which contains two expressions and one operation (+,-,/,*) which it applies to them. Therefore, an expression will ALWAYS evaluate to a number, if the inputs are correct. 
-**
+ 
+***
 ###Parsing
 While there is skeleton code for a recursive descent parser, which is fairly straightforward, a bottom-up parser may be simpler, once a parse table has been generated.  However, it may be too laborious to generate a parse table by hand for this grammar without any automated tools, so may not be such a good idea.
 ***
