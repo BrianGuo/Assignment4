@@ -179,7 +179,8 @@ class Tokenizer implements Iterator<Token> {
             setNextTokenAndReset(MUL);
             break;
         case '/':
-            setNextTokenAndReset(DIV);
+            //setNextTokenAndReset(DIV);
+            lexSlash();
             break;
         case '<':
             lexLAngle();
@@ -222,9 +223,30 @@ class Tokenizer implements Iterator<Token> {
         while (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
             if (c == '\n') lineNo++;
             c = getNextCharAndAppend();
-        }
+        }//at the end of the loop, c is not whitespace
 
         resetBufferWith(c);
+    }
+
+    private void lexSlash() throws IOException, EOFException {
+        int c = nextChar(false);
+        if (c == -1)
+            setNextTokenAndReset(DIV);
+        else{
+            char cc = (char) c;
+            buf.append(cc);
+            if(cc == '/'){ //do comment logic
+                c = nextChar(false);
+                while (c != -1 && c != '\n') {
+                    c = nextChar(false);
+                }
+                if(c != -1)
+                    resetBufferWith((char) c);
+                else
+                    buf.setLength(0); //reset the buffer to force a getNextCharAndAppend() which will throw EOF
+            }
+            else setNextTokenAndResetWith(DIV, cc);
+        }
     }
 
     private void lexLAngle() throws IOException, EOFException {
