@@ -1,10 +1,10 @@
 package ast;
 
-public class MemoryNode implements Node {
+public class MemoryNode implements Expr {
 
-	Expr expression;
-	int location;
-	int size;
+	private Expr expression;
+	private int location;
+	private int size;
 	
 	
 	public MemoryNode(Expr exp){
@@ -68,6 +68,11 @@ public class MemoryNode implements Node {
 	public String toString() {
 		StringBuilder temp = new StringBuilder();
 		return prettyPrint(temp).toString();
+	}
+
+	@Override
+	public int evaluate() {
+		return 0;
 	}
 	
 	
