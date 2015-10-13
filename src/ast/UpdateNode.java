@@ -2,11 +2,11 @@ package ast;
 
 public class UpdateNode implements Node {
 
-	MemoryNode left;
-	Expr right;
-	int size;
-	int leftsize;
-	int rightsize;
+	private MemoryNode left;
+	private Expr right;
+	private int size;
+	private int leftsize;
+	private int rightsize;
 	
 	public UpdateNode(MemoryNode l, Expr r) {
 		left = l;

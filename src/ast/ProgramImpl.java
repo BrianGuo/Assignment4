@@ -1,12 +1,15 @@
 package ast;
 
+import java.util.ArrayList;
+
 /**
  * A data structure representing a critter program.
  *
  */
 public class ProgramImpl implements Program {
 
-    @Override
+    private ArrayList<Rule> rules;
+    
     public int size() {
         // TODO Auto-generated method stub
         return 0;

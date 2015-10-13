@@ -2,26 +2,25 @@ package ast;
 
 public class ActionNode implements Node {
 
-	String type;
+	Action type;
 	Expr num;
+	int size;
 	
-	
-	public ActionNode(String t, Expr r){
-		type = t;
+	public ActionNode(Action a, Expr r){
+		type = a;
 		num = r;
+		size = 1;
 	}
 	
-	public ActionNode(String t) {
-		type = t;
+	public ActionNode(Action a) {
+		type = a;
 		num = null;
+		size = 1 + num.size();
 	}
 	
 	@Override
 	public int size() {
-		if (num != null)
-			return num.size() +1;
-		else
-			return 1;
+		return size;
 	}
 
 	@Override
@@ -38,7 +37,7 @@ public class ActionNode implements Node {
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
 		String possibleEnd = "";
-		if (type.equals("tag") || type.equals("serve"))
+		if (type.equals(Action.TAG) || type.equals(Action.SERVE))
 			possibleEnd = "[" + num.toString() + "]";
 		return sb.append(type + possibleEnd);
 	}
@@ -48,5 +47,7 @@ public class ActionNode implements Node {
 		return prettyPrint(sb).toString();
 	}
 	
-	
+	public enum Action {
+		WAIT,FORWARD,BACKWARD,LEFT,RIGHT,EAT,ATTACK,GROW,BUD,MATE,TAG,SERVE;
+	}
 }

@@ -2,22 +2,18 @@ package ast;
 
 public class BinaryOp implements Expr {
 
-	private String Operation;
+	private Operation Operation;
 	private Expr left;
 	private int leftsize;
 	private Expr right;
 	private int rightsize;
 	
-	public BinaryOp(Expr l, Expr r, String o){
-		if ("+-*/mod".indexOf(o.trim()) == -1)
-			Operation = null;
-		else{
-			left = l;
-			right = r;
-			leftsize = l.size();
-			rightsize = r.size();
-			Operation = o;
-		}
+	public BinaryOp(Expr l, Expr r, Operation o){
+		left = l;
+		right = r;
+		leftsize = l.size();
+		rightsize = r.size();
+		Operation = o;
 	}
 	@Override
 	public int size() {
@@ -31,8 +27,7 @@ public class BinaryOp implements Expr {
 		if (index == 0)
 			return this;
 		else if (index > leftsize) {
-			int n = index-(leftsize+1);
-			return right.nodeAt(n);
+			return right.nodeAt(index - (leftsize+1));
 		}
 		else {
 			return left.nodeAt(index-1);
@@ -41,7 +36,27 @@ public class BinaryOp implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		return sb.append(left.toString() + Operation + right.toString());
+		String op = "";
+		switch (Operation) {
+		case PLUS:
+			op = "+";
+			break;
+		case MINUS:
+			op = "-";
+			break;
+		case MULT:
+			op = "*";
+			break;
+		case DIV:
+			op = "/";
+			break;
+		case MOD:
+			op = "mod";
+			break;
+		default:
+			break;
+		}
+		return sb.append(left.toString() + op + right.toString());
 	}
 	
 	public String toString() {
@@ -61,20 +76,22 @@ public class BinaryOp implements Expr {
 			return 0;
 		}
 		switch(Operation){
-		case "+":
+		case PLUS:
 			return a + b;
-		case "-":
+		case MINUS:
 			return a-b;
-		case "*":
+		case MULT:
 			return a * b;
-		case"/":
+		case DIV:
 			return a/b;
-		case"mod":
+		case MOD:
 			return a%b;
 		default:
 			break;
 		}
 		return 0;
 	}
-	
+	public enum Operation {
+		PLUS, MINUS, MULT, DIV, MOD;
+	}
 }

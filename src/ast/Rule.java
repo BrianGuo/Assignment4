@@ -5,6 +5,9 @@ package ast;
  */
 public class Rule implements Node {
 
+	private Condition left;
+	private Command Right;
+	
     @Override
     public int size() {
         // TODO Auto-generated method stub
