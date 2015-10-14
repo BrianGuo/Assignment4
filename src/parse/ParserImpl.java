@@ -33,12 +33,13 @@ class ParserImpl implements Parser {
     }
 
     public static Rule parseRule(Tokenizer t) throws SyntaxError {
-        Token cond;
-        Token command;
-        //praseCondition
+        Condition condition;
+        Command command;
+        condition = parseCondition(t);
         consume(t, TokenType.ARR);
         command = parseCommand(t);
         consume(t, TokenType.SEMICOLON);
+        return new Rule(condition, command);
     }
 
     public static Command parseCommand(Tokenizer t) throws SyntaxError {
@@ -57,21 +58,87 @@ class ParserImpl implements Parser {
         return update;
     }
 
-    public static BinaryCondition parseCondition(Tokenizer t) throws SyntaxError {
+    public static Condition parseCondition(Tokenizer t) throws SyntaxError {
         // TODO
         //turns out I was describing the shunting yard algorithm
         //push literals onto stack, push conditions onto another stack
         //compare precedence (and vs or): if higher precedence, then pop 2, create tree, push tree
 
-        Stack<BinaryCondition> literals = new Stack<>();
-        Stack<BinaryCondition> conditions = new Stack<>();
-        BinaryCondition condition;
-        RelationNode cur = parseRelation(t);
+        Stack<Condition> literals = new Stack<>();
+        Stack<Token> conditions = new Stack<>();
+        //Condition condition;
 
-        while(t.peek().getType() == TokenType.OR  || t.peek().getType() == TokenType.AND){
+        //condition = parseBrace(t);
+        literals.add(parseBrace(t));
 
+
+        while(t.peek().getType() == TokenType.OR  || t.peek().getType() == TokenType.AND){ //if there are more things...
+            try {
+                Token cur = t.next(); //either OR or AND
+                //conditions.add(t.next());
+                literals.add(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
+                while(true) {
+                    if (compare(cur, conditions.peek())) { //we should reduce now
+                        Condition r = literals.pop(); //first one
+                        Condition l = literals.pop(); //second one
+                        Condition cond = new BinaryCondition(l, conditions.pop(), r); //form the tree...
+                        literals.push(cond); //push tree onto literals!
+                    } else { //none left
+                        conditions.push(cur);
+                        break;
+                    }
+                }
+            }
+
+            catch(Exception e){
+                throw new SyntaxError(); //Because this means someone screwed up
+            }
         }
-        throw new UnsupportedOperationException();
+        //there may still be some left on the stack
+        while(conditions.peek() != null){
+            Condition r = literals.pop(); //first one
+            Condition l = literals.pop(); //second one
+            Condition cond = new BinaryCondition(l, conditions.pop(), r);
+            literals.push(cond);
+        }
+        //we need support for a binarycondition that only contains a relation
+        return literals.pop();
+    }
+
+    /**
+     * Compares precedence of operators
+     * Return value of True means to pop and reduce, False means to push
+     * @param cur
+     * @param peek
+     * @return true if precedence of cur <= precedence of top of stack (peek), talse if cur < precedence.
+     */
+    private static boolean compare(Token cur, Token peek) {
+        if(peek == null){ //EOF
+            return false;
+        }
+        TokenType tt1 = cur.getType();
+        TokenType tt2 = peek.getType();
+        if(tt1 == TokenType.AND){
+            return true;
+        }
+        else if(tt1 == TokenType.OR && tt2 == TokenType.OR){
+            return true;
+        }
+        return false;
+    }
+
+
+    private static Condition parseBrace(Tokenizer t) throws SyntaxError {
+        Condition condition;
+        if(t.peek().getType() == TokenType.LBRACE){
+            consume(t, TokenType.LBRACE);
+            condition = parseCondition(t);
+            consume(t, TokenType.RBRACE);
+        }
+        else{
+            condition = parseRelation(t);
+        }
+        return condition;
     }
 
     public static BinaryCondition parseConjunction(Tokenizer t) throws SyntaxError {
