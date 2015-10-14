@@ -2,6 +2,7 @@ package ast;
 
 public class ActionNode implements Node {
 
+
 	Action type;
 	Expr num;
 	int size;
@@ -16,6 +17,7 @@ public class ActionNode implements Node {
 		type = a;
 		num = null;
 		size = 1 + num.size();
+
 	}
 	
 	@Override
@@ -37,9 +39,11 @@ public class ActionNode implements Node {
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
 		String possibleEnd = "";
+		
 		if (type.equals(Action.TAG) || type.equals(Action.SERVE))
 			possibleEnd = "[" + num.toString() + "]";
 		return sb.append(type + possibleEnd);
+
 	}
 	
 	public String toString() {
