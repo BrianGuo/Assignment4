@@ -1,6 +1,7 @@
 package parse;
 
 import java.io.Reader;
+import java.util.Stack;
 
 import ast.*;
 import exceptions.SyntaxError;
@@ -64,21 +65,27 @@ class ParserImpl implements Parser {
         UpdateNode update;
         compareAndAdvance(t, TokenType.MEM);
         compareAndAdvance(t, TokenType.LBRACKET);
-        parseExpression(t); //TODO: add this as a node to update
+        MemoryNode mem = new MemoryNode(parseExpression(t)); //TODO: add this as a node to update
         compareAndAdvance(t, TokenType.RBRACKET);
         compareAndAdvance(t, TokenType.ASSIGN);
-        parseExpression(t); //TODO: add this as a node to update
+        Expr e = parseExpression(t); //TODO: add this as a node to update
+        update = new UpdateNode(mem, e);
+        return update;
     }
 
     public static BinaryCondition parseCondition(Tokenizer t) throws SyntaxError {
         // TODO
+        //have a stack of literals and a stack of conditions
+        //peek at the next token: if literal, push onto literal stack, likewise for if next is or/and
+        //reduce as much as possible when possible: if there is a condition under the uppermost condition AND
+        //if the  top condition is an or with an empty left side OR
+        //if the top condition is an and
+        Stack<BinaryCondition> literals = new Stack<>();
+        Stack<BinaryCondition> conditions = new Stack<>();
         BinaryCondition condition;
-        parseConjunction(t); //TODO: add this as left side of the condition
+        RelationNode cur = parseRelation(t);
+
         while(t.peek().getType() == TokenType.OR  || t.peek().getType() == TokenType.AND){
-            BinaryCondition condition2;
-            t.next();
-            parseConjunction(t); //TODO: add this to condition2
-            //TODO: add condition2 as right side of condition
 
         }
         throw new UnsupportedOperationException();
@@ -86,7 +93,8 @@ class ParserImpl implements Parser {
 
     public static BinaryCondition parseConjunction(Tokenizer t) throws SyntaxError {
         BinaryCondition conj;
-        parse
+        //parse
+        throw new UnsupportedOperationException(); 
     }
 
     public static Expr parseExpression(Tokenizer t) throws SyntaxError {
