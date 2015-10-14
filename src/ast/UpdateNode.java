@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+
 public class UpdateNode implements Node {
 
 	private MemoryNode left;
@@ -44,6 +46,21 @@ public class UpdateNode implements Node {
 	public String toString() {
 		StringBuilder temp = new StringBuilder();
 		return prettyPrint(temp).toString();
+	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		return (n instanceof UpdateNode);
 	}
 
 }

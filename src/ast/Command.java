@@ -1,7 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
-public class Command implements Node {
+public class Command extends ListChildren implements Node {
 
 	private ArrayList<UpdateNode> updates;
 	private ActionNode action;
@@ -11,6 +11,12 @@ public class Command implements Node {
 		updates = null;
 		action = null;
 	}
+	
+	public Command(Command c){
+		this.updates = c.getUpdates();
+		this.action = c.getAction();
+	}
+	
 	public Command(ActionNode a){
 		action = a;
 	}
@@ -25,7 +31,12 @@ public class Command implements Node {
 		temp += action.size;
 		size = temp +1;
 	}
-	
+	public ArrayList<UpdateNode> getUpdates(){
+		return updates;
+	}
+	public ActionNode getAction(){
+		return action;
+	}
 	@Override
 	public int size() {
 		return size;
@@ -35,7 +46,7 @@ public class Command implements Node {
 	public Node nodeAt(int index) {
 		if (index == 0)
 			return this;
-		else if (index < 0 || index > size)
+		else if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException();
 		int temp = index;
 		int updatesIndex = 0;
@@ -60,6 +71,32 @@ public class Command implements Node {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		return prettyPrint(sb).toString();
+	}
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		for (UpdateNode u: updates)
+			temp.add(u);
+		if (action != null)
+			temp.add(action);
+		return temp;
+	}
+	
+	@Override
+	public ArrayList<? extends Node> getChildren() {
+		return updates;
+	}
+	
+	@Override
+	public boolean sameType(Node n) {
+		return (n instanceof Command);
+	}
+	@Override
+	public void setChildren(ArrayList<Node> n) {
+		ArrayList<UpdateNode> temp = new ArrayList<UpdateNode>();
+		for(Node instance: n)
+			temp.add((UpdateNode) instance);
+		updates = temp;
 	}
 	
 }

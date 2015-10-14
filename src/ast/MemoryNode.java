@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+
 public class MemoryNode implements Expr {
 
 	private Expr expression;
@@ -73,6 +75,20 @@ public class MemoryNode implements Expr {
 	@Override
 	public int evaluate() {
 		return 0;
+	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (expression != null)
+			temp.add(expression);
+		return temp;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	

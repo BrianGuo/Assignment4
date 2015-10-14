@@ -11,13 +11,11 @@ public class MutationFactory {
     }
 
     public static Mutation getSwap() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+    	return new SwapMutation();
     }
 
     public static Mutation getReplace() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new CopyMutation();
     }
 
     public static Mutation getTransform() {

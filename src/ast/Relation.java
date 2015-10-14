@@ -1,6 +1,8 @@
 package ast;
 
-public class Relation implements Condition {
+import java.util.ArrayList;
+
+public class Relation extends BinaryChildren implements Condition {
 
 	Expr left;
 	Expr right;
@@ -14,6 +16,11 @@ public class Relation implements Condition {
 		R = rel;
 		leftsize = l.size();
 		rightsize = r.size();
+	}
+	public Relation(Relation b){
+		this.left = b.left;
+		this.right = b.right;
+		this.R = b.R;
 	}
 	@Override
 	public int size() {
@@ -64,4 +71,36 @@ public class Relation implements Condition {
 	public enum Relationship {
 		LESS,GREATER,EQUAL,NOTEQUAL,GREATOREQUAL,LESSOREQUAL;
 	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+	
+	/*@Override
+	public Object getLeft() {
+		return left;
+	}
+
+	@Override
+	public Object getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Object l) {
+		if (l instanceof Expr)
+			left = (Expr) l;
+	}
+
+	@Override
+	public void setRight(Object r) {
+		if (r instanceof Expr)
+			right = (Expr) r;
+	}*/
 }

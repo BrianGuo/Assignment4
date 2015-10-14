@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+
 public class ActionNode implements Node {
 
 	Action type;
@@ -50,4 +52,19 @@ public class ActionNode implements Node {
 	public enum Action {
 		WAIT,FORWARD,BACKWARD,LEFT,RIGHT,EAT,ATTACK,GROW,BUD,MATE,TAG,SERVE;
 	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (num != null)
+			temp.add(num);
+		return temp;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		return (n instanceof ActionNode);
+	}
+	
+	
 }

@@ -1,10 +1,12 @@
 package ast;
 
+import java.util.ArrayList;
+
 /**
  * A representation of a binary Boolean condition: 'and' or 'or'
  *
  */
-public class BinaryCondition implements Condition {
+public class BinaryCondition extends BinaryChildren implements Condition {
 
 	Condition left;
 	Condition right;
@@ -26,6 +28,12 @@ public class BinaryCondition implements Condition {
     	rightsize = r.size();
     }
 
+    public BinaryCondition(BinaryCondition b){
+		this.left = b.left;
+		this.right = b.right;
+		this.op = b.op;
+	}
+    
     @Override
     public int size() {
         return leftsize + rightsize + 1;
@@ -35,7 +43,7 @@ public class BinaryCondition implements Condition {
     public Node nodeAt(int index) {
     	if (index == 0)
     		return this;
-    	if (index < 0 || index > size())
+    	if (index < 0 || index >= size())
     		throw new IndexOutOfBoundsException();
     	else if (index > leftsize)
     		return right.nodeAt(index - (leftsize + 1));
@@ -56,7 +64,7 @@ public class BinaryCondition implements Condition {
         default:
         	break;
         }
-        return sb.append(left.toString() + " " + condition + " " + right.toString());
+        return sb.append("{" + left.toString() + " " + condition + " " + right.toString() + "}");
     }
 
     @Override
@@ -71,4 +79,40 @@ public class BinaryCondition implements Condition {
     public enum Operator {
         OR, AND;
     }
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+
+
+	/*@Override
+	public Object getLeft() {
+		return left;
+	}
+
+	@Override
+	public Object getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Object l) {
+		if (l instanceof Condition)
+			left = (Condition) l;
+	}
+
+	@Override
+	public void setRight(Object r) {
+		if (r instanceof Condition)
+			right = (Condition) r;
+	}*/
+	
+	
+	
 }

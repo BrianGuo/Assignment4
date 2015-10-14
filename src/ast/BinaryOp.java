@@ -1,12 +1,20 @@
 package ast;
 
-public class BinaryOp implements Expr {
+import java.util.ArrayList;
+
+public class BinaryOp extends BinaryChildren implements Expr {
 
 	private Operation Operation;
 	private Expr left;
 	private int leftsize;
 	private Expr right;
 	private int rightsize;
+	
+	public BinaryOp(BinaryOp b){
+		this.left = b.left;
+		this.right = b.right;
+		this.Operation = b.Operation;
+	}
 	
 	public BinaryOp(Expr l, Expr r, Operation o){
 		left = l;
@@ -56,7 +64,7 @@ public class BinaryOp implements Expr {
 		default:
 			break;
 		}
-		return sb.append(left.toString() + op + right.toString());
+		return sb.append("(" + left.toString() + op + right.toString() + ")");
 	}
 	
 	public String toString() {
@@ -91,7 +99,42 @@ public class BinaryOp implements Expr {
 		}
 		return 0;
 	}
+	
 	public enum Operation {
 		PLUS, MINUS, MULT, DIV, MOD;
 	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+	
+	@Override
+	public Node getLeft() {
+		return left;
+	}
+
+	@Override
+	public Node getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Node l) {
+		if (l instanceof Expr)
+			left = (Expr) l;
+	}
+
+	@Override
+	public void setRight(Node r) {
+		if (r instanceof Expr)
+			right = (Expr) r;
+	}
+	
+
 }
