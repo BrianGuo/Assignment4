@@ -59,11 +59,10 @@ class ParserImpl implements Parser {
 
     public static BinaryCondition parseCondition(Tokenizer t) throws SyntaxError {
         // TODO
-        //have a stack of literals and a stack of conditions
-        //peek at the next token: if literal, push onto literal stack, likewise for if next is or/and
-        //reduce as much as possible when possible: if there is a condition under the uppermost condition AND
-        //if the  top condition is an or with an empty left side OR
-        //if the top condition is an and
+        //turns out I was describing the shunting yard algorithm
+        //push literals onto stack, push conditions onto another stack
+        //compare precedence (and vs or): if higher precedence, then pop 2, create tree, push tree
+
         Stack<BinaryCondition> literals = new Stack<>();
         Stack<BinaryCondition> conditions = new Stack<>();
         BinaryCondition condition;
