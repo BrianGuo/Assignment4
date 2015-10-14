@@ -6,29 +6,42 @@ package ast;
 public class Rule implements Node {
 
 	private Condition left;
-	private Command Right;
+	private Command right;
+	private int leftsize;
+	private int rightsize;
+	
+	public Rule(Condition l, Command r) {
+		left = l;
+		right = r;
+		leftsize = l.size();
+		rightsize = r.size();
+	}
 	
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return leftsize + rightsize + 1;
     }
 
     @Override
     public Node nodeAt(int index) {
-        // TODO Auto-generated method stub
-        return null;
+        if (index == 0)
+        	return this;
+        else if (index < 0 || index > size())
+        	throw new IndexOutOfBoundsException();
+        else if (index > leftsize)
+        	return right.nodeAt(index - (leftsize+1));
+        else
+        	return left.nodeAt(index - 1);
     }
 
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
-        // TODO Auto-generated method stub
-        return null;
+        return sb.append(right.toString() + " --> " + left.toString());
     }
     
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuilder sb = new StringBuilder();
+        return prettyPrint(sb).toString();
     }
 }

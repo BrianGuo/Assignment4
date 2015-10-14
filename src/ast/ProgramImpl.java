@@ -9,16 +9,39 @@ import java.util.ArrayList;
 public class ProgramImpl implements Program {
 
     private ArrayList<Rule> rules;
+    private int size;
     
+    public ProgramImpl(){
+    	rules = new ArrayList<Rule>();
+    	size = 0;
+    }
+    public ProgramImpl(ArrayList<Rule> r){
+    	rules = r;
+    	size = 0;
+    	for(Rule i: r){
+    		size += i.size();
+    	}
+    	size ++;
+    }
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return size;
     }
 
     @Override
     public Node nodeAt(int index) {
-        // TODO Auto-generated method stub
-        return null;
+        if (index == 0)
+        	return this;
+        else if (index < 0 || index > size)
+        	throw new IndexOutOfBoundsException();
+        else{
+        	int temp = index;
+        	int currentRule = 0;
+        	while(temp > rules.get(currentRule).size() && currentRule < rules.size()){
+        		temp -= rules.get(currentRule).size();
+        		currentRule++;
+        	}
+        	return rules.get(currentRule).nodeAt(temp-1);
+        }
     }
 
     @Override
@@ -35,14 +58,16 @@ public class ProgramImpl implements Program {
 
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
-        // TODO Auto-generated method stub
-        return null;
+        for(Rule r: rules){
+        	sb.append(r.toString() + "\n");
+        }
+        return sb;
     }
     
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuilder sb = new StringBuilder();
+        return prettyPrint(sb).toString();
     }
 
 }

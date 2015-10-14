@@ -5,7 +5,7 @@ public class Command implements Node {
 
 	private ArrayList<UpdateNode> updates;
 	private ActionNode action;
-	int size;
+	private int size;
 	
 	public Command() {
 		updates = null;
