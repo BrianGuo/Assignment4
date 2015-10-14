@@ -37,3 +37,7 @@ The implementation of the fault injector will provide us with many sample critte
 ***
 ###Pretty printing
 One possible approach is to use the visitor pattern, which for a small upfront amount of work, should mostly trivialize pretty printing as it will make it independent of the code for each Node.  We could also use toString() helper functions or just recursively prettyPrint() everything instead.
+
+###Miscellaneous
+- Each Node has a children() method that returns an ArrayList of all of its children.  Mutation methods can use this to provide a general interface for both list-like and tree-like nodes, and do other things (like check if the Node actually has children).
+- Currently, swap mutations only swap the first 2 children.
