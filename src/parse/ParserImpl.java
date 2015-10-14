@@ -14,22 +14,6 @@ class ParserImpl implements Parser {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Helper function that checks if the next Token is the given type.  Consumes and advances if so, throws SyntaxError
-     * otherwise.  Use when you don't care about the next token, just that it's there.
-     * @param t Tokenizer used everywhere
-     * @param type Type to compare the token to
-     * @throws SyntaxError
-     */
-    private static void compareAndAdvance(Tokenizer t, TokenType type) throws SyntaxError{
-        if(t.peek().getType() == type){
-            t.next();
-        }
-        else{
-            throw new SyntaxError();
-        }
-    }
-
     /** Parses a program from the stream of tokens provided by the Tokenizer,
      *  consuming tokens representing the program. All following methods with
      *  a name "parseX" have the same spec except that they parse syntactic form
@@ -52,9 +36,9 @@ class ParserImpl implements Parser {
         Token cond;
         Token command;
         //praseCondition
-        compareAndAdvance(t,TokenType.ARR);
+        consume(t, TokenType.ARR);
         command = parseCommand(t);
-        compareAndAdvance(t, TokenType.SEMICOLON);
+        consume(t, TokenType.SEMICOLON);
     }
 
     public static Command parseCommand(Tokenizer t) throws SyntaxError {
@@ -63,11 +47,11 @@ class ParserImpl implements Parser {
 
     public static UpdateNode parseUpdate(Tokenizer t) throws SyntaxError {
         UpdateNode update;
-        compareAndAdvance(t, TokenType.MEM);
-        compareAndAdvance(t, TokenType.LBRACKET);
+        consume(t, TokenType.MEM);
+        consume(t, TokenType.LBRACKET);
         MemoryNode mem = new MemoryNode(parseExpression(t)); //TODO: add this as a node to update
-        compareAndAdvance(t, TokenType.RBRACKET);
-        compareAndAdvance(t, TokenType.ASSIGN);
+        consume(t, TokenType.RBRACKET);
+        consume(t, TokenType.ASSIGN);
         Expr e = parseExpression(t); //TODO: add this as a node to update
         update = new UpdateNode(mem, e);
         return update;
@@ -120,7 +104,11 @@ class ParserImpl implements Parser {
      * @throws SyntaxError if the wrong kind of token is encountered.
      */
     public static void consume(Tokenizer t, TokenType tt) throws SyntaxError {
-        // TODO
-        throw new UnsupportedOperationException();
+        if(t.peek().getType() == tt){
+            t.next();
+        }
+        else{
+            throw new SyntaxError();
+        }
     }
 }
