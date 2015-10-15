@@ -28,8 +28,7 @@ class ParserImpl implements Parser {
         while(t.hasNext()){
             program.addRule(parseRule(t));
         }
-
-        throw new UnsupportedOperationException();
+        return program;
     }
 
     public static Rule parseRule(Tokenizer t) throws SyntaxError {
@@ -99,12 +98,14 @@ class ParserImpl implements Parser {
             try {
                 Token cur = t.next(); //either OR or AND
                 //conditions.add(t.next());
+                conditions.push(cur);
                 literals.push(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
-                while(true) {
+                while(!conditions.empty()) {
+                    cur = conditions.pop();
                     if (compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
                         Condition l = literals.pop(); //second one
-                        Condition cond = new BinaryCondition(l, conditions.pop(), r); //form the tree...
+                        Condition cond = new BinaryCondition(l, cur, r); //form the tree...
                         literals.push(cond); //push tree onto literals!
                     } else { //none left
                         conditions.push(cur);
@@ -118,7 +119,7 @@ class ParserImpl implements Parser {
             }
         }
         //there may still be some left on the stack
-        while(conditions.peek() != null){
+        while(!conditions.empty()){
             Condition r = literals.pop(); //first one
             Condition l = literals.pop(); //second one
             Condition cond = new BinaryCondition(l, conditions.pop(), r);
@@ -189,7 +190,7 @@ class ParserImpl implements Parser {
         Stack<Token> operations = new Stack<>();
         literals.add(parseParen(t));
 
-
+        //TODO: Compare this logic to the fixed version in parseConditional and update if this is incorrect
         while(t.peek().isAddOp() || t.peek().isMulOp()){ //if there are more things...
             try {
                 Token cur = t.next(); //either OR or AND
@@ -213,7 +214,7 @@ class ParserImpl implements Parser {
             }
         }
         //there may still be some left on the stack
-        while(operations.peek() != null){
+        while(!operations.empty()){
             Expr r = literals.pop(); //first one
             Expr l = literals.pop(); //second one
             Expr cond = new BinaryOp(l,r, operations.pop());
@@ -256,7 +257,7 @@ class ParserImpl implements Parser {
         }
         else if (cur.getType() == TokenType.MINUS){ //unary negation
             consume(t, TokenType.MINUS);
-            factor = new Negation(t.next().toNumToken().getValue());
+            factor = new UnaryNode(t.next().toNumToken().getValue());
         }
         else if (cur.isNum()){ //regular number
             factor = new NumberNode(t.next().toNumToken().getValue());
