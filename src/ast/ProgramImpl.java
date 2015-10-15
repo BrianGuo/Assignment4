@@ -40,6 +40,7 @@ public class ProgramImpl extends ListChildren implements Program {
 
     public boolean addRule(Rule r) {
     	rules.add(r);
+    	size += r.size();
     	return true;
     }
     
@@ -212,17 +213,21 @@ public class ProgramImpl extends ListChildren implements Program {
 			return null;
 		int index = n;
 		Node m = nodeAt(n);
-		Node result = null;
+		Node result = this;
 		ArrayList<Node> temp = children();
 		while(!(temp.contains(m))){
 			int current = 0;
 			while(index > temp.get(current).size()){
+				System.out.println(index + ": index");
+				System.out.println(temp.get(current).size() + ": size");
 				index -= temp.get(current).size();
 				current ++;
 			}
 			result = temp.get(current);
 			temp = temp.get(current).children();
 			current = 0;
+			index --;
+			System.out.println("Finished one cycle");
 		}
 		return result;
 	}

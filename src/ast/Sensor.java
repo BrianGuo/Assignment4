@@ -32,7 +32,6 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 		return r;
 	}
 	public Sensor(Token s, Expr r){
-		System.out.println(s.toString());
 		if(s.isSensor()){
 			this.sense = s;
 			this.r = r;
