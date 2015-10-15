@@ -257,7 +257,7 @@ class ParserImpl implements Parser {
         }
         else if (cur.getType() == TokenType.MINUS){ //unary negation
             consume(t, TokenType.MINUS);
-            factor = new UnaryNode(t.next().toNumToken().getValue());
+            factor = new NegationNode(parseFactor(t));
         }
         else if (cur.isNum()){ //regular number
             factor = new NumberNode(t.next().toNumToken().getValue());
