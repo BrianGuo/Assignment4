@@ -11,7 +11,7 @@ public class CopyMutation implements ParentSpecificMutation {
 	}
 	public CopyMutation(){
 	}
-	public Node copy(Node n){
+	public static Node copy(Node n){
 		if (n instanceof BinaryChildren){
 			try{
 			BinaryChildren BinaryN = (BinaryChildren) n.getClass().getDeclaredConstructor(n.getClass()).newInstance(n);
