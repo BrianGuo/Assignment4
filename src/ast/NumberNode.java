@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class NumberNode implements Expr{
+public class NumberNode extends UnaryNode implements Expr{
 
 	private int num;
 	
@@ -48,5 +48,7 @@ public class NumberNode implements Expr{
 	public ArrayList<Node> children() {
 		return new ArrayList<Node>();
 	}
+	
+	
 	
 }

@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class UpdateNode implements Node {
+public class UpdateNode extends BinaryChildren implements Node {
 
 	private MemoryNode left;
 	private Expr right;
@@ -18,6 +18,23 @@ public class UpdateNode implements Node {
 		size = leftsize + rightsize;
 	}
 	
+	public UpdateNode(UpdateNode u) {
+		left = u.getLeft();
+		right = u.getRight();
+	}
+	
+	public MemoryNode getLeft() {
+		return left;
+	}
+	public Expr getRight(){
+		return right;
+	}
+	public void setLeft(MemoryNode n) {
+		left = n;
+	}
+	public void setRight(Expr r){
+		right = r;
+	}
 	@Override
 	public int size() {
 		return size;

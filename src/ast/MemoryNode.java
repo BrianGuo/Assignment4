@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class MemoryNode implements Expr {
+public class MemoryNode extends UnaryNode implements Expr {
 
 	private Expr expression;
 	private int location;
@@ -15,6 +15,12 @@ public class MemoryNode implements Expr {
 		size = expression.size()+1;
 	}
 	
+	public MemoryNode(MemoryNode m) {
+		expression = m.getExpression();
+	}
+	public Expr getExpression() {
+		return expression;
+	}
 	@Override
 	public int size() {
 		return size;
@@ -90,6 +96,20 @@ public class MemoryNode implements Expr {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	@Override
+	public boolean hasChild(){
+		return (expression != null);
+	}
 	
+	@Override
+	public void setChild(Node n) {
+		if (n instanceof Expr)
+			expression = (Expr) n;
+	}
+	
+	@Override
+	public Node getChild() {
+		return expression;
+	}
 	
 }

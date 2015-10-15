@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class ActionNode implements Node {
+public class ActionNode extends UnaryNode implements Node {
 
 	Action type;
 	Expr num;
@@ -19,7 +19,18 @@ public class ActionNode implements Node {
 		num = null;
 		size = 1 + num.size();
 	}
+	public ActionNode(ActionNode a) {
+		type = a.getAction();
+		if (a.getNum() != null)
+			num = a.getNum();
+	}
 	
+	public Expr getNum() {
+		return num;
+	}
+	public Action getAction(){
+		return type;
+	}
 	@Override
 	public int size() {
 		return size;
@@ -66,5 +77,19 @@ public class ActionNode implements Node {
 		return (n instanceof ActionNode);
 	}
 	
+	@Override
+	public boolean hasChild() {
+		return (num != null);
+	}
 	
+	@Override
+	public void setChild(Node n) {
+		if (n instanceof Expr)
+			num = ( Expr) n;
+	}
+	
+	@Override
+	public Node getChild(){
+		return num;
+	}
 }

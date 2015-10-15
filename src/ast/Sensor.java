@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class Sensor implements Expr {
+public class Sensor extends UnaryNode implements Expr {
 
 	private Senses s;
 	private Expr r;
@@ -14,6 +14,17 @@ public class Sensor implements Expr {
 		size = 1;
 	}
 	
+	public Sensor (Sensor sense){
+		s = sense.getSense();
+		if(sense.getExpr()!= null)
+			r = sense.getExpr();
+	}
+	public Senses getSense(){
+		return s;
+	}
+	public Expr getExpr() {
+		return r;
+	}
 	public Sensor(Senses s, Expr r){
 		this.s = s;
 		if(s.equals(Senses.NEARBY) || s.equals(Senses.AHEAD) || s.equals(Senses.RANDOM)){
@@ -86,5 +97,20 @@ public class Sensor implements Expr {
 			temp.add(r);
 		return temp;
 	}
+	
+	@Override
+	public boolean hasChild() {
+		return ((s == Senses.NEARBY || s == Senses.AHEAD || s == Senses.RANDOM) && r != null);
+	}
+	
+	@Override
+	public void setChild(Node n) {
+		if (n instanceof Expr)
+			r = (Expr) n;
+	}
 
+	@Override
+	public Node getChild(){
+		return r;
+	}
 }

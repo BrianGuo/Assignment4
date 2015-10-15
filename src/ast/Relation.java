@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Relation extends BinaryChildren implements Condition {
 
-	Expr left;
-	Expr right;
-	Relationship R;
+	private Expr left;
+	private Expr right;
+	private Relationship R;
 	int leftsize;
 	int rightsize;
 	
@@ -18,9 +18,9 @@ public class Relation extends BinaryChildren implements Condition {
 		rightsize = r.size();
 	}
 	public Relation(Relation b){
-		this.left = b.left;
-		this.right = b.right;
-		this.R = b.R;
+		this.left = b.getLeft();
+		this.right = b.getRight();
+		this.R = b.getR();
 	}
 	@Override
 	public int size() {
@@ -82,25 +82,29 @@ public class Relation extends BinaryChildren implements Condition {
 		return temp;
 	}
 	
-	/*@Override
-	public Object getLeft() {
+	@Override
+	public Expr getLeft() {
 		return left;
 	}
 
 	@Override
-	public Object getRight() {
+	public Expr getRight() {
 		return right;
 	}
 
 	@Override
-	public void setLeft(Object l) {
+	public void setLeft(Node l) {
 		if (l instanceof Expr)
 			left = (Expr) l;
 	}
 
 	@Override
-	public void setRight(Object r) {
+	public void setRight(Node r) {
 		if (r instanceof Expr)
 			right = (Expr) r;
-	}*/
+	}
+	
+	public Relationship getR(){
+		return R;
+	}
 }
