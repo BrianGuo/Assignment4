@@ -5,4 +5,8 @@ package ast;
  *
  */
 public interface Condition extends Node {
+	
+	default boolean sameType(Node n){
+		return (n instanceof Condition);
+	}
 }

@@ -1,19 +1,32 @@
 package ast;
 
-public class Relation implements Condition {
+import java.util.ArrayList;
 
-	Expr left;
-	Expr right;
-	Relationship R;
+import parse.Token;
+
+public class Relation extends BinaryChildren implements Condition,Tokenable {
+
+	private Expr left;
+	private Expr right;
+	private Token R;
 	int leftsize;
 	int rightsize;
 	
-	public Relation (Expr l, Expr r, Relationship rel) {
+	public Relation (Expr l, Expr r, Token rel) {
 		left = l;
 		right = r;
-		R = rel;
+		if (rel.isRelOp())
+			R = rel;
 		leftsize = l.size();
 		rightsize = r.size();
+	}
+	public Relation(Relation b){
+		this.left = b.getLeft();
+		leftsize = left.size();
+		this.right = b.getRight();
+		rightsize = right.size();
+		if (b.getR().isRelOp())
+			this.R = b.getR();
 	}
 	@Override
 	public int size() {
@@ -35,33 +48,58 @@ public class Relation implements Condition {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String relation = "";
-		switch (R) {
-		case LESS:
-			relation = "<";
-			break;
-		case GREATER:
-			relation = ">";
-			break;
-		case EQUAL:
-			relation = "=";
-			break;
-		case NOTEQUAL:
-			relation = "!=";
-			break;
-		case GREATOREQUAL:
-			relation = ">=";
-			break;
-		case LESSOREQUAL:
-			relation = "<=";
-			break;
-		default:
-			break;
-		}
-		return sb.append(left.toString() + " " + relation + " " + right.toString());
+		return sb.append(left.toString() + " " + R.toString() + " " + right.toString());
 	}
 	
-	public enum Relationship {
-		LESS,GREATER,EQUAL,NOTEQUAL,GREATOREQUAL,LESSOREQUAL;
+	
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+	
+	@Override
+	public Expr getLeft() {
+		return left;
+	}
+
+	@Override
+	public Expr getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Node l) {
+		if (l instanceof Expr)
+			left = (Expr) l;
+	}
+
+	@Override
+	public void setRight(Node r) {
+		if (r instanceof Expr)
+			right = (Expr) r;
+	}
+	
+	public Token getR(){
+		return R;
+	}
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public Token getToken() {
+		return getR();
+	}
+	@Override
+	public void setToken(Token t) {
+		if (t.isRelOp())
+			R = t;
 	}
 }

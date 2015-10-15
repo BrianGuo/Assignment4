@@ -1,6 +1,8 @@
 package ast;
 
-public class UpdateNode implements Node {
+import java.util.ArrayList;
+
+public class UpdateNode extends BinaryChildren implements Node {
 
 	private MemoryNode left;
 	private Expr right;
@@ -16,6 +18,23 @@ public class UpdateNode implements Node {
 		size = leftsize + rightsize;
 	}
 	
+	public UpdateNode(UpdateNode u) {
+		left = u.getLeft();
+		right = u.getRight();
+	}
+	
+	public MemoryNode getLeft() {
+		return left;
+	}
+	public Expr getRight(){
+		return right;
+	}
+	public void setLeft(MemoryNode n) {
+		left = n;
+	}
+	public void setRight(Expr r){
+		right = r;
+	}
 	@Override
 	public int size() {
 		return size;
@@ -44,6 +63,21 @@ public class UpdateNode implements Node {
 	public String toString() {
 		StringBuilder temp = new StringBuilder();
 		return prettyPrint(temp).toString();
+	}
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		return (n instanceof UpdateNode);
 	}
 
 }

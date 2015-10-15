@@ -8,11 +8,12 @@ import static parse.TokenCategory.OTHER;
 import static parse.TokenCategory.RELOP;
 import static parse.TokenCategory.SENSOR;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-enum TokenType {
+public enum TokenType {
     MEM(OTHER, "mem"),
     WAIT(ACTION, "wait"),
     FORWARD(ACTION, "forward"),
@@ -83,5 +84,19 @@ enum TokenType {
 
     public static TokenType getTypeFromString(final String rep) {
         return stringToTypeMap.get(rep);
+    }
+    
+    public static TokenCategory getCategory(TokenType t) {
+    	return t.category;
+    }
+    
+    public static ArrayList<TokenType> getAlloftype(TokenCategory t){
+    	ArrayList<TokenType> temp = new ArrayList<TokenType>();
+    	for (final TokenType current: values()){
+    		if (TokenType.getCategory(current) == t)
+    			temp.add(current);
+    	}
+    	return temp;
+    			
     }
 }

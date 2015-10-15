@@ -1,19 +1,33 @@
 package ast;
 
-public class BinaryOp implements Expr {
+import java.util.ArrayList;
 
-	private Operation Operation;
+import parse.Token;
+
+public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
+
+	private Token Operation;
 	private Expr left;
 	private int leftsize;
 	private Expr right;
 	private int rightsize;
 	
-	public BinaryOp(Expr l, Expr r, Operation o){
+	public BinaryOp(BinaryOp b){
+		this.left = b.left;
+		leftsize = b.getLeft().size();
+		this.right = b.right;
+		rightsize = b.getRight().size();
+		if (b.getOperation().isAddOp() || b.getOperation().isMulOp())
+			this.Operation = b.getOperation();
+	}
+	
+	public BinaryOp(Expr l, Expr r, Token o){
 		left = l;
 		right = r;
 		leftsize = l.size();
 		rightsize = r.size();
-		Operation = o;
+		if (o.isAddOp() || o.isMulOp())
+			Operation = o;
 	}
 	@Override
 	public int size() {
@@ -36,27 +50,7 @@ public class BinaryOp implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String op = "";
-		switch (Operation) {
-		case PLUS:
-			op = "+";
-			break;
-		case MINUS:
-			op = "-";
-			break;
-		case MULT:
-			op = "*";
-			break;
-		case DIV:
-			op = "/";
-			break;
-		case MOD:
-			op = "mod";
-			break;
-		default:
-			break;
-		}
-		return sb.append(left.toString() + op + right.toString());
+		return sb.append("(" + left.toString() + Operation.toString() + right.toString() + ")");
 	}
 	
 	public String toString() {
@@ -64,7 +58,7 @@ public class BinaryOp implements Expr {
 		return prettyPrint(s).toString();
 	}
 	
-	public int evaluate() {
+	/*public int evaluate() {
 		int a = 0;
 		int b = 0;
 		try{
@@ -90,8 +84,62 @@ public class BinaryOp implements Expr {
 			break;
 		}
 		return 0;
+	}*/
+	
+	
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
 	}
-	public enum Operation {
-		PLUS, MINUS, MULT, DIV, MOD;
+	
+	@Override
+	public Node getLeft() {
+		return left;
 	}
+
+	@Override
+	public Node getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Node l) {
+		if (l instanceof Expr)
+			left = (Expr) l;
+	}
+
+	@Override
+	public void setRight(Node r) {
+		if (r instanceof Expr)
+			right = (Expr) r;
+	}
+	
+	public Token getOperation(){
+		return Operation;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Token getToken() {
+		return getOperation();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if (t.isAddOp() || t.isMulOp())
+			Operation = t;
+	}
+	
+
 }
