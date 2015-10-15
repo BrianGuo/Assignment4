@@ -26,9 +26,7 @@ class ParserImpl implements Parser {
         //TODO Parse rules until we reach the end
         ProgramImpl program = new ProgramImpl();
         while(t.hasNext()){
-            //program.
-            program.add(parseRule(t));
-            //t.next(); //do I do this or not
+            program.addRule(parseRule(t));
         }
 
         throw new UnsupportedOperationException();
@@ -52,7 +50,7 @@ class ParserImpl implements Parser {
         }
         if(t.peek().isAction()){ //last one wasn't actually an update
             action = parseAction(t);
-            command.addAction(action);
+            command.setAction(action);
         }
         return command;
     }
@@ -273,8 +271,17 @@ class ParserImpl implements Parser {
         Token cur = t.next();
         Expr sensor;
         if(cur.getType() == TokenType.SMELL){
-            //er...need sensor nodes.
+            sensor = new Sensor(cur);
         }
+        else{
+            Token type = t.next();
+            Expr expr;
+            consume(t, TokenType.LBRACKET);
+            expr = parseExpression(t);
+            consume(t, TokenType.RBRACKET);
+            sensor = new Sensor(type, expr);
+        }
+        return sensor;
     }
 
     // TODO

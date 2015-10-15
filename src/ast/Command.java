@@ -20,6 +20,8 @@ public class Command extends ListChildren implements Node {
 	public Command(ActionNode a){
 		action = a;
 	}
+
+
 	
 	public Command(ArrayList<UpdateNode> updates, ActionNode a){
 		this.updates = updates;
@@ -105,5 +107,6 @@ public class Command extends ListChildren implements Node {
 	public void addUpdate(UpdateNode u) {
 		updates.add(u);
 	}
+	public void setAction(ActionNode a){action = a;}
 	
 }
