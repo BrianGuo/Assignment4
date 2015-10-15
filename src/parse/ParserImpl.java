@@ -328,7 +328,6 @@ class ParserImpl implements Parser {
         }
         else{
             //Token type = t.peek();
-            //System.out.println("next token:" + type);
             Expr expr;
             consume(t, TokenType.LBRACKET);
             expr = parseExpression(t);

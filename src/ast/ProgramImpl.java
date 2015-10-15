@@ -15,7 +15,7 @@ public class ProgramImpl extends ListChildren implements Program {
     
     public ProgramImpl(){
     	rules = new ArrayList<Rule>();
-    	size = 0;
+    	size = 1;
     }
     public ProgramImpl(ArrayList<Rule> r){
     	rules = r;
@@ -40,6 +40,7 @@ public class ProgramImpl extends ListChildren implements Program {
 
     public boolean addRule(Rule r) {
     	rules.add(r);
+		size += r.size();
     	return true;
     }
     
