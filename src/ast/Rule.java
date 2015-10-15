@@ -42,7 +42,7 @@ public class Rule extends BinaryChildren implements Node {
 
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
-        return sb.append(right.toString() + " --> " + left.toString());
+        return sb.append(left.toString() + " --> " + right.toString());
     }
     
     @Override
@@ -66,25 +66,25 @@ public class Rule extends BinaryChildren implements Node {
 		return (n instanceof Rule);
 	}
 	
-	/*@Override
-	public Object getLeft() {
+	@Override
+	public Node getLeft() {
 		return left;
 	}
 
 	@Override
-	public Object getRight() {
+	public Node getRight() {
 		return right;
 	}
 
 	@Override
-	public void setLeft(Object l) {
+	public void setLeft(Node l) {
 		if (l instanceof Condition)
 			left = (Condition) l;
 	}
 
 	@Override
-	public void setRight(Object r) {
+	public void setRight(Node r) {
 		if (r instanceof Command)
 			right = (Command) r;
-	}*/
+	}
 }

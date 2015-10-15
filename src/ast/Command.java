@@ -8,7 +8,7 @@ public class Command extends ListChildren implements Node {
 	private int size;
 	
 	public Command() {
-		updates = null;
+		updates = new ArrayList<UpdateNode>();
 		action = null;
 	}
 	
@@ -20,7 +20,10 @@ public class Command extends ListChildren implements Node {
 	public Command(ActionNode a){
 		action = a;
 	}
-	
+	public Command(ArrayList<UpdateNode> updates){
+		action = null;
+		this.updates = updates;
+	}
 	public Command(ArrayList<UpdateNode> updates, ActionNode a){
 		this.updates = updates;
 		action = a;

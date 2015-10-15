@@ -72,6 +72,15 @@ public class ProgramImpl extends ListChildren implements Program {
         	switch(whichMut){
         	case 0:
         		m = MutationFactory.getRemove();
+        		if (nodeAt(selected) instanceof Rule || nodeAt(selected) instanceof UpdateNode){
+        			if(findParent(selected).children().size() == 1)
+        				return this;
+        			else{
+        				ArrayList<Node> temp = findParent(selected).children();
+        				temp.remove(nodeAt(selected));
+        				((ListChildren) findParent(selected)).setChildren(temp);
+        			}
+        		}
         		return mutate(selected, m);
         	case 1:
         		m = MutationFactory.getSwap();
@@ -114,10 +123,7 @@ public class ProgramImpl extends ListChildren implements Program {
     
     @Override 
     public ArrayList<Node> getChildren(){
-    	ArrayList<Node> temp = new ArrayList<Node>();
-    	for (Rule i: rules)
-    		temp.add(i);
-    	return temp;
+    	return children();
     }
     
 	@Override
@@ -160,5 +166,6 @@ public class ProgramImpl extends ListChildren implements Program {
 			temp.add((Rule) instance);
 		rules = temp;
 	}
+	
 
 }

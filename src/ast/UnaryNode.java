@@ -2,9 +2,9 @@ package ast;
 
 public abstract class UnaryNode implements Node {
 	
-	boolean hasChild(){return false;}
+	abstract boolean hasChild();
 	
-	void setChild(Node n){}
+	abstract void setChild(Node n);
 	
-	Node getChild(){return null;};
+	abstract Node getChild();
 }
