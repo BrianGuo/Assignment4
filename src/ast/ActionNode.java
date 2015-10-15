@@ -22,6 +22,7 @@ public class ActionNode extends UnaryNode implements Node {
 		num = null;
 		size = 1;
 	}
+
 	public ActionNode(ActionNode a) {
 		type = a.getAction();
 		if (a.getNum() != null)

@@ -1,0 +1,23 @@
+5. 1000n
+lim n->infinity 1000n/n^2 = lim 1000/n = 0 NOT O(n^2)
+6. 5n^2 + 10n - 10
+5n^2 + 10n - 10 - 6n^2 <= 0
+10n - 10 - n^2 <= 0
+n^2 -10n + 10 >= 0
+n^2 - 10n + 25 = 15
+(n-5)^2 = +/-sqrt(15)
+n = 5 +/- sqrt(15) ~= 1, 9
+
+n0 = 9, k = 6
+
+7. n^3
+lim n->infinity n^3/n^2 = lim n = infinity NOT O(n^2)
+
+8. 2^n
+lim n-> infinity 2^n/n^2 = lim ln2 * 2^n/2n = lim ln2 * ln 2 * 2^n / 2 = infinity NOT O(n^2)
+
+9. f_1(n) * f_2(n), f_1 and f2 are O(n)
+for all n > n_1, f_1(n) <= k_1g(n)
+for all n > n_2, f_2(n) <= k_2g(n)
+    	    	 f_1(n) * f_2(n) <= (k_1*k_2)(g(n))^2 for all n > max(n_1, n_2)
+g(n) = O(n) -> (g(n))^2 = O(n^2) -> O(n^2) (k = k_1*k_2, n0 = max(n_1, n_2))
