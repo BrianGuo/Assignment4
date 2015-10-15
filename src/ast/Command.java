@@ -99,4 +99,8 @@ public class Command extends ListChildren implements Node {
 		updates = temp;
 	}
 	
+	public void addUpdate(UpdateNode u) {
+		updates.add(u);
+	}
+	
 }

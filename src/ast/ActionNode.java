@@ -2,22 +2,25 @@ package ast;
 
 import java.util.ArrayList;
 
+import parse.Token;
 public class ActionNode extends UnaryNode implements Node {
 
-	Action type;
+	Token type;
 	Expr num;
 	int size;
 	
-	public ActionNode(Action a, Expr r){
-		type = a;
+	public ActionNode(Token a, Expr r){
+		if (a.isAction())
+			type = a;
 		num = r;
-		size = 1;
+		size = 1+num.size();
 	}
 	
-	public ActionNode(Action a) {
-		type = a;
+	public ActionNode(Token a) {
+		if (a.isAction())
+			type = a;
 		num = null;
-		size = 1 + num.size();
+		size = 1;
 	}
 	public ActionNode(ActionNode a) {
 		type = a.getAction();
@@ -28,7 +31,7 @@ public class ActionNode extends UnaryNode implements Node {
 	public Expr getNum() {
 		return num;
 	}
-	public Action getAction(){
+	public Token getAction(){
 		return type;
 	}
 	@Override
@@ -49,10 +52,10 @@ public class ActionNode extends UnaryNode implements Node {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String possibleEnd = "";
-		if (type.equals(Action.TAG) || type.equals(Action.SERVE))
-			possibleEnd = "[" + num.toString() + "]";
-		return sb.append(type + possibleEnd);
+		sb.append(type);
+		if (num != null)
+			sb.append("[" + num.toString() + "]");
+		return sb;
 	}
 	
 	public String toString() {
@@ -60,9 +63,6 @@ public class ActionNode extends UnaryNode implements Node {
 		return prettyPrint(sb).toString();
 	}
 	
-	public enum Action {
-		WAIT,FORWARD,BACKWARD,LEFT,RIGHT,EAT,ATTACK,GROW,BUD,MATE,TAG,SERVE;
-	}
 
 	@Override
 	public ArrayList<Node> children() {

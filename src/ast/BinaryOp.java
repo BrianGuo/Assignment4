@@ -2,9 +2,11 @@ package ast;
 
 import java.util.ArrayList;
 
+import parse.Token;
+
 public class BinaryOp extends BinaryChildren implements Expr {
 
-	private Operation Operation;
+	private Token Operation;
 	private Expr left;
 	private int leftsize;
 	private Expr right;
@@ -12,16 +14,19 @@ public class BinaryOp extends BinaryChildren implements Expr {
 	
 	public BinaryOp(BinaryOp b){
 		this.left = b.left;
+		leftsize = b.getLeft().size();
 		this.right = b.right;
+		rightsize = b.getRight().size();
 		this.Operation = b.Operation;
 	}
 	
-	public BinaryOp(Expr l, Expr r, Operation o){
+	public BinaryOp(Expr l, Expr r, Token o){
 		left = l;
 		right = r;
 		leftsize = l.size();
 		rightsize = r.size();
-		Operation = o;
+		if (o.isAddOp() || o.isMulOp())
+			Operation = o;
 	}
 	@Override
 	public int size() {
@@ -44,27 +49,7 @@ public class BinaryOp extends BinaryChildren implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String op = "";
-		switch (Operation) {
-		case PLUS:
-			op = "+";
-			break;
-		case MINUS:
-			op = "-";
-			break;
-		case MULT:
-			op = "*";
-			break;
-		case DIV:
-			op = "/";
-			break;
-		case MOD:
-			op = "mod";
-			break;
-		default:
-			break;
-		}
-		return sb.append("(" + left.toString() + op + right.toString() + ")");
+		return sb.append("(" + left.toString() + Operation.toString() + right.toString() + ")");
 	}
 	
 	public String toString() {
@@ -72,7 +57,7 @@ public class BinaryOp extends BinaryChildren implements Expr {
 		return prettyPrint(s).toString();
 	}
 	
-	public int evaluate() {
+	/*public int evaluate() {
 		int a = 0;
 		int b = 0;
 		try{
@@ -98,11 +83,9 @@ public class BinaryOp extends BinaryChildren implements Expr {
 			break;
 		}
 		return 0;
-	}
+	}*/
 	
-	public enum Operation {
-		PLUS, MINUS, MULT, DIV, MOD;
-	}
+	
 
 	@Override
 	public ArrayList<Node> children() {

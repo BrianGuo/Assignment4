@@ -2,32 +2,37 @@ package ast;
 
 import java.util.ArrayList;
 
+import parse.Token;
+
 public class Sensor extends UnaryNode implements Expr {
 
-	private Senses s;
+	private Token sense;
 	private Expr r;
 	private int size;
 	
-	public Sensor(Senses s){
-		this.s= s;
+	public Sensor(Token s){
+		this.sense= s;
 		r = null;
 		size = 1;
 	}
 	
-	public Sensor (Sensor sense){
-		s = sense.getSense();
-		if(sense.getExpr()!= null)
-			r = sense.getExpr();
+	public Sensor (Sensor sensor){
+		sense = sensor.getSense();
+		size = 1;
+		if(sensor.getExpr()!= null){
+			r = sensor.getExpr();
+			size += r.size();
+		}
 	}
-	public Senses getSense(){
-		return s;
+	public Token getSense(){
+		return sense;
 	}
 	public Expr getExpr() {
 		return r;
 	}
-	public Sensor(Senses s, Expr r){
-		this.s = s;
-		if(s.equals(Senses.NEARBY) || s.equals(Senses.AHEAD) || s.equals(Senses.RANDOM)){
+	public Sensor(Token s, Expr r){
+		if(s.isSensor()){
+			this.sense = s;
 			this.r = r;
 		}
 		size = r.size() + 1;
@@ -52,43 +57,20 @@ public class Sensor extends UnaryNode implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String suffix = "";
+		sb.append(sense.toString());
 		if (r != null)
-			suffix = "[" + r.toString() + "]";
-		String prefix = "";
-		switch(s) {
-		case NEARBY:
-			prefix = "nearby";
-			break;
-		case AHEAD:
-			prefix = "ahead";
-			break;
-		case RANDOM:
-			prefix = "random";
-			break;
-		case SMELL:
-			prefix = "smell";
-			break;
-		default:
-			break;
-		}
-		sb.append(prefix + suffix);
+			sb.append("[" + r.toString() + "]");
 		return sb;
 	}
 
-	@Override
-	public int evaluate() {
-		return 0;
-	}
+	
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		return prettyPrint(sb).toString();
 	}
 	
-	public enum Senses {
-		NEARBY,AHEAD,RANDOM,SMELL;
-	}
+	
 
 	@Override
 	public ArrayList<Node> children() {
@@ -100,7 +82,7 @@ public class Sensor extends UnaryNode implements Expr {
 	
 	@Override
 	public boolean hasChild() {
-		return ((s == Senses.NEARBY || s == Senses.AHEAD || s == Senses.RANDOM) && r != null);
+		return (sense.isSensor() && r != null);
 	}
 	
 	@Override
