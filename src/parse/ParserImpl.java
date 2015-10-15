@@ -301,13 +301,13 @@ class ParserImpl implements Parser {
             sensor = new Sensor(cur);
         }
         else{
-            Token type = t.peek();
+            //Token type = t.peek();
             //System.out.println("next token:" + type);
             Expr expr;
             consume(t, TokenType.LBRACKET);
             expr = parseExpression(t);
             consume(t, TokenType.RBRACKET);
-            sensor = new Sensor(type, expr);
+            sensor = new Sensor(cur, expr);
         }
         return sensor;
     }
