@@ -21,7 +21,8 @@
  
 ***
 ###Parsing
-While there is skeleton code for a recursive descent parser, which is fairly straightforward, a bottom-up parser may be simpler, once a parse table has been generated.  However, it may be too laborious to generate a parse table by hand for this grammar without any automated tools, so may not be such a good idea.
+Standard recursive descent parser.
+From inspection, it appears every operation is left-associative (except unary negation), and "and" has precedence over "or."  Conditionals and expressions are handled using the shunting-yard algorithm, which means there is no need for separate parse methods for conjunction/relation and factor/term.  Unary negation can be handled in parseFactor() transparently.
 ***
 ### Mutations
 Mutation may be one of the more difficult processes to implement. Mutations themselves are described in detail in the project specification and are fairly straightforward. Deciding whether or not to mutate is simply a matter of calling Math.random(), as is deciding whether to mutate an attribute or a rule set. The most difficult task may be giving each node an equal probability to be mutated. I would like to find some way to do it without traversing through the tree and counting each individual Node, but I do not, as of yet, see a way to. Considering that there may be up to 999 rules, though, I imagine that counting a rule and its sub-Nodes may be rather slow. Still, perhaps it is the fact that the number of rules is arbitrary that makes it difficult to find a method that gives each node an equal opportunity, without counting each Node.
