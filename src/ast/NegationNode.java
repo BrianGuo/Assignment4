@@ -57,4 +57,19 @@ public class NegationNode extends UnaryNode implements Expr {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	@Override
+	public boolean hasChild() {
+		return (expression!= null);
+	}
+	
+	@Override 
+	public void setChild(Node n) {
+		if(n instanceof Expr)
+			expression = (Expr) n;
+	}
+	
+	@Override
+	public Node getChild(){
+		return expression;
+	}
 }

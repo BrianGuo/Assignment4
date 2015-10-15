@@ -11,13 +11,20 @@ public class RemoveMutation implements ParentSpecificMutation {
 		this.p = p;
 	}
 	public Node mutate(Node n){
-		ArrayList<Node> candidates = new ArrayList<Node>();
-		for(int i = 0; i < n.size(); i++ ){
-			if (n.sameType(n.nodeAt(i)))
-				candidates.add(n.nodeAt(i));
+		if(n instanceof UnaryNode && ((UnaryNode) n).hasChild() || n instanceof BinaryCondition || n instanceof BinaryOp){
+			ArrayList<Node> candidates = new ArrayList<Node>();
+			for(int i = 1; i < n.size(); i++ ){
+				if (n.sameType(n.nodeAt(i)))
+					candidates.add(n.nodeAt(i));
+			}
+			Collections.shuffle(candidates);
+			if (candidates.size()>0)
+				return candidates.get(0);
+			return null;
 		}
-		Collections.shuffle(candidates);
-		return candidates.get(0);
+		else{
+			return null;
+		}
 	}
 	
 	@Override

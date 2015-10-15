@@ -40,6 +40,29 @@ public class TransformMutation implements ParentSpecificMutation {
 				newN = new NumberNode(((NumberNode) n).getNum() - num/den);
 			return newN;	
 		}
+		else if (n instanceof UnaryNode && ((UnaryNode) n).hasChild()){
+			Random r = new Random();
+			int NewN = r.nextInt(5);
+			switch(NewN){
+			case 0:
+				MemoryNode m = new MemoryNode((Expr) ((UnaryNode)n).getChild());
+				return m;
+			case 1:
+				NegationNode m2 = new NegationNode((Expr) ((UnaryNode)n).getChild());
+				return m2;
+			case 2:
+				Sensor m3 = new Sensor(new Token(TokenType.getTypeFromString("nearby"),-1), ((Expr) ((UnaryNode)n).getChild()));
+				return m3;
+			case 3:
+				Sensor m4 = new Sensor(new Token(TokenType.getTypeFromString("ahead"),-1), ((Expr) ((UnaryNode)n).getChild()));
+				return m4;
+			case 4:
+				Sensor m5 = new Sensor(new Token(TokenType.getTypeFromString("random"),-1), ((Expr) ((UnaryNode)n).getChild()));
+				return m5;
+			default:
+				return null;
+			}
+		}
 		else
 			return null;
 	}

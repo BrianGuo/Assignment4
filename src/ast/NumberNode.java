@@ -49,6 +49,19 @@ public class NumberNode extends UnaryNode implements Expr{
 		return new ArrayList<Node>();
 	}
 	
+	@Override
+	public boolean hasChild(){
+		return false;
+	}
 	
+	@Override
+	public void setChild(Node n) {
+		return;
+	}
+	
+	@Override
+	public Node getChild() {
+		return null;
+	}
 	
 }
