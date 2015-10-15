@@ -99,7 +99,7 @@ public class MemoryNode extends UnaryNode implements Expr {
 		if (MemoryToken != null)
 			return sb.append(MemoryToken.toString());
 		else
-			return sb.append(expression.toString());
+			return sb.append("mem[" + expression.toString() + "]");
 	}
 	
 	public String toString() {
