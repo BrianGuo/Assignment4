@@ -83,8 +83,11 @@ public class Command extends ListChildren implements Node {
 	}
 	
 	@Override
-	public ArrayList<? extends Node> getChildren() {
-		return updates;
+	public ArrayList<Node> getChildren() {
+		ArrayList<Node> result = new ArrayList<Node>();
+		for(UpdateNode u: updates)
+			result.add(u);
+		return result;
 	}
 	
 	@Override

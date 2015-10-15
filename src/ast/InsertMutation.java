@@ -12,8 +12,7 @@ public class InsertMutation implements Mutation {
 	
 	@Override
 	public boolean equals(Mutation m) {
-		// TODO Auto-generated method stub
-		return false;
+		return (m instanceof InsertMutation);
 	}
 	
 	public Node mutate(Node n) {

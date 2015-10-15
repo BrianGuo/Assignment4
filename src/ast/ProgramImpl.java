@@ -85,8 +85,11 @@ public class ProgramImpl extends ListChildren implements Program {
     }
     
     @Override 
-    public ArrayList<? extends Node> getChildren(){
-    	return rules;
+    public ArrayList<Node> getChildren(){
+    	ArrayList<Node> temp = new ArrayList<Node>();
+    	for (Rule i: rules)
+    		temp.add(i);
+    	return temp;
     }
     
 	@Override
