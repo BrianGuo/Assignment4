@@ -6,32 +6,26 @@ package ast;
  */
 public class MutationFactory {
     public static Mutation getRemove() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new RemoveMutation();
     }
 
     public static Mutation getSwap() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+    	return new SwapMutation();
     }
 
     public static Mutation getReplace() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new CopyMutation();
     }
 
     public static Mutation getTransform() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new TransformMutation();
     }
 
     public static Mutation getInsert() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new InsertMutation();
     }
 
     public static Mutation getDuplicate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+        return new DuplicateMutation();
     }
 }

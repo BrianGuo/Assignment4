@@ -1,10 +1,6 @@
 package parse;
 
-import static parse.TokenCategory.ACTION;
-import static parse.TokenCategory.ADDOP;
-import static parse.TokenCategory.MEMSUGAR;
-import static parse.TokenCategory.MULOP;
-import static parse.TokenCategory.SENSOR;
+import static parse.TokenCategory.*;
 import static parse.TokenType.EOF;
 import static parse.TokenType.ERROR;
 import static parse.TokenType.NUM;
@@ -14,7 +10,7 @@ import java.util.InputMismatchException;
 /**
  * A Token represents a legal token (symbol) in the critter language
  */
-class Token {
+public class Token {
     private final TokenType type;
     final int lineNo;
 
@@ -26,7 +22,7 @@ class Token {
      * @param lineNo
      *            The line number in the input file containing this token.
      */
-    Token(final TokenType type, final int lineNo) {
+    public Token(final TokenType type, final int lineNo) {
         this.type = type;
         this.lineNo = lineNo;
     }
@@ -34,7 +30,7 @@ class Token {
     /**
      * @return The type of this token
      */
-    TokenType getType() {
+    public TokenType getType() {
         return type;
     }
 
@@ -69,7 +65,7 @@ class Token {
      * 
      * @return true if this token is of action type
      */
-    boolean isAction() {
+    public boolean isAction() {
         return type.category == ACTION;
     }
 
@@ -78,7 +74,7 @@ class Token {
      * 
      * @return true if this token is of addop type
      */
-    boolean isAddOp() {
+    public boolean isAddOp() {
         return type.category == ADDOP;
     }
 
@@ -87,8 +83,12 @@ class Token {
      * 
      * @return true if this token is of mulop type.shorthand
      */
-    boolean isMulOp() {
+    public boolean isMulOp() {
         return type.category == MULOP;
+    }
+    
+    public boolean isRelOp() {
+    	return type.category == TokenCategory.RELOP;
     }
 
     /**
@@ -96,16 +96,23 @@ class Token {
      * 
      * @return true if this token is of sensor type.shorthand
      */
-    boolean isSensor() {
+    public boolean isSensor() {
         return type.category == SENSOR;
     }
+
+    /**
+     * Determine whether this token is of relop type.
+     *
+     * @return true if this token is of relop type.
+     */
+    boolean isRelOp() { return type.category == RELOP; }
 
     /**
      * Determine whether this token is syntactic sugar for memory locations
      * 
      * @return true if this token is syntactic sugar for memory locations
      */
-    boolean isMemSugar() {
+    public boolean isMemSugar() {
         return type.category == MEMSUGAR;
     }
 
