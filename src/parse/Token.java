@@ -1,10 +1,6 @@
 package parse;
 
-import static parse.TokenCategory.ACTION;
-import static parse.TokenCategory.ADDOP;
-import static parse.TokenCategory.MEMSUGAR;
-import static parse.TokenCategory.MULOP;
-import static parse.TokenCategory.SENSOR;
+import static parse.TokenCategory.*;
 import static parse.TokenType.EOF;
 import static parse.TokenType.ERROR;
 import static parse.TokenType.NUM;
@@ -99,6 +95,13 @@ class Token {
     boolean isSensor() {
         return type.category == SENSOR;
     }
+
+    /**
+     * Determine whether this token is of relop type.
+     *
+     * @return true if this token is of relop type.
+     */
+    boolean isRelOp() { return type.category == RELOP; }
 
     /**
      * Determine whether this token is syntactic sugar for memory locations

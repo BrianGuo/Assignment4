@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import ast.*;
 import exceptions.SyntaxError;
+import jdk.nashorn.internal.runtime.regexp.joni.Syntax;
 
 class ParserImpl implements Parser {
 
@@ -27,7 +28,7 @@ class ParserImpl implements Parser {
         while(t.hasNext()){
             //program.
             program.add(parseRule(t));
-            t.next(); //do I do this or not
+            //t.next(); //do I do this or not
         }
 
         throw new UnsupportedOperationException();
@@ -44,17 +45,43 @@ class ParserImpl implements Parser {
     }
 
     public static Command parseCommand(Tokenizer t) throws SyntaxError {
-        //parse any pos number of updates, then an update-or-action
+        Command command = new Command();
+        ActionNode action;
+        while (t.peek().getType() == TokenType.MEM) { //this also handles the case of update-or-action being an update
+            command.addUpdate(parseUpdate(t));
+        }
+        if(t.peek().isAction()){ //last one wasn't actually an update
+            action = parseAction(t);
+            command.addAction(action);
+        }
+        return command;
+    }
+
+    /**
+     * Precondition: The next token is actually an action
+     */
+    public static ActionNode parseAction(Tokenizer t) throws SyntaxError {
+        ActionNode actionNode;
+        if(t.peek().toString().equals("tag") || t.peek().toString().equals("serve" )){
+            Token action = t.next(); //not consume() because we have 2 different types we already checked for...
+            consume(t, TokenType.LBRACKET);
+            Expr expr = parseExpression(t);
+            consume(t, TokenType.RBRACKET);
+            return new ActionNode(action, expr);
+        }
+        else{
+            return new ActionNode(t.next());
+        }
     }
 
     public static UpdateNode parseUpdate(Tokenizer t) throws SyntaxError {
         UpdateNode update;
         consume(t, TokenType.MEM);
         consume(t, TokenType.LBRACKET);
-        MemoryNode mem = new MemoryNode(parseExpression(t)); //TODO: add this as a node to update
+        MemoryNode mem = new MemoryNode(parseExpression(t));
         consume(t, TokenType.RBRACKET);
         consume(t, TokenType.ASSIGN);
-        Expr e = parseExpression(t); //TODO: add this as a node to update
+        Expr e = parseExpression(t);
         update = new UpdateNode(mem, e);
         return update;
     }
@@ -79,7 +106,7 @@ class ParserImpl implements Parser {
                     if (compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
                         Condition l = literals.pop(); //second one
-                        Condition cond = new BinaryCondition(l, conditions.pop().getType(), r); //form the tree...
+                        Condition cond = new BinaryCondition(l, conditions.pop(), r); //form the tree...
                         literals.push(cond); //push tree onto literals!
                     } else { //none left
                         conditions.push(cur);
@@ -96,7 +123,7 @@ class ParserImpl implements Parser {
         while(conditions.peek() != null){
             Condition r = literals.pop(); //first one
             Condition l = literals.pop(); //second one
-            Condition cond = new BinaryCondition(l, conditions.pop().getType(), r);
+            Condition cond = new BinaryCondition(l, conditions.pop(), r);
             literals.push(cond);
         }
         //we need support for a binarycondition that only contains a relation
@@ -137,6 +164,18 @@ class ParserImpl implements Parser {
             condition = parseRelation(t);
         }
         return condition;
+    }
+
+    public static Relation parseRelation(Tokenizer t) throws SyntaxError {
+        Expr l = parseExpression(t);
+        if(t.peek().isRelOp()){
+            Token rel = t.next();
+            Expr r = parseExpression(t);
+            return new Relation(l, r, rel);
+        }
+        else{
+            throw new SyntaxError();
+        }
     }
 
     public static Expr parseExpression(Tokenizer t) throws SyntaxError {
