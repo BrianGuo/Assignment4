@@ -1,5 +1,5 @@
 package parse;
 
-enum TokenCategory {
+public enum TokenCategory {
     ACTION, RELOP, ADDOP, MULOP, SENSOR, MEMSUGAR, OTHER;
 }

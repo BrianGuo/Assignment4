@@ -1,23 +1,33 @@
 package ast;
 
-public class BinaryOp implements Expr {
+import java.util.ArrayList;
 
-	private String Operation;
+import parse.Token;
+
+public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
+
+	private Token Operation;
 	private Expr left;
 	private int leftsize;
 	private Expr right;
 	private int rightsize;
 	
-	public BinaryOp(Expr l, Expr r, String o){
-		if ("+-*/mod".indexOf(o.trim()) == -1)
-			Operation = null;
-		else{
-			left = l;
-			right = r;
-			leftsize = l.size();
-			rightsize = r.size();
+	public BinaryOp(BinaryOp b){
+		this.left = b.left;
+		leftsize = b.getLeft().size();
+		this.right = b.right;
+		rightsize = b.getRight().size();
+		if (b.getOperation().isAddOp() || b.getOperation().isMulOp())
+			this.Operation = b.getOperation();
+	}
+	
+	public BinaryOp(Expr l, Expr r, Token o){
+		left = l;
+		right = r;
+		leftsize = l.size();
+		rightsize = r.size();
+		if (o.isAddOp() || o.isMulOp())
 			Operation = o;
-		}
 	}
 	@Override
 	public int size() {
@@ -31,8 +41,7 @@ public class BinaryOp implements Expr {
 		if (index == 0)
 			return this;
 		else if (index > leftsize) {
-			int n = index-(leftsize+1);
-			return right.nodeAt(n);
+			return right.nodeAt(index - (leftsize+1));
 		}
 		else {
 			return left.nodeAt(index-1);
@@ -41,7 +50,7 @@ public class BinaryOp implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		return sb.append(left.toString() + Operation + right.toString());
+		return sb.append("(" + left.toString() + Operation.toString() + right.toString() + ")");
 	}
 	
 	public String toString() {
@@ -49,7 +58,7 @@ public class BinaryOp implements Expr {
 		return prettyPrint(s).toString();
 	}
 	
-	public int evaluate() {
+	/*public int evaluate() {
 		int a = 0;
 		int b = 0;
 		try{
@@ -61,20 +70,76 @@ public class BinaryOp implements Expr {
 			return 0;
 		}
 		switch(Operation){
-		case "+":
+		case PLUS:
 			return a + b;
-		case "-":
+		case MINUS:
 			return a-b;
-		case "*":
+		case MULT:
 			return a * b;
-		case"/":
+		case DIV:
 			return a/b;
-		case"mod":
+		case MOD:
 			return a%b;
 		default:
 			break;
 		}
 		return 0;
+	}*/
+	
+	
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (left != null)
+			temp.add(left);
+		if (right != null)
+			temp.add(right);
+		return temp;
 	}
 	
+	@Override
+	public Node getLeft() {
+		return left;
+	}
+
+	@Override
+	public Node getRight() {
+		return right;
+	}
+
+	@Override
+	public void setLeft(Node l) {
+		if (l instanceof Expr)
+			left = (Expr) l;
+	}
+
+	@Override
+	public void setRight(Node r) {
+		if (r instanceof Expr)
+			right = (Expr) r;
+	}
+	
+	public Token getOperation(){
+		return Operation;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Token getToken() {
+		return getOperation();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if (t.isAddOp() || t.isMulOp())
+			Operation = t;
+	}
+	
+
 }

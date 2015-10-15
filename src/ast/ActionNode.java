@@ -1,27 +1,43 @@
 package ast;
 
-public class ActionNode implements Node {
+import java.util.ArrayList;
 
-	String type;
+import parse.Token;
+public class ActionNode extends UnaryNode implements Node,Tokenable {
+
+	Token type;
 	Expr num;
+	int size;
 	
-	
-	public ActionNode(String t, Expr r){
-		type = t;
+	public ActionNode(Token a, Expr r){
+		if (a.isAction())
+			type = a;
 		num = r;
+		size = 1+num.size();
 	}
 	
-	public ActionNode(String t) {
-		type = t;
+	public ActionNode(Token a) {
+		if (a.isAction())
+			type = a;
 		num = null;
+		size = 1;
+	}
+
+	public ActionNode(ActionNode a) {
+		type = a.getAction();
+		if (a.getNum() != null)
+			num = a.getNum();
 	}
 	
+	public Expr getNum() {
+		return num;
+	}
+	public Token getAction(){
+		return type;
+	}
 	@Override
 	public int size() {
-		if (num != null)
-			return num.size() +1;
-		else
-			return 1;
+		return size;
 	}
 
 	@Override
@@ -37,10 +53,10 @@ public class ActionNode implements Node {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		String possibleEnd = "";
-		if (type.equals("tag") || type.equals("serve"))
-			possibleEnd = "[" + num.toString() + "]";
-		return sb.append(type + possibleEnd);
+		sb.append(type);
+		if (num != null)
+			sb.append("[" + num.toString() + "]");
+		return sb;
 	}
 	
 	public String toString() {
@@ -48,5 +64,44 @@ public class ActionNode implements Node {
 		return prettyPrint(sb).toString();
 	}
 	
+
+	@Override
+	public ArrayList<Node> children() {
+		ArrayList<Node> temp = new ArrayList<Node>();
+		if (num != null)
+			temp.add(num);
+		return temp;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		return (n instanceof ActionNode);
+	}
 	
+	@Override
+	public boolean hasChild() {
+		return (num != null);
+	}
+	
+	@Override
+	public void setChild(Node n) {
+		if (n instanceof Expr)
+			num = ( Expr) n;
+	}
+	
+	@Override
+	public Node getChild(){
+		return num;
+	}
+
+	@Override
+	public Token getToken() {
+		return getAction();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if(t.isAction())
+			type = t;
+	}
 }

@@ -1,11 +1,21 @@
 package ast;
 
-public class NumberNode implements Expr{
+import java.util.ArrayList;
+
+public class NumberNode extends UnaryNode implements Expr{
 
 	private int num;
 	
 	public NumberNode(int n){
 		num = n;
+	}
+	
+	public NumberNode(NumberNode n){
+		num = n.getNum();
+	}
+	
+	public int getNum(){
+		return num;
 	}
 	@Override
 	public int size() {
@@ -32,6 +42,26 @@ public class NumberNode implements Expr{
 	
 	public int evaluate() {
 		return num;
+	}
+	
+	@Override
+	public ArrayList<Node> children() {
+		return new ArrayList<Node>();
+	}
+	
+	@Override
+	public boolean hasChild(){
+		return false;
+	}
+	
+	@Override
+	public void setChild(Node n) {
+		return;
+	}
+	
+	@Override
+	public Node getChild() {
+		return null;
 	}
 	
 }

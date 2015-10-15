@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+
 /**
  * A node in the abstract syntax tree of a program.
  */
@@ -53,4 +55,19 @@ public interface Node {
      */
     @Override
     String toString();
+    
+    /**
+     * Returns the direct children of the Node, or an empty arraylist if there are none
+     * @return children of the node
+     */
+    ArrayList<Node> children();
+    
+    /**
+     * Returns whether or not this Node is of the same type as given node
+     * @param the node to compare
+     * @return whether or not they are of the same type 
+     */
+    boolean sameType(Node n);
+    
+    
 }
