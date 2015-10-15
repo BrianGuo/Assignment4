@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import parse.Token;
 
-public class Relation extends BinaryChildren implements Condition {
+public class Relation extends BinaryChildren implements Condition,Tokenable {
 
 	private Expr left;
 	private Expr right;
@@ -87,5 +87,19 @@ public class Relation extends BinaryChildren implements Condition {
 	
 	public Token getR(){
 		return R;
+	}
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public Token getToken() {
+		return getR();
+	}
+	@Override
+	public void setToken(Token t) {
+		if (t.isRelOp())
+			R = t;
 	}
 }

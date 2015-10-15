@@ -2,15 +2,18 @@ package ast;
 
 import java.util.ArrayList;
 
+import parse.Token;
+import parse.TokenType;
+
 /**
  * A representation of a binary Boolean condition: 'and' or 'or'
  *
  */
-public class BinaryCondition extends BinaryChildren implements Condition {
+public class BinaryCondition extends BinaryChildren implements Condition, Tokenable {
 
 	Condition left;
 	Condition right;
-	Operator op;
+	Token op;
 	int leftsize;
 	int rightsize;
 	
@@ -20,20 +23,30 @@ public class BinaryCondition extends BinaryChildren implements Condition {
      * @param op
      * @param r
      */
-    public BinaryCondition(Condition l, Operator op, Condition r) {
+    public BinaryCondition(Condition l, Token op, Condition r) {
     	left = l;
-    	this.op = op;
+    	if (isOperator(op))
+    		this.op = op;
     	right = r;
     	leftsize = l.size();
     	rightsize = r.size();
     }
 
+    public boolean isOperator(Token t){
+    	return (t.equals(TokenType.getTypeFromString("OR")) || t.equals(TokenType.getTypeFromString("AND")));
+    }
+    
     public BinaryCondition(BinaryCondition b){
 		this.left = b.left;
 		this.right = b.right;
-		this.op = b.op;
+		if(isOperator(b.getOp()))
+			this.op = b.op;
+		leftsize = left.size();
+		rightsize = right.size();
 	}
-    
+    public Token getOp(){
+    	return op;
+    }
     @Override
     public int size() {
         return leftsize + rightsize + 1;
@@ -53,18 +66,7 @@ public class BinaryCondition extends BinaryChildren implements Condition {
     
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
-    	String condition = "";
-        switch (op){
-        case OR:
-        	condition = "or";
-        	break;
-        case AND:
-        	condition = "and";
-        	break;
-        default:
-        	break;
-        }
-        return sb.append("{" + left.toString() + " " + condition + " " + right.toString() + "}");
+        return sb.append("{" + left.toString() + " " + op.toString() + " " + right.toString() + "}");
     }
 
     @Override
@@ -91,27 +93,44 @@ public class BinaryCondition extends BinaryChildren implements Condition {
 	}
 
 
-	/*@Override
-	public Object getLeft() {
+	@Override
+	public Node getLeft() {
 		return left;
 	}
 
 	@Override
-	public Object getRight() {
+	public Node getRight() {
 		return right;
 	}
 
 	@Override
-	public void setLeft(Object l) {
+	public void setLeft(Node l) {
 		if (l instanceof Condition)
 			left = (Condition) l;
 	}
 
 	@Override
-	public void setRight(Object r) {
+	public void setRight(Node r) {
 		if (r instanceof Condition)
 			right = (Condition) r;
-	}*/
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Token getToken() {
+		return getOp();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if(isOperator(t))
+			op = t;
+	}
 	
 	
 	

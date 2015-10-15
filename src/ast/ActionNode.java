@@ -3,7 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import parse.Token;
-public class ActionNode extends UnaryNode implements Node {
+public class ActionNode extends UnaryNode implements Node,Tokenable {
 
 	Token type;
 	Expr num;
@@ -92,5 +92,16 @@ public class ActionNode extends UnaryNode implements Node {
 	@Override
 	public Node getChild(){
 		return num;
+	}
+
+	@Override
+	public Token getToken() {
+		return getAction();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if(t.isAction())
+			type = t;
 	}
 }

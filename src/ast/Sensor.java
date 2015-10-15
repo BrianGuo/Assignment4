@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import parse.Token;
 
-public class Sensor extends UnaryNode implements Expr {
+public class Sensor extends UnaryNode implements Expr, Tokenable {
 
 	private Token sense;
 	private Expr r;
@@ -94,5 +94,22 @@ public class Sensor extends UnaryNode implements Expr {
 	@Override
 	public Node getChild(){
 		return r;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Token getToken() {
+		return getSense();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if (t.isSensor())
+			sense = t;
 	}
 }

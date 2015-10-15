@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import parse.Token;
 
-public class BinaryOp extends BinaryChildren implements Expr {
+public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 
 	private Token Operation;
 	private Expr left;
@@ -17,7 +17,8 @@ public class BinaryOp extends BinaryChildren implements Expr {
 		leftsize = b.getLeft().size();
 		this.right = b.right;
 		rightsize = b.getRight().size();
-		this.Operation = b.Operation;
+		if (b.getOperation().isAddOp() || b.getOperation().isMulOp())
+			this.Operation = b.getOperation();
 	}
 	
 	public BinaryOp(Expr l, Expr r, Token o){
@@ -117,6 +118,27 @@ public class BinaryOp extends BinaryChildren implements Expr {
 	public void setRight(Node r) {
 		if (r instanceof Expr)
 			right = (Expr) r;
+	}
+	
+	public Token getOperation(){
+		return Operation;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Token getToken() {
+		return getOperation();
+	}
+
+	@Override
+	public void setToken(Token t) {
+		if (t.isAddOp() || t.isMulOp())
+			Operation = t;
 	}
 	
 

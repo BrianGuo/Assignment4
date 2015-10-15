@@ -34,7 +34,7 @@ public class Token {
     /**
      * @return The type of this token
      */
-    TokenType getType() {
+    public TokenType getType() {
         return type;
     }
 
