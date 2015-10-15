@@ -105,10 +105,75 @@ public class ProgramImpl extends ListChildren implements Program {
 
     @Override
     public Program mutate(int index, Mutation m) {
-        // TODO Auto-generated method stub
-        return null;
+        Node n = nodeAt(index);
+        Node parent = findParent(index);
+        if(m instanceof RemoveMutation){
+        	((RemoveMutation) m).setProgram(this);
+        	Node mutated = ((RemoveMutation) m).mutate(n);
+        	addChild(parent,n,mutated);
+        	return this;
+        }
+        else if (m instanceof SwapMutation) {
+        	((SwapMutation) m).mutate(n);
+        	return this;
+        }
+        else if (m instanceof CopyMutation){
+        	((CopyMutation) m).setProgram(this);
+        	Node copy = ((CopyMutation) m).mutate(n);
+        	addChild(parent, n, copy);
+        	return this;
+        }
+        else if (m instanceof TransformMutation) {
+        	Node transformed = ((TransformMutation) m).mutate(n);
+        	addChild(parent,n,transformed);
+        	return this;
+        }
+        else if (m instanceof InsertMutation){
+        	((InsertMutation) m).setProgram(this);
+        	Node insertNode = ((InsertMutation) m).mutate(n);
+        	addChild(parent, n, insertNode);
+        	return this;
+        }
+        else if (m instanceof DuplicateMutation){
+        	Node duplicateNode = ((DuplicateMutation) m).mutate(n);
+        	addChild(parent,n,duplicateNode);
+        	return this;
+        }
+        else{
+        	return this;
+        }
     }
 
+    public boolean addChild(Node parent, Node original, Node newNode) {
+    	if(newNode == null)
+    		return false;
+    	if (parent instanceof UnaryNode) {
+    		if (((UnaryNode) parent).hasChild()){
+    			((UnaryNode) parent).setChild(newNode);
+    			return true;
+    		}
+    		return false;
+    	}
+    	else if (parent instanceof BinaryChildren) {
+    		if (((BinaryChildren) parent).getLeft().equals(original)){
+    			((BinaryChildren) parent).setLeft(newNode);
+    			return true;
+    		}
+    		else if (((BinaryChildren) parent).getRight().equals(original)){
+    			((BinaryChildren) parent).setRight(newNode);
+    			return true;
+    		}
+    		else
+    			return false;
+    	}
+    	else if (parent instanceof ListChildren) {
+    		ArrayList<Node> children = ((ListChildren) parent).getChildren();
+    		children.add(newNode);
+    		((ListChildren) parent).setChildren(children);
+    		return true;
+    	}
+    	return false;
+    }
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
         for(Rule r: rules){

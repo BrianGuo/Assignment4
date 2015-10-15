@@ -14,7 +14,9 @@ public class InsertMutation implements Mutation {
 	public boolean equals(Mutation m) {
 		return (m instanceof InsertMutation);
 	}
-	
+	public void setProgram(Program p){
+		this.p = p;
+	}
 	public Node mutate(Node n) {
 		if (n instanceof Expr) {
 			Random r = new Random();

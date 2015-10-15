@@ -23,7 +23,7 @@ public class SwapMutation implements Mutation {
 			}
 			else if (n instanceof ListChildren){
 				ListChildren ListN = (ListChildren) n;
-				ArrayList<? extends Node> children = ListN.getChildren();
+				ArrayList<Node> children = ListN.getChildren();
 				ArrayList<Node> children2 = new ArrayList<Node>();
 				children2.add(children.get(1));
 				children2.add(children.get(0));

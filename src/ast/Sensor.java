@@ -3,6 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import parse.Token;
+import parse.TokenType;
 
 public class Sensor extends UnaryNode implements Expr, Tokenable {
 
@@ -31,6 +32,7 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 		return r;
 	}
 	public Sensor(Token s, Expr r){
+		System.out.println(s.toString());
 		if(s.isSensor()){
 			this.sense = s;
 			this.r = r;
@@ -82,7 +84,7 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 	
 	@Override
 	public boolean hasChild() {
-		return (sense.isSensor() && r != null);
+		return (sense.getType().equals(TokenType.NEARBY) || sense.getType().equals(TokenType.AHEAD) || sense.getType().equals(TokenType.RANDOM));
 	}
 	
 	@Override
