@@ -11,6 +11,7 @@ public class ProgramImpl extends ListChildren implements Program {
 
     private ArrayList<Rule> rules;
     private int size;
+
     
     public ProgramImpl(){
     	rules = new ArrayList<Rule>();
@@ -90,6 +91,7 @@ public class ProgramImpl extends ListChildren implements Program {
         		return mutate(selected,m);
         	}
         }
+		return null; //shouldn't happen?
     }
 
     @Override

@@ -56,6 +56,7 @@ public class MemoryNode extends UnaryNode implements Expr {
 		}
 	}
 	public MemoryNode(Expr exp, Token T){
+		System.out.println("Token in MemoryNode constructor:" + T);
 		expression = exp;
 		if (T.isMemSugar())
 			MemoryToken = T;

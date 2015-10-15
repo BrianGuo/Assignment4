@@ -30,10 +30,12 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
     	right = r;
     	leftsize = l.size();
     	rightsize = r.size();
+		//System.out.println("op:" + this.op);
     }
 
     public boolean isOperator(Token t){
-    	return (t.equals(TokenType.getTypeFromString("OR")) || t.equals(TokenType.getTypeFromString("AND")));
+		//System.out.println("T:" + t);
+    	return (t.getType() == TokenType.OR || t.getType() == TokenType.AND);
     }
     
     public BinaryCondition(BinaryCondition b){
@@ -66,6 +68,10 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
     
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
+		//System.out.println("op in pp:" + op);
+//		System.out.println("l:" + left);
+//		System.out.println("r:" + right);
+//		System.out.println("op:" + op);
         return sb.append("{" + left.toString() + " " + op.toString() + " " + right.toString() + "}");
     }
 

@@ -1,18 +1,28 @@
 package parse;
 
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Stack;
 
 import ast.*;
 import exceptions.SyntaxError;
-import jdk.nashorn.internal.runtime.regexp.joni.Syntax;
+
 
 class ParserImpl implements Parser {
 
     @Override
     public Program parse(Reader r) {
-        // TODO
-        throw new UnsupportedOperationException();
+        Tokenizer tokenizer = new Tokenizer(r);
+        try{
+            return parseProgram(tokenizer);
+        }
+        catch(SyntaxError e){
+            System.out.println("Syntax error while reading rules.");
+            e.getStackTrace();
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.exit(1);
+        }
+        return null;
     }
 
     /** Parses a program from the stream of tokens provided by the Tokenizer,
@@ -76,10 +86,13 @@ class ParserImpl implements Parser {
         consume(t, TokenType.MEM);
         consume(t, TokenType.LBRACKET);
         MemoryNode mem = new MemoryNode(parseExpression(t));
+//        System.out.println("mem:" + mem);
         consume(t, TokenType.RBRACKET);
         consume(t, TokenType.ASSIGN);
         Expr e = parseExpression(t);
+//        System.out.println("e:" + e);
         update = new UpdateNode(mem, e);
+//        System.out.println("update:"+ update);
         return update;
     }
 
@@ -91,22 +104,30 @@ class ParserImpl implements Parser {
 
         Stack<Condition> literals = new Stack<>();
         Stack<Token> conditions = new Stack<>();
-        literals.add(parseBrace(t));
+        literals.push(parseBrace(t));
 
 
         while(t.peek().getType() == TokenType.OR  || t.peek().getType() == TokenType.AND){ //if there are more things...
             try {
                 Token cur = t.next(); //either OR or AND
                 //conditions.add(t.next());
+
                 conditions.push(cur);
+                //System.out.println("????");
                 literals.push(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
+
                 while(!conditions.empty()) {
+//                    System.out.println("??");
                     cur = conditions.pop();
-                    if (compare(cur, conditions.peek())) { //we should reduce now
+                    //System.out.println("cur:" + cur);
+                    //System.out.println("conditions:" + conditions);
+                    if (conditions.isEmpty() || compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
                         Condition l = literals.pop(); //second one
                         Condition cond = new BinaryCondition(l, cur, r); //form the tree...
+                        //System.out.println("cond:" + cond);
                         literals.push(cond); //push tree onto literals!
+
                     } else { //none left
                         conditions.push(cur);
                         break;
@@ -138,12 +159,13 @@ class ParserImpl implements Parser {
      * @return true if precedence of cur <= precedence of top of stack (peek), talse if cur < precedence.
      */
     private static boolean compare(Token cur, Token peek) {
+        //System.out.println("peek in compare: " + peek);
         if(peek == null){ //EOF
             return false;
         }
         TokenType tt1 = cur.getType();
         TokenType tt2 = peek.getType();
-        if(tt1 == TokenType.AND || cur.isMulOp()){
+        if((tt1 == TokenType.AND || cur.isMulOp())){
             return true;
         }
         else if((tt1 == TokenType.OR && tt2 == TokenType.OR) || cur.isAddOp() && peek.isAddOp()){
@@ -154,6 +176,7 @@ class ParserImpl implements Parser {
 
 
     private static Condition parseBrace(Tokenizer t) throws SyntaxError {
+        //System.out.println("??");
         Condition condition;
         if(t.peek().getType() == TokenType.LBRACE){
             consume(t, TokenType.LBRACE);
@@ -188,19 +211,22 @@ class ParserImpl implements Parser {
     public static Expr parseExpression(Tokenizer t) throws SyntaxError {
         Stack<Expr> literals = new Stack<>();
         Stack<Token> operations = new Stack<>();
-        literals.add(parseParen(t));
-
+        literals.push(parseParen(t));
+        //System.out.println("next token:" + t.peek().toString());
         //TODO: Compare this logic to the fixed version in parseConditional and update if this is incorrect
         while(t.peek().isAddOp() || t.peek().isMulOp()){ //if there are more things...
             try {
                 Token cur = t.next(); //either OR or AND
 
+                operations.push(cur);
                 literals.push(parseParen(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
-                while(true) {
-                    if (compare(cur, operations.peek())) { //we should reduce now
+                while(!operations.empty()) {
+                    cur = operations.pop();
+                    //really hope this is the right isEmpty() logic
+                    if (operations.isEmpty() || compare(cur, operations.peek())) { //we should reduce now
                         Expr r = literals.pop(); //first one
                         Expr l = literals.pop(); //second one
-                        Expr op = new BinaryOp(l,r,operations.pop()); //form the tree...
+                        Expr op = new BinaryOp(l,r,cur); //form the tree...
                         literals.push(op); //push tree onto literals!
                     } else { //none left
                         operations.push(cur);
@@ -231,7 +257,7 @@ class ParserImpl implements Parser {
         Expr expr;
         if(t.peek().getType() == TokenType.LPAREN){
             consume(t, TokenType.LPAREN);
-            expr = parseFactor(t);
+            expr = parseExpression(t);
             consume(t, TokenType.RPAREN);
         }
         else{
@@ -247,12 +273,12 @@ class ParserImpl implements Parser {
     }
 
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
-        Token cur = t.next();
+        Token cur = t.peek();
         Expr factor;
         if(cur.getType() == TokenType.MEM){
             consume(t, TokenType.MEM);
             consume(t, TokenType.LBRACKET);
-            factor = parseExpression(t);
+            factor = new MemoryNode(parseExpression(t));
             consume(t, TokenType.RBRACKET);
         }
         else if (cur.getType() == TokenType.MINUS){ //unary negation
@@ -275,7 +301,8 @@ class ParserImpl implements Parser {
             sensor = new Sensor(cur);
         }
         else{
-            Token type = t.next();
+            Token type = t.peek();
+            //System.out.println("next token:" + type);
             Expr expr;
             consume(t, TokenType.LBRACKET);
             expr = parseExpression(t);

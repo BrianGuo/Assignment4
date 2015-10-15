@@ -8,7 +8,7 @@ public class Command extends ListChildren implements Node {
 	private int size;
 	
 	public Command() {
-		updates = null;
+		updates = new ArrayList<>();
 		action = null;
 	}
 	

@@ -18,7 +18,6 @@ public class RemoveMutation implements ParentSpecificMutation {
 		}
 		Collections.shuffle(candidates);
 		return candidates.get(0);
-		return null;
 	}
 	
 	@Override

@@ -100,12 +100,12 @@ public class Token {
         return type.category == SENSOR;
     }
 
-    /**
-     * Determine whether this token is of relop type.
-     *
-     * @return true if this token is of relop type.
-     */
-    boolean isRelOp() { return type.category == RELOP; }
+//    /**
+//     * Determine whether this token is of relop type.1
+//     *
+//     * @return true if this token is of relop type.
+//     */
+//    boolean isRelOp() { return type.category == RELOP; }
 
     /**
      * Determine whether this token is syntactic sugar for memory locations

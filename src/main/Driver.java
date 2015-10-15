@@ -3,38 +3,48 @@ import ast.*;
 import parse.*;
 import exceptions.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
 //import org.apache.commons.cli.*;
 
 public class Driver {
     public static void main(String[] args){
-        /*
-        File inputFile;
+
+        FileReader inputFile;
         try {
 
             if(args[0].equals("--mutate")){
                 int numMutations = Integer.parseInt(args[1]);
-                inputFile = new Scanner(args[2]); //change to scanner that splits on ";"
-                ProgramImpl prog = new ProgramImpl(something to do with that file);
+                inputFile = new FileReader(args[2]);
+
+                Program prog = ParserFactory.getParser().parse(inputFile);
+
                 for(int i = 0; i < numMutations; i++){
                 prog.mutate();
                 //print out what got changed
-                prog.prettyPrting();
+                    System.out.println(prog);
                 }
 
             }
             else{
-                inputFile = new Scanner(args[2]);
-                ProgramImpl prog = new ProgramImpl(something to do with that file);
-                System.out.println(prog.prettyPrint());
+                inputFile = new FileReader(args[0]);
+                Program prog = ParserFactory.getParser().parse(inputFile);
+                System.out.println(prog);
             }
         }
+        catch(FileNotFoundException e){
+            System.out.println("File not found");
+        }
+        /*
         catch (Exception e){
             System.out.println("Usage:");
             System.exit(1);
         }
+        */
     }
-         */
+
 
 }

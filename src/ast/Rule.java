@@ -42,7 +42,7 @@ public class Rule extends BinaryChildren implements Node {
 
     @Override
     public StringBuilder prettyPrint(StringBuilder sb) {
-        return sb.append(right.toString() + " --> " + left.toString());
+        return sb.append(left.toString() + " --> " + right.toString());
     }
     
     @Override
