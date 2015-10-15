@@ -23,8 +23,9 @@ class ParserImpl implements Parser {
      */
     public static ProgramImpl parseProgram(Tokenizer t) throws SyntaxError {
         //TODO Parse rules until we reach the end
-        ProgramImpl program;
+        ProgramImpl program = new ProgramImpl();
         while(t.hasNext()){
+            //program.
             program.add(parseRule(t));
             t.next(); //do I do this or not
         }
@@ -66,9 +67,6 @@ class ParserImpl implements Parser {
 
         Stack<Condition> literals = new Stack<>();
         Stack<Token> conditions = new Stack<>();
-        //Condition condition;
-
-        //condition = parseBrace(t);
         literals.add(parseBrace(t));
 
 
@@ -81,7 +79,7 @@ class ParserImpl implements Parser {
                     if (compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
                         Condition l = literals.pop(); //second one
-                        Condition cond = new BinaryCondition(l, conditions.pop(), r); //form the tree...
+                        Condition cond = new BinaryCondition(l, conditions.pop().getType(), r); //form the tree...
                         literals.push(cond); //push tree onto literals!
                     } else { //none left
                         conditions.push(cur);
@@ -98,7 +96,7 @@ class ParserImpl implements Parser {
         while(conditions.peek() != null){
             Condition r = literals.pop(); //first one
             Condition l = literals.pop(); //second one
-            Condition cond = new BinaryCondition(l, conditions.pop(), r);
+            Condition cond = new BinaryCondition(l, conditions.pop().getType(), r);
             literals.push(cond);
         }
         //we need support for a binarycondition that only contains a relation
@@ -139,12 +137,6 @@ class ParserImpl implements Parser {
             condition = parseRelation(t);
         }
         return condition;
-    }
-
-    public static BinaryCondition parseConjunction(Tokenizer t) throws SyntaxError {
-        BinaryCondition conj;
-        //parse
-        throw new UnsupportedOperationException(); 
     }
 
     public static Expr parseExpression(Tokenizer t) throws SyntaxError {
