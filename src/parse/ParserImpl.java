@@ -54,7 +54,7 @@ class ParserImpl implements Parser {
     public static Command parseCommand(Tokenizer t) throws SyntaxError {
         Command command = new Command();
         ActionNode action;
-        while (t.peek().getType() == TokenType.MEM) { //this also handles the case of update-or-action being an update
+        while (t.peek().getType() == TokenType.MEM || t.peek().isMemSugar()) { //this also handles the case of update-or-action being an update
             command.addUpdate(parseUpdate(t));
         }
         if(t.peek().isAction()){ //last one wasn't actually an update
@@ -81,13 +81,42 @@ class ParserImpl implements Parser {
         }
     }
 
+    private static MemoryNode parseMemory(Tokenizer t) throws SyntaxError {
+        MemoryNode mem;
+        if(t.peek().isMemSugar()){
+            switch(t.next().getType().stringRep){
+                case "MEMSIZE": mem = new MemoryNode(new NumberNode(0));
+                    break;
+                case "DEFENSE": mem = new MemoryNode(new NumberNode(1));
+                    break;
+                case "OFFENSE": mem = new MemoryNode(new NumberNode(2));
+                    break;
+                case "SIZE": mem = new MemoryNode(new NumberNode(3));
+                    break;
+                case "ENERGY": mem = new MemoryNode(new NumberNode(4));
+                    break;
+                case "PASS": mem = new MemoryNode(new NumberNode(5));
+                    break;
+                case "TAG": mem = new MemoryNode(new NumberNode(6));
+                    break;
+                case "POSTURE": mem = new MemoryNode(new NumberNode(7));
+                    break;
+                default: throw new SyntaxError();
+
+            }
+        }
+        else {
+            consume(t, TokenType.MEM);
+            consume(t, TokenType.LBRACKET);
+            mem = new MemoryNode(parseExpression(t));
+            consume(t, TokenType.RBRACKET);
+        }
+        return mem;
+    }
+
     public static UpdateNode parseUpdate(Tokenizer t) throws SyntaxError {
         UpdateNode update;
-        consume(t, TokenType.MEM);
-        consume(t, TokenType.LBRACKET);
-        MemoryNode mem = new MemoryNode(parseExpression(t));
-//        System.out.println("mem:" + mem);
-        consume(t, TokenType.RBRACKET);
+        MemoryNode mem = parseMemory(t);
         consume(t, TokenType.ASSIGN);
         Expr e = parseExpression(t);
 //        System.out.println("e:" + e);
@@ -275,11 +304,8 @@ class ParserImpl implements Parser {
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
         Token cur = t.peek();
         Expr factor;
-        if(cur.getType() == TokenType.MEM){
-            consume(t, TokenType.MEM);
-            consume(t, TokenType.LBRACKET);
-            factor = new MemoryNode(parseExpression(t));
-            consume(t, TokenType.RBRACKET);
+        if(cur.getType() == TokenType.MEM || cur.isMemSugar()){
+            factor = parseMemory(t);
         }
         else if (cur.getType() == TokenType.MINUS){ //unary negation
             consume(t, TokenType.MINUS);
