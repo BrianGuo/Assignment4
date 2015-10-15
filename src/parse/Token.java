@@ -14,7 +14,7 @@ import java.util.InputMismatchException;
 /**
  * A Token represents a legal token (symbol) in the critter language
  */
-class Token {
+public class Token {
     private final TokenType type;
     final int lineNo;
 
@@ -26,7 +26,7 @@ class Token {
      * @param lineNo
      *            The line number in the input file containing this token.
      */
-    Token(final TokenType type, final int lineNo) {
+    public Token(final TokenType type, final int lineNo) {
         this.type = type;
         this.lineNo = lineNo;
     }
@@ -69,7 +69,7 @@ class Token {
      * 
      * @return true if this token is of action type
      */
-    boolean isAction() {
+    public boolean isAction() {
         return type.category == ACTION;
     }
 
@@ -78,7 +78,7 @@ class Token {
      * 
      * @return true if this token is of addop type
      */
-    boolean isAddOp() {
+    public boolean isAddOp() {
         return type.category == ADDOP;
     }
 
@@ -87,8 +87,12 @@ class Token {
      * 
      * @return true if this token is of mulop type.shorthand
      */
-    boolean isMulOp() {
+    public boolean isMulOp() {
         return type.category == MULOP;
+    }
+    
+    public boolean isRelOp() {
+    	return type.category == TokenCategory.RELOP;
     }
 
     /**
@@ -96,7 +100,7 @@ class Token {
      * 
      * @return true if this token is of sensor type.shorthand
      */
-    boolean isSensor() {
+    public boolean isSensor() {
         return type.category == SENSOR;
     }
 
@@ -105,7 +109,7 @@ class Token {
      * 
      * @return true if this token is syntactic sugar for memory locations
      */
-    boolean isMemSugar() {
+    public boolean isMemSugar() {
         return type.category == MEMSUGAR;
     }
 
