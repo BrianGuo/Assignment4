@@ -87,7 +87,7 @@ class ParserImpl implements Parser {
     }
 
     public static Condition parseCondition(Tokenizer t) throws SyntaxError {
-        // TODO
+
         //turns out I was describing the shunting yard algorithm
         //push literals onto stack, push conditions onto another stack
         //compare precedence (and vs or): if higher precedence, then pop 2, create tree, push tree
@@ -101,7 +101,7 @@ class ParserImpl implements Parser {
             try {
                 Token cur = t.next(); //either OR or AND
                 //conditions.add(t.next());
-                literals.add(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
+                literals.push(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
                 while(true) {
                     if (compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
@@ -126,12 +126,13 @@ class ParserImpl implements Parser {
             Condition cond = new BinaryCondition(l, conditions.pop(), r);
             literals.push(cond);
         }
-        //we need support for a binarycondition that only contains a relation
+
         return literals.pop();
     }
 
     /**
      * Compares precedence of operators
+     * Works for both conditions and expressions
      * Return value of True means to pop and reduce, False means to push
      * @param cur
      * @param peek
@@ -143,10 +144,10 @@ class ParserImpl implements Parser {
         }
         TokenType tt1 = cur.getType();
         TokenType tt2 = peek.getType();
-        if(tt1 == TokenType.AND){
+        if(tt1 == TokenType.AND || cur.isMulOp()){
             return true;
         }
-        else if(tt1 == TokenType.OR && tt2 == TokenType.OR){
+        else if((tt1 == TokenType.OR && tt2 == TokenType.OR) || cur.isAddOp() && peek.isAddOp()){
             return true;
         }
         return false;
@@ -166,6 +167,8 @@ class ParserImpl implements Parser {
         return condition;
     }
 
+
+
     public static Relation parseRelation(Tokenizer t) throws SyntaxError {
         Expr l = parseExpression(t);
         if(t.peek().isRelOp()){
@@ -178,19 +181,100 @@ class ParserImpl implements Parser {
         }
     }
 
+    /*
+     * Well, I already wrote an implementation of the shunting-yard algorithm, so might as well do the exact same thing!
+     * Unfortunately we didn't do the OO design well enough--ideally, Condition and BinaryOp would both implement
+     * some binary interface, and I would be able to set the l and r sides and thus reuse the code.  Oh well.
+     */
     public static Expr parseExpression(Tokenizer t) throws SyntaxError {
-        // TODO
-        throw new UnsupportedOperationException();
+        Stack<Expr> literals = new Stack<>();
+        Stack<Token> operations = new Stack<>();
+        literals.add(parseParen(t));
+
+
+        while(t.peek().isAddOp() || t.peek().isMulOp()){ //if there are more things...
+            try {
+                Token cur = t.next(); //either OR or AND
+
+                literals.push(parseParen(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
+                while(true) {
+                    if (compare(cur, operations.peek())) { //we should reduce now
+                        Expr r = literals.pop(); //first one
+                        Expr l = literals.pop(); //second one
+                        Expr op = new BinaryOp(l,r,operations.pop()); //form the tree...
+                        literals.push(op); //push tree onto literals!
+                    } else { //none left
+                        operations.push(cur);
+                        break;
+                    }
+                }
+            }
+
+            catch(Exception e){
+                throw new SyntaxError(); //Because this means someone screwed up
+            }
+        }
+        //there may still be some left on the stack
+        while(operations.peek() != null){
+            Expr r = literals.pop(); //first one
+            Expr l = literals.pop(); //second one
+            Expr cond = new BinaryOp(l,r, operations.pop());
+            literals.push(cond);
+        }
+
+        return literals.pop();
     }
 
+    /**
+     * Bad OO design strikes again...different types so I had to hardcode it.  Ugh.
+     */
+    private static Expr parseParen(Tokenizer t) throws SyntaxError {
+        Expr expr;
+        if(t.peek().getType() == TokenType.LPAREN){
+            consume(t, TokenType.LPAREN);
+            expr = parseFactor(t);
+            consume(t, TokenType.RPAREN);
+        }
+        else{
+            expr = parseFactor(t);
+        }
+        return expr;
+    }
+
+    //Obsoleted by shunting-yard
     public static Expr parseTerm(Tokenizer t) throws SyntaxError {
         // TODO
         throw new UnsupportedOperationException();
     }
 
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
-        // TODO
-        throw new UnsupportedOperationException();
+        Token cur = t.next();
+        Expr factor;
+        if(cur.getType() == TokenType.MEM){
+            consume(t, TokenType.MEM);
+            consume(t, TokenType.LBRACKET);
+            factor = parseExpression(t);
+            consume(t, TokenType.RBRACKET);
+        }
+        else if (cur.getType() == TokenType.MINUS){ //unary negation
+            consume(t, TokenType.MINUS);
+            factor = new Negation(t.next().toNumToken().getValue());
+        }
+        else if (cur.isNum()){ //regular number
+            factor = new NumberNode(t.next().toNumToken().getValue());
+        }
+        else{ //sensor
+            factor = parseSensor(t);
+        }
+        return factor;
+    }
+
+    public static Expr parseSensor(Tokenizer t) throws SyntaxError {
+        Token cur = t.next();
+        Expr sensor;
+        if(cur.getType() == TokenType.SMELL){
+            //er...need sensor nodes.
+        }
     }
 
     // TODO
