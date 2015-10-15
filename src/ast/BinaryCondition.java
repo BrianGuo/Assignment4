@@ -33,7 +33,7 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
     }
 
     public boolean isOperator(Token t){
-    	return (t.equals(TokenType.getTypeFromString("OR")) || t.equals(TokenType.getTypeFromString("AND")));
+    	return (t.getType().equals(TokenType.getTypeFromString("OR")) || t.getType().equals(TokenType.getTypeFromString("AND")));
     }
     
     public BinaryCondition(BinaryCondition b){

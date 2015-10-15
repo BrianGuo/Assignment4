@@ -52,7 +52,10 @@ public class Relation extends BinaryChildren implements Condition,Tokenable {
 	}
 	
 	
-
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		return prettyPrint(sb).toString();
+	}
 	@Override
 	public ArrayList<Node> children() {
 		ArrayList<Node> temp = new ArrayList<Node>();
