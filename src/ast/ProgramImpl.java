@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * A data structure representing a critter program.
@@ -60,8 +61,35 @@ public class ProgramImpl extends ListChildren implements Program {
 
     @Override
     public Program mutate() {
-        // TODO Auto-generated method stub
-        return null;
+        Random r = new Random();
+        int AttrOrRule = r.nextInt(2);
+        if (AttrOrRule == 0)
+        	return this;
+        else{
+        	int selected = r.nextInt(size());
+        	int whichMut = r.nextInt(6);
+        	Mutation m;
+        	switch(whichMut){
+        	case 0:
+        		m = MutationFactory.getRemove();
+        		return mutate(selected, m);
+        	case 1:
+        		m = MutationFactory.getSwap();
+        		return mutate(selected,m);
+        	case 2:
+        		m = MutationFactory.getReplace();
+        		return mutate(selected,m);
+        	case 3:
+        		m = MutationFactory.getTransform();
+        		return mutate(selected,m);
+        	case 4:
+        		m = MutationFactory.getInsert();
+        		return mutate(selected,m);
+        	case 5:
+        		m = MutationFactory.getDuplicate();
+        		return mutate(selected,m);
+        	}
+        }
     }
 
     @Override
@@ -105,7 +133,7 @@ public class ProgramImpl extends ListChildren implements Program {
 	public boolean sameType(Node n) {
 		return (n instanceof ProgramImpl);
 	}
-	
+	@Override
 	public Node findParent (int n) {
 		if (n>= size || n<= 0)
 			return null;

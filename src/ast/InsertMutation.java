@@ -20,8 +20,27 @@ public class InsertMutation implements Mutation {
 			Random r = new Random();
 			int parity = r.nextInt(2);
 			if (parity == 0){
-				MemoryNode m = new MemoryNode((Expr) n);
-				return m;
+				int round2 = r.nextInt(5);
+				switch(round2){
+				case 0:
+					MemoryNode m = new MemoryNode((Expr) n);
+					return m;
+				case 1:
+					NegationNode m2 = new NegationNode((Expr) n);
+					return m2;
+				case 2:
+					Sensor m3 = new Sensor(new Token(TokenType.getTypeFromString("nearby"),-1), (Expr) n);
+					return m3;
+				case 3:
+					Sensor m4 = new Sensor(new Token(TokenType.getTypeFromString("ahead"),-1), (Expr) n);
+					return m4;
+				case 4:
+					Sensor m5 = new Sensor(new Token(TokenType.getTypeFromString("random"),-1), (Expr) n);
+					return m5;
+				default:
+					return null;
+				}
+				
 			}
 			else {
 				ArrayList<Expr> temp = new ArrayList<Expr>();
