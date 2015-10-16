@@ -9,22 +9,27 @@ public class Command extends ListChildren implements Node {
 	
 	public Command() {
 		updates = new ArrayList<>();
-
+		size = 1;
 		action = null;
 	}
 	
 	public Command(Command c){
 		this.updates = c.getUpdates();
 		this.action = c.getAction();
+		this.size = c.size();
 	}
 	
 	public Command(ActionNode a){
 		action = a;
+		size = a.size();
 	}
 
 	public Command(ArrayList<UpdateNode> updates){
 		action = null;
 		this.updates = updates;
+		size = 1;
+		for(UpdateNode u: updates)
+			size += u.size();
 	}
 	public Command(ArrayList<UpdateNode> updates, ActionNode a){
 		this.updates = updates;
@@ -109,6 +114,7 @@ public class Command extends ListChildren implements Node {
 	
 	public void addUpdate(UpdateNode u) {
 		updates.add(u);
+		size += u.size();
 	}
 	public void setAction(ActionNode a){action = a;}
 	

@@ -34,8 +34,9 @@ public class Rule extends BinaryChildren implements Node {
         	return this;
         else if (index < 0 || index >= size())
         	throw new IndexOutOfBoundsException();
-        else if (index > leftsize)
+        else if (index > leftsize){
         	return right.nodeAt(index - (leftsize+1));
+        }
         else
         	return left.nodeAt(index - 1);
     }
