@@ -2,6 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+/**
+ * Represents any Node which can store a variable number of children, such as ProgramImpl (rules) and Commands (updates).
+ */
+
 public abstract class ListChildren implements Node {
 
 	public ListChildren(){};

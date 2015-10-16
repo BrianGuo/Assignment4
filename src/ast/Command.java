@@ -1,5 +1,7 @@
 package ast;
-
+/**
+ * Represents a command, with any positive number of updates and possibly up to one action.
+ */
 import java.util.ArrayList;
 public class Command extends ListChildren implements Node {
 

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import parse.Token;
 
+/**
+ * Represents a typical relation between two arithmetic expressions (<=, !=, >, etc).
+ */
 public class Relation extends BinaryChildren implements Condition,Tokenable {
 
 	private Expr left;

@@ -3,6 +3,9 @@ package ast;
 import java.util.ArrayList;
 
 public class NegationNode extends UnaryNode implements Expr {
+	/**
+	 * Represents the unary negation operator.  Negates the value of {@code} expression.  Can be chained together for double or more negatives.
+	 */
 
 	private Expr expression;
 	//private int size;

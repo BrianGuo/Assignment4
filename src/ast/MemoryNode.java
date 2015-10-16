@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import parse.Token;
 import parse.TokenType;
 
+/**
+ * Represents a memory access, such as mem[5].  Also handles syntactic sugar for memory locations.
+ * {@code expression} The index of memory to access
+ */
 public class MemoryNode extends UnaryNode implements Expr {
 
 	private Token MemoryToken;

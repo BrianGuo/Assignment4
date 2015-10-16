@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import parse.Token;
 import parse.TokenType;
 
+/**
+ * A representation of a sensor--nearby, ahead, random, and smell.
+ * {@code sense}: Represents the type of sensor.
+ * {@code r}: For use with nearby, ahead, and random.  Meaningless for smell.
+ */
 public class Sensor extends UnaryNode implements Expr, Tokenable {
 
 	private Token sense;
