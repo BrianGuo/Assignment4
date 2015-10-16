@@ -20,8 +20,8 @@ public class driver {
 			System.out.println(prog.toString());
 			System.out.println();
 			System.out.println();
-			Mutation m = MutationFactory.getReplace();
-			for(int i = 0; i < 10 ; i++ ){
+			Mutation m = MutationFactory.getSwap();
+			for(int i = 0; i < prog.size() ; i++ ){
 				//System.out.println(prog.nodeAt(i).getClass() + " ");
 				prog.mutate(i,m);
 			}
