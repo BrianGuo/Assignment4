@@ -5,41 +5,41 @@ public class Command extends ListChildren implements Node {
 
 	private ArrayList<UpdateNode> updates;
 	private ActionNode action;
-	private int size;
+	//private int size;
 	
 	public Command() {
 		updates = new ArrayList<>();
-		size = 1;
+		//size = 1;
 		action = null;
 	}
 	
 	public Command(Command c){
 		this.updates = c.getUpdates();
 		this.action = c.getAction();
-		this.size = c.size();
+		//this.size = c.size();
 	}
 	
 	public Command(ActionNode a){
 		action = a;
-		size = a.size();
+		//size = a.size();
 	}
 
 	public Command(ArrayList<UpdateNode> updates){
 		action = null;
 		this.updates = updates;
-		size = 1;
-		for(UpdateNode u: updates)
-			size += u.size();
+		//size = 1;
+		//for(UpdateNode u: updates)
+			//size += u.size();
 	}
 	public Command(ArrayList<UpdateNode> updates, ActionNode a){
 		this.updates = updates;
 		action = a;
-		int temp = 0;
+		/*int temp = 0;
 		for (int i = 0; i < updates.size(); i++){
 			temp += updates.get(i).size();
 		}
 		temp += action.size;
-		size = temp +1;
+		size = temp +1;*/
 	}
 	public ArrayList<UpdateNode> getUpdates(){
 		return updates;
@@ -49,6 +49,13 @@ public class Command extends ListChildren implements Node {
 	}
 	@Override
 	public int size() {
+		int size = 1;
+		if (action != null)
+			size += action.size();
+		if (updates != null){
+			for (UpdateNode u: updates)
+				size += u.size();
+		}
 		return size;
 	}
 
@@ -56,7 +63,7 @@ public class Command extends ListChildren implements Node {
 	public Node nodeAt(int index) {
 		if (index == 0)
 			return this;
-		else if (index < 0 || index >= size)
+		else if (index < 0 || index >= size())
 			throw new IndexOutOfBoundsException();
 		int temp = index;
 		int updatesIndex = 0;
@@ -64,7 +71,10 @@ public class Command extends ListChildren implements Node {
 			temp -= updates.get(updatesIndex).size();
 			updatesIndex++;
 		}
-		return(updates.get(updatesIndex).nodeAt(temp - 1));
+		if(updatesIndex == updates.size())
+			return action.nodeAt(temp - 1);
+		else
+			return(updates.get(updatesIndex).nodeAt(temp - 1));
 	}
 
 	@Override
@@ -107,14 +117,19 @@ public class Command extends ListChildren implements Node {
 	@Override
 	public void setChildren(ArrayList<Node> n) {
 		ArrayList<UpdateNode> temp = new ArrayList<UpdateNode>();
-		for(Node instance: n)
+		//size = 1;
+		//if (action != null)
+			//size += action.size();
+		for(Node instance: n){
+			//size += instance.size();
 			temp.add((UpdateNode) instance);
+		}
 		updates = temp;
 	}
 	
 	public void addUpdate(UpdateNode u) {
 		updates.add(u);
-		size += u.size();
+		//size += u.size();
 	}
 	public void setAction(ActionNode a){action = a;}
 	

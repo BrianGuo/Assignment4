@@ -9,20 +9,20 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 
 	private Token sense;
 	private Expr r;
-	private int size;
+	//private int size;
 	
 	public Sensor(Token s){
 		this.sense= s;
 		r = null;
-		size = 1;
+		//size = 1;
 	}
 	
 	public Sensor (Sensor sensor){
 		sense = sensor.getSense();
-		size = 1;
+		//size = 1;
 		if(sensor.getExpr()!= null){
 			r = sensor.getExpr();
-			size += r.size();
+			//size += r.size();
 		}
 	}
 	public Token getSense(){
@@ -36,11 +36,14 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 			this.sense = s;
 			this.r = r;
 		}
-		size = r.size() + 1;
+		//size = r.size() + 1;
 	}
 	
 	@Override
 	public int size() {
+		int size = 1;
+		if (r!= null)
+			size += r.size();
 		return size;
 	}
 
@@ -48,7 +51,7 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 	public Node nodeAt(int index) {
 		if (index ==0)
 			return this;
-		else if (index < 0 || index >= size)
+		else if (index < 0 || index >= size())
 			throw new IndexOutOfBoundsException();
 		else{
 			return r.nodeAt(index -1);
@@ -88,8 +91,10 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 	
 	@Override
 	public void setChild(Node n) {
-		if (n instanceof Expr)
+		if (n instanceof Expr){
 			r = (Expr) n;
+			//size = 1 + n.size();
+		}
 	}
 
 	@Override
