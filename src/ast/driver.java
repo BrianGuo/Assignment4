@@ -23,10 +23,10 @@ public class driver {
 			Mutation m = MutationFactory.getSwap();
 			for(int i = 0; i < prog.size() ; i++ ){
 				//System.out.println(prog.nodeAt(i).getClass() + " ");
-				prog.mutate(i,m);
+				//prog.mutate(i,m);
 			}
 			
-			System.out.println(prog);
+			//System.out.println(prog);
 		}
 		catch(FileNotFoundException e){
 			System.out.println("file not found");
