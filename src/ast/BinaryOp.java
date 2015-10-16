@@ -133,11 +133,6 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 		return Operation;
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public Token getToken() {

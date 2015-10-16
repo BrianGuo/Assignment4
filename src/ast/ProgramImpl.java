@@ -137,7 +137,18 @@ public class ProgramImpl extends ListChildren implements Program {
         else if (m instanceof CopyMutation){
         	((CopyMutation) m).setProgram(this);
         	Node copy = ((CopyMutation) m).mutate(n);
-        	System.out.println(addChild(parent, n, copy));
+        	if (n instanceof Rule || n instanceof UpdateNode) {
+        		ArrayList<Node> children = ((ListChildren) parent).children();
+        		int index2 = children.indexOf(n);
+        		if (index2 != -1){
+        			children.set(index2, copy);
+        			((ListChildren) parent).setChildren(children);
+        			System.out.println("True");
+        		}
+        		return this;
+        	}
+        	else
+        		System.out.println(addChild(parent, n, copy));
         	return this;
         }
         else if (m instanceof TransformMutation) {

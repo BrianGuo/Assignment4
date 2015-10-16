@@ -121,11 +121,7 @@ public class MemoryNode extends UnaryNode implements Expr {
 		return temp;
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	@Override
 	public boolean hasChild(){
 		return (expression != null);

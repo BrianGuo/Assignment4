@@ -20,10 +20,10 @@ public class driver {
 			System.out.println(prog.toString());
 			System.out.println();
 			System.out.println();
-			Mutation m = MutationFactory.getRemove();
-			while(prog.children().size()>1){
-				System.out.println(prog.nodeAt(1).getClass() + " ");
-				prog.mutate(1,m);
+			Mutation m = MutationFactory.getReplace();
+			for(int i = 0; i < 10 ; i++ ){
+				//System.out.println(prog.nodeAt(i).getClass() + " ");
+				prog.mutate(i,m);
 			}
 			
 			System.out.println(prog);

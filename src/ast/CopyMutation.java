@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CopyMutation implements ParentSpecificMutation {
 
@@ -38,8 +39,10 @@ public class CopyMutation implements ParentSpecificMutation {
 			}
 		}
 		else if (n instanceof UnaryNode){
+			//System.out.println("reached here");
 			try{
 				UnaryNode UnaryN = (UnaryNode) n.getClass().getDeclaredConstructor(n.getClass()).newInstance(n);
+				//System.out.println(UnaryN);
 				if (((UnaryNode) n).hasChild())
 					UnaryN.setChild(copy(UnaryN.getChild()));
 				return UnaryN;
@@ -51,11 +54,19 @@ public class CopyMutation implements ParentSpecificMutation {
 		return null;
 	}
 	public Node mutate(Node n) {
+		//System.out.println("reached this point");
 		int size = p.size();
 		int current = 0;
+		ArrayList<Node> candidates = new ArrayList<Node>();
 		while(current < size){
-			if (p.nodeAt(current).sameType(n) && !(p.nodeAt(current).equals(n)))
-				return copy(p.nodeAt(current));
+			if (p.nodeAt(current).sameType(n) && !(p.nodeAt(current).equals(n))){
+				candidates.add(p.nodeAt(current));
+			}
+			current ++;
+		}
+		if (candidates.size() > 0){
+			Collections.shuffle(candidates);
+			return copy(candidates.get(0));
 		}
 		return null;
 	}

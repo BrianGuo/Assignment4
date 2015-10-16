@@ -129,11 +129,6 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
 		}
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public Token getToken() {
