@@ -62,7 +62,7 @@ Nodes are given number indices in the order they would be visited by a pre-order
 ####Miscellanea regarding mutations
 
 *	A mutation is considered to have succeeded if it actually had an effect
-*	Remove works on any node that is a child of a list-like node, any unary node with a child, and binaryOp. (or put another way: any binary node or any unary node with a child). Does not work on relations, although it probably should.
+*	Remove works on any node that is a child of a list-like node, any unary node with a child, and binaryOp. (or put another way: any binary node or any unary node with a child).
 *	Swap works on any list-like node with two or more elements and any binary node, otherwise a different mutation should be chosen.
 *	Duplicate works on any list-like node with at least one child.
 *	Insert is messy, but should work on any unary node, expressions, and conditions.
