@@ -25,7 +25,9 @@ public class NumberNode extends UnaryNode implements Expr{
 	@Override
 	public Node nodeAt(int index) {
 		if (index != 0)
-			throw new IndexOutOfBoundsException();
+			return null;
+			//throw new IndexOutOfBoundsException();
+
 		else
 			return this;
 	}

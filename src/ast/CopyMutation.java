@@ -54,8 +54,19 @@ public class CopyMutation implements ParentSpecificMutation {
 		int size = p.size();
 		int current = 0;
 		while(current < size){
-			if (p.nodeAt(current).sameType(n) && !(p.nodeAt(current).equals(n)))
+			//System.out.println("current:" + current);
+			//System.out.println("node class:" + p.nodeAt(current).getClass());
+			//System.out.println("n class:" + n.getClass());
+			//System.out.println("node:" + p.nodeAt(current));
+
+			//System.out.println("n:" + n);
+			Node curNode = p.nodeAt(current);
+			if (curNode.sameType(n) && !(curNode.equals(n))) {
+				//System.out.println("yayyyy");
+
 				return copy(p.nodeAt(current));
+			}
+			//current++; ???
 		}
 		return null;
 	}

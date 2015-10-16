@@ -15,7 +15,7 @@ public class ProgramImpl extends ListChildren implements Program {
     
     public ProgramImpl(){
     	rules = new ArrayList<Rule>();
-    	size = 0;
+    	size = 1;
     }
     public ProgramImpl(ArrayList<Rule> r){
     	rules = r;
@@ -57,6 +57,7 @@ public class ProgramImpl extends ListChildren implements Program {
         		temp -= rules.get(currentRule).size();
         		currentRule++;
         	}
+			System.out.println("nodeAt " + index + ": " + rules.get(currentRule).nodeAt(temp-1));
         	return rules.get(currentRule).nodeAt(temp-1);
         }
     }
@@ -224,12 +225,21 @@ public class ProgramImpl extends ListChildren implements Program {
 		ArrayList<Node> temp = children();
 		while(!(temp.contains(m))){
 			int current = 0;
-			while(index > temp.get(current).size()){
+
+			while(current < temp.size() && index > temp.get(current).size()){
+				System.out.println("temp:" + temp);
+				System.out.println("current:" + current);
+				System.out.println("index:" + index);
+				System.out.println("temp size:" + temp.get(current).size());
+				System.out.println("m:" + m);
 				index -= temp.get(current).size();
 				current ++;
 			}
+			System.out.println("final temp:" + temp);
+			System.out.println("final current:" + current);
+			System.out.println("m:" + m);
 			result = temp.get(current);
-			temp = temp.get(current).children();
+			temp = result.children();
 			current = 0;
 			index --;
 			
