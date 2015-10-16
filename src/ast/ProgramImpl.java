@@ -67,109 +67,103 @@ public class ProgramImpl extends ListChildren implements Program {
     @Override
     public Program mutate() {
         Random r = new Random();
-        int AttrOrRule = r.nextInt(2);
-        if (AttrOrRule == 0)
-        	return this;
-        else{
-        	System.out.println("Reached Here");
-        	int selected = r.nextInt(size());
-        	int whichMut = r.nextInt(6);
-        	Mutation m;
-        	switch(whichMut){
-        	case 0:
-        		m = MutationFactory.getRemove();
-        		if (nodeAt(selected) instanceof Rule || nodeAt(selected) instanceof UpdateNode){
-        			if(findParent(selected).children().size() == 1)
-        				return this;
-        			else{
-        				ArrayList<Node> temp = findParent(selected).children();
-        				temp.remove(nodeAt(selected));
-        				((ListChildren) findParent(selected)).setChildren(temp);
-        			}
-        		}
-        		return mutate(selected, m);
-        	case 1:
-        		m = MutationFactory.getSwap();
-        		return mutate(selected,m);
-        	case 2:
-        		m = MutationFactory.getReplace();
-        		return mutate(selected,m);
-        	case 3:
-        		m = MutationFactory.getTransform();
-        		return mutate(selected,m);
-        	case 4:
-        		m = MutationFactory.getInsert();
-        		return mutate(selected,m);
-        	case 5:
-        		m = MutationFactory.getDuplicate();
-        		return mutate(selected,m);
-        	}
-        }
-		return null; //shouldn't happen?
+    	int selected = r.nextInt(size());
+    	int whichMut = r.nextInt(6);
+    	Mutation m;
+    	switch(whichMut){
+    	case 0:
+    		m = MutationFactory.getRemove();
+    		if (nodeAt(selected) instanceof Rule || nodeAt(selected) instanceof UpdateNode){
+    			if(findParent(selected).children().size() == 1)
+    				return this;
+    			else{
+    				ArrayList<Node> temp = findParent(selected).children();
+    				temp.remove(nodeAt(selected));
+    				((ListChildren) findParent(selected)).setChildren(temp);
+    			}
+    		}
+    		return mutate(selected, m);
+    	case 1:
+    		m = MutationFactory.getSwap();
+    		return mutate(selected,m);
+    	case 2:
+    		m = MutationFactory.getReplace();
+    		return mutate(selected,m);
+    	case 3:
+    		m = MutationFactory.getTransform();
+    		return mutate(selected,m);
+    	case 4:
+    		m = MutationFactory.getInsert();
+    		return mutate(selected,m);
+    	case 5:
+    		m = MutationFactory.getDuplicate();
+    		return mutate(selected,m);
+    	}
+    	return null; //shouldn't happen?
     }
 
     @Override
     public Program mutate(int index, Mutation m) {
         Node n = nodeAt(index);
+        System.out.println("A " + m.getClass() + " mutation is performed on Node #" + index + " which is a " + n.getClass() + " node that represents the text (" + n + ")");
+        boolean worked = false;
         Node parent = findParent(index);
         if(m instanceof RemoveMutation){
         	if (n instanceof Rule || n instanceof UpdateNode){
         		if (((ListChildren) parent).getChildren().size() > 1){
         			ArrayList<Node> children = ((ListChildren) parent).getChildren();
-        			System.out.println(children.remove(n));
+        			worked = children.remove(n);
         			((ListChildren) parent).setChildren(children);
-        			return this;
         		}
-        		else
-        			return this;
         	}
         	else{
 	        	((RemoveMutation) m).setProgram(this);
 	        	Node mutated = ((RemoveMutation) m).mutate(n);
-	        	System.out.println(addChild(parent,n,mutated));
-	        	return this;
+	        	System.out.println("If this works, the new Node will be " + mutated);
+	        	worked = addChild(parent,n,mutated);
+
         	}
         }
         else if (m instanceof SwapMutation) {
-        	((SwapMutation) m).mutate(n);
-        	return this;
+        	worked = ((SwapMutation) m).mutate(n);
         }
         else if (m instanceof CopyMutation){
         	((CopyMutation) m).setProgram(this);
         	Node copy = ((CopyMutation) m).mutate(n);
+        	System.out.println("If this works, the new Node will be " + copy);
         	if (n instanceof Rule || n instanceof UpdateNode) {
         		ArrayList<Node> children = ((ListChildren) parent).children();
         		int index2 = children.indexOf(n);
         		if (index2 != -1){
         			children.set(index2, copy);
         			((ListChildren) parent).setChildren(children);
-        			System.out.println("True");
+        			worked = true;
         		}
-        		return this;
         	}
         	else
-        		System.out.println(addChild(parent, n, copy));
-        	return this;
+        		worked = addChild(parent, n, copy);
         }
         else if (m instanceof TransformMutation) {
         	Node transformed = ((TransformMutation) m).mutate(n);
-        	System.out.println(addChild(parent,n,transformed));
-        	return this;
+        	System.out.println("If this works, the new Node will be " + transformed);
+        	worked = addChild(parent,n,transformed);
         }
         else if (m instanceof InsertMutation){
         	((InsertMutation) m).setProgram(this);
         	Node insertNode = ((InsertMutation) m).mutate(n);
-        	System.out.println(addChild(parent, n, insertNode));
-        	return this;
+        	System.out.println("If this works, the new Node will be " + insertNode);
+        	worked = addChild(parent, n, insertNode);
         }
         else if (m instanceof DuplicateMutation){
         	Node duplicateNode = ((DuplicateMutation) m).mutate(n);
-        	addChild(n,n,duplicateNode);
-        	return this;
+        	System.out.println("If this works, the new Node will be " + duplicateNode);
+        	worked = addChild(n,n,duplicateNode);
         }
-        else{
-        	return this;
-        }
+        if (worked)
+        	System.out.println("It was a success.");
+        else
+        	System.out.println("It didn't work");
+        return this;
     }
 
     public boolean addChild(Node parent, Node original, Node newNode) {
