@@ -10,12 +10,12 @@ public class MemoryNode extends UnaryNode implements Expr {
 	private Token MemoryToken;
 	private Expr expression;
 	//private int location;
-	private int size;
+	//private int size;
 	
 	
 	public MemoryNode(Expr exp){
 		expression = exp;
-		size = expression.size()+1;
+		//size = expression.size()+1;
 		generateSugar();
 	}
 	public void generateSugar() {
@@ -60,14 +60,14 @@ public class MemoryNode extends UnaryNode implements Expr {
 		expression = exp;
 		if (T.isMemSugar())
 			MemoryToken = T;
-		size = exp.size()+1;
+		//size = exp.size()+1;
 	}
 	
 	public MemoryNode(MemoryNode m) {
 		if (m.getExpression() != null){
 			expression = m.getExpression();
 			generateSugar();
-			size = expression.size()+1;
+			//size = expression.size()+1;
 		}
 	}
 	
@@ -79,12 +79,13 @@ public class MemoryNode extends UnaryNode implements Expr {
 	}
 	@Override
 	public int size() {
+		int size = 1 + expression.size();
 		return size;
 	}
 
 	@Override
 	public Node nodeAt(int index) {
-		if (index >= size || index < 0)
+		if (index >= size() || index < 0)
 			throw new IndexOutOfBoundsException();
 		if (index == 0){
 			return this;
@@ -132,8 +133,10 @@ public class MemoryNode extends UnaryNode implements Expr {
 	
 	@Override
 	public void setChild(Node n) {
-		if (n instanceof Expr)
+		if (n instanceof Expr){
 			expression = (Expr) n;
+			//size = n.size() + 1;
+		}
 	}
 	
 	@Override

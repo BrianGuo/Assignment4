@@ -6,16 +6,14 @@ public class UpdateNode extends BinaryChildren implements Node {
 
 	private MemoryNode left;
 	private Expr right;
-	private int size;
-	private int leftsize;
-	private int rightsize;
+	//private int leftsize;
+	//private int rightsize;
 	
 	public UpdateNode(MemoryNode l, Expr r) {
 		left = l;
 		right = r;
-		leftsize = l.size();
-		rightsize = r.size();
-		size = leftsize + rightsize;
+		//leftsize = l.size();
+		//rightsize = r.size();
 	}
 	
 	public UpdateNode(UpdateNode u) {
@@ -31,23 +29,30 @@ public class UpdateNode extends BinaryChildren implements Node {
 	}
 	public void setLeft(MemoryNode n) {
 		left = n;
+		//leftsize = n.size();
 	}
 	public void setRight(Expr r){
+		//rightsize = r.size();
 		right = r;
 	}
 	@Override
 	public int size() {
-		return size;
-	}
+    	int size = 1;
+    	if (left != null)
+    		size += left.size();
+    	if (right != null)
+    		size += right.size();
+        return size;
+    }
 
 	@Override
 	public Node nodeAt(int index) {
 		if (index == 0)
 			return this;
-		if (index >= size || index < 0)
+		if (index >= size() || index < 0)
 			throw new IndexOutOfBoundsException();
-		else if (index > leftsize){
-			int n = index-(leftsize+1);
+		else if (index > left.size()){
+			int n = index-(left.size()+1);
 			return right.nodeAt(n);
 		}
 		else {

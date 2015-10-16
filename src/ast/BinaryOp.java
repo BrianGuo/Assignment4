@@ -8,15 +8,15 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 
 	private Token Operation;
 	private Expr left;
-	private int leftsize;
+	//private int leftsize;
 	private Expr right;
-	private int rightsize;
+	//private int rightsize;
 	
 	public BinaryOp(BinaryOp b){
 		this.left = b.left;
-		leftsize = b.getLeft().size();
+		//leftsize = b.getLeft().size();
 		this.right = b.right;
-		rightsize = b.getRight().size();
+		//rightsize = b.getRight().size();
 		if (b.getOperation().isAddOp() || b.getOperation().isMulOp())
 			this.Operation = b.getOperation();
 	}
@@ -24,15 +24,20 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 	public BinaryOp(Expr l, Expr r, Token o){
 		left = l;
 		right = r;
-		leftsize = l.size();
-		rightsize = r.size();
+		//leftsize = l.size();
+		//rightsize = r.size();
 		if (o.isAddOp() || o.isMulOp())
 			Operation = o;
 	}
 	@Override
 	public int size() {
-		return leftsize + rightsize + 1;
-	}
+    	int size = 1;
+    	if (left != null)
+    		size += left.size();
+    	if (right != null)
+    		size += right.size();
+        return size;
+    }
 
 	@Override
 	public Node nodeAt(int index) {
@@ -40,8 +45,8 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 			throw new IndexOutOfBoundsException();
 		if (index == 0)
 			return this;
-		else if (index > leftsize) {
-			return right.nodeAt(index - (leftsize+1));
+		else if (index > left.size()) {
+			return right.nodeAt(index - (left.size()+1));
 		}
 		else {
 			return left.nodeAt(index-1);
@@ -110,14 +115,18 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 
 	@Override
 	public void setLeft(Node l) {
-		if (l instanceof Expr)
+		if (l instanceof Expr){
 			left = (Expr) l;
+			//leftsize = left.size();
+		}
 	}
 
 	@Override
 	public void setRight(Node r) {
-		if (r instanceof Expr)
+		if (r instanceof Expr){
 			right = (Expr) r;
+			//rightsize = right.size();
+		}
 	}
 	
 	public Token getOperation(){

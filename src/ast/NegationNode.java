@@ -5,30 +5,30 @@ import java.util.ArrayList;
 public class NegationNode extends UnaryNode implements Expr {
 
 	private Expr expression;
-	private int size;
+	//private int size;
 	
 	public NegationNode(Expr e) {
 		expression = e;
-		size = e.size();
+		//size = e.size();
 	}
 	
 	public NegationNode(NegationNode n) {
 		expression = n.getExpression();
-		size = n.size();
+		//size = n.size();
 	}
 	public Expr getExpression(){
 		return expression;
 	}
 	@Override
 	public int size() {
-		return size;
+		return expression.size();
 	}
 
 	@Override
 	public Node nodeAt(int index) {
 		if (index == 0)
 			return this;
-		else if (index < 0 || index >= size)
+		else if (index < 0 || index >= size())
 			throw new IndexOutOfBoundsException();
 		else{
 			return expression.nodeAt(index -1);
@@ -64,8 +64,10 @@ public class NegationNode extends UnaryNode implements Expr {
 	
 	@Override 
 	public void setChild(Node n) {
-		if(n instanceof Expr)
+		if(n instanceof Expr){
 			expression = (Expr) n;
+			//size = n.size()+1;
+		}
 	}
 	
 	@Override

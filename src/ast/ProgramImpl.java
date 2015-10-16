@@ -10,20 +10,20 @@ import java.util.Random;
 public class ProgramImpl extends ListChildren implements Program {
 
     private ArrayList<Rule> rules;
-    private int size;
+    //private int size;
 
     
     public ProgramImpl(){
     	rules = new ArrayList<Rule>();
-    	size = 0;
+    	//size = 0;
     }
     public ProgramImpl(ArrayList<Rule> r){
     	rules = r;
-    	size = 0;
-    	for(Rule i: r){
-    		size += i.size();
-    	}
-    	size ++;
+    	//size = 0;
+    	//for(Rule i: r){
+    		//size += i.size();
+    	//}
+    	//size ++;
     }
     
     public ProgramImpl(ProgramImpl p){
@@ -35,12 +35,15 @@ public class ProgramImpl extends ListChildren implements Program {
     	return rules;
     }
     public int size() {
+    	int size = 1;
+    	for (Rule r: rules)
+    		size += r.size();
         return size;
     }
 
     public boolean addRule(Rule r) {
     	rules.add(r);
-    	size += r.size();
+    	//size += r.size();
     	return true;
     }
     
@@ -48,7 +51,7 @@ public class ProgramImpl extends ListChildren implements Program {
     public Node nodeAt(int index) {
         if (index == 0)
         	return this;
-        else if (index < 0 || index >= size)
+        else if (index < 0 || index >= size())
         	throw new IndexOutOfBoundsException();
         else{
         	int temp = index;
@@ -216,7 +219,7 @@ public class ProgramImpl extends ListChildren implements Program {
 	}
 	@Override
 	public Node findParent (int n) {
-		if (n>= size || n<= 0)
+		if (n>= size() || n<= 0)
 			return null;
 		int index = n;
 		Node m = nodeAt(n);
@@ -224,11 +227,14 @@ public class ProgramImpl extends ListChildren implements Program {
 		ArrayList<Node> temp = children();
 		while(!(temp.contains(m))){
 			int current = 0;
+			System.out.println(temp.get(current).size() + "size");
+			System.out.println(result.getClass());
 			while(index > temp.get(current).size()){
 				index -= temp.get(current).size();
 				current ++;
 			}
 			result = temp.get(current);
+			//System.out.println(result.getClass());
 			temp = temp.get(current).children();
 			current = 0;
 			index --;
@@ -239,8 +245,11 @@ public class ProgramImpl extends ListChildren implements Program {
 	@Override
 	public void setChildren(ArrayList<Node> n) {
 		ArrayList<Rule> temp = new ArrayList<Rule>();
-		for (Node instance: n)
+		//size = 1;
+		for (Node instance: n){
+			//size += instance.size();
 			temp.add((Rule) instance);
+		}
 		rules = temp;
 	}
 	

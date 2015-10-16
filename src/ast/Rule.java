@@ -9,14 +9,14 @@ public class Rule extends BinaryChildren implements Node {
 
 	private Condition left;
 	private Command right;
-	private int leftsize;
-	private int rightsize;
+	//private int leftsize;
+	//private int rightsize;
 	
 	public Rule(Condition l, Command r) {
 		left = l;
 		right = r;
-		leftsize = l.size();
-		rightsize = r.size();
+		//leftsize = l.size();
+		//rightsize = r.size();
 	}
 	public Rule(Rule b){
 		this.left = b.left;
@@ -25,7 +25,7 @@ public class Rule extends BinaryChildren implements Node {
 	
     @Override
     public int size() {
-        return leftsize + rightsize + 1;
+        return left.size() + right.size() + 1;
     }
 
     @Override
@@ -34,8 +34,8 @@ public class Rule extends BinaryChildren implements Node {
         	return this;
         else if (index < 0 || index >= size())
         	throw new IndexOutOfBoundsException();
-        else if (index > leftsize){
-        	return right.nodeAt(index - (leftsize+1));
+        else if (index > left.size()){
+        	return right.nodeAt(index - (left.size()+1));
         }
         else
         	return left.nodeAt(index - 1);
@@ -79,13 +79,17 @@ public class Rule extends BinaryChildren implements Node {
 
 	@Override
 	public void setLeft(Node l) {
-		if (l instanceof Condition)
+		if (l instanceof Condition){
 			left = (Condition) l;
+			//leftsize = l.size();
+		}
 	}
 
 	@Override
 	public void setRight(Node r) {
-		if (r instanceof Command)
+		if (r instanceof Command){
 			right = (Command) r;
+			//rightsize = r.size();
+		}
 	}
 }
