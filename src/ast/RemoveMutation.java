@@ -14,8 +14,7 @@ public class RemoveMutation implements ParentSpecificMutation {
 		if(n instanceof UnaryNode && ((UnaryNode) n).hasChild() || n instanceof BinaryCondition || n instanceof BinaryOp){
 			ArrayList<Node> candidates = new ArrayList<Node>();
 			for(int i = 1; i < n.size(); i++ ){
-				if (n.sameType(n.nodeAt(i)))
-					candidates.add(n.nodeAt(i));
+				candidates.add(n.nodeAt(i));
 			}
 			Collections.shuffle(candidates);
 			if (candidates.size()>0)

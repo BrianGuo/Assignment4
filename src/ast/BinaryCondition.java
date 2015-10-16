@@ -14,8 +14,8 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
 	Condition left;
 	Condition right;
 	Token op;
-	int leftsize;
-	int rightsize;
+	//int leftsize;
+	//int rightsize;
 	
     /**
      * Create an AST representation of l op r.
@@ -28,8 +28,8 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
     	if (isOperator(op))
     		this.op = op;
     	right = r;
-    	leftsize = l.size();
-    	rightsize = r.size();
+    	//leftsize = l.size();
+    	//rightsize = r.size();
 		//System.out.println("op:" + this.op);
     }
 
@@ -42,15 +42,20 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
 		this.right = b.right;
 		if(isOperator(b.getOp()))
 			this.op = b.op;
-		leftsize = left.size();
-		rightsize = right.size();
+		//leftsize = left.size();
+		//rightsize = right.size();
 	}
     public Token getOp(){
     	return op;
     }
     @Override
     public int size() {
-        return leftsize + rightsize + 1;
+    	int size = 1;
+    	if (left != null)
+    		size += left.size();
+    	if (right != null)
+    		size += right.size();
+        return size;
     }
 
     @Override
@@ -59,8 +64,8 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
     		return this;
     	if (index < 0 || index >= size())
     		throw new IndexOutOfBoundsException();
-    	else if (index > leftsize)
-    		return right.nodeAt(index - (leftsize + 1));
+    	else if (index > left.size())
+    		return right.nodeAt(index - (left.size() + 1));
     	else
     		return left.nodeAt(index - 1);
     }
@@ -110,21 +115,20 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
 
 	@Override
 	public void setLeft(Node l) {
-		if (l instanceof Condition)
+		if (l instanceof Condition){
 			left = (Condition) l;
+			//leftsize = left.size();
+		}
 	}
 
 	@Override
 	public void setRight(Node r) {
-		if (r instanceof Condition)
+		if (r instanceof Condition){
 			right = (Condition) r;
+			//rightsize = right.size();
+		}
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public Token getToken() {

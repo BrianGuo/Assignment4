@@ -4,34 +4,42 @@ import java.util.ArrayList;
 
 import parse.Token;
 
+/**
+ * Represents a typical relation between two arithmetic expressions (<=, !=, >, etc).
+ */
 public class Relation extends BinaryChildren implements Condition,Tokenable {
 
 	private Expr left;
 	private Expr right;
 	private Token R;
-	int leftsize;
-	int rightsize;
+	//int leftsize;
+	//int rightsize;
 	
 	public Relation (Expr l, Expr r, Token rel) {
 		left = l;
 		right = r;
 		if (rel.isRelOp())
 			R = rel;
-		leftsize = l.size();
-		rightsize = r.size();
+		//leftsize = l.size();
+		//rightsize = r.size();
 	}
 	public Relation(Relation b){
 		this.left = b.getLeft();
-		leftsize = left.size();
+		//leftsize = left.size();
 		this.right = b.getRight();
-		rightsize = right.size();
+		//rightsize = right.size();
 		if (b.getR().isRelOp())
 			this.R = b.getR();
 	}
 	@Override
 	public int size() {
-		return leftsize + rightsize + 1;
-	}
+    	int size = 1;
+    	if (left != null)
+    		size += left.size();
+    	if (right != null)
+    		size += right.size();
+        return size;
+    }
 
 	@Override
 	public Node nodeAt(int index) {
@@ -40,8 +48,8 @@ public class Relation extends BinaryChildren implements Condition,Tokenable {
 		else if (index < 0 || index >= size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		else if (index > leftsize)
-			return right.nodeAt(index - (leftsize+1));
+		else if (index > left.size())
+			return right.nodeAt(index - (left.size()+1));
 		else
 			return left.nodeAt(index -1 );
 	}
@@ -78,24 +86,24 @@ public class Relation extends BinaryChildren implements Condition,Tokenable {
 
 	@Override
 	public void setLeft(Node l) {
-		if (l instanceof Expr)
+		if (l instanceof Expr){
 			left = (Expr) l;
+			//leftsize = l.size();
+		}
 	}
 
 	@Override
 	public void setRight(Node r) {
-		if (r instanceof Expr)
+		if (r instanceof Expr){
 			right = (Expr) r;
+			//rightsize = r.size();
+		}
 	}
 	
 	public Token getR(){
 		return R;
 	}
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	@Override
 	public Token getToken() {
 		return getR();

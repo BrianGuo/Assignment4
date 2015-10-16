@@ -10,20 +10,19 @@ import java.util.Random;
 public class ProgramImpl extends ListChildren implements Program {
 
     private ArrayList<Rule> rules;
-    private int size;
+    //private int size;
 
     
     public ProgramImpl(){
     	rules = new ArrayList<Rule>();
-    	size = 1;
     }
     public ProgramImpl(ArrayList<Rule> r){
     	rules = r;
-    	size = 0;
-    	for(Rule i: r){
-    		size += i.size();
-    	}
-    	size ++;
+    	//size = 0;
+    	//for(Rule i: r){
+    		//size += i.size();
+    	//}
+    	//size ++;
     }
     
     public ProgramImpl(ProgramImpl p){
@@ -35,12 +34,15 @@ public class ProgramImpl extends ListChildren implements Program {
     	return rules;
     }
     public int size() {
+    	int size = 1;
+    	for (Rule r: rules)
+    		size += r.size();
         return size;
     }
 
     public boolean addRule(Rule r) {
     	rules.add(r);
-		size += r.size();
+    	//size += r.size();
     	return true;
     }
     
@@ -48,7 +50,7 @@ public class ProgramImpl extends ListChildren implements Program {
     public Node nodeAt(int index) {
         if (index == 0)
         	return this;
-        else if (index < 0 || index >= size)
+        else if (index < 0 || index >= size())
         	throw new IndexOutOfBoundsException();
         else{
         	int temp = index;
@@ -69,6 +71,7 @@ public class ProgramImpl extends ListChildren implements Program {
         if (AttrOrRule == 0)
         	return this;
         else{
+        	System.out.println("Reached Here");
         	int selected = r.nextInt(size());
         	int whichMut = r.nextInt(6);
         	Mutation m;
@@ -110,10 +113,22 @@ public class ProgramImpl extends ListChildren implements Program {
         Node n = nodeAt(index);
         Node parent = findParent(index);
         if(m instanceof RemoveMutation){
-        	((RemoveMutation) m).setProgram(this);
-        	Node mutated = ((RemoveMutation) m).mutate(n);
-        	addChild(parent,n,mutated);
-        	return this;
+        	if (n instanceof Rule || n instanceof UpdateNode){
+        		if (((ListChildren) parent).getChildren().size() > 1){
+        			ArrayList<Node> children = ((ListChildren) parent).getChildren();
+        			System.out.println(children.remove(n));
+        			((ListChildren) parent).setChildren(children);
+        			return this;
+        		}
+        		else
+        			return this;
+        	}
+        	else{
+	        	((RemoveMutation) m).setProgram(this);
+	        	Node mutated = ((RemoveMutation) m).mutate(n);
+	        	System.out.println(addChild(parent,n,mutated));
+	        	return this;
+        	}
         }
         else if (m instanceof SwapMutation) {
         	((SwapMutation) m).mutate(n);
@@ -122,23 +137,34 @@ public class ProgramImpl extends ListChildren implements Program {
         else if (m instanceof CopyMutation){
         	((CopyMutation) m).setProgram(this);
         	Node copy = ((CopyMutation) m).mutate(n);
-        	addChild(parent, n, copy);
+        	if (n instanceof Rule || n instanceof UpdateNode) {
+        		ArrayList<Node> children = ((ListChildren) parent).children();
+        		int index2 = children.indexOf(n);
+        		if (index2 != -1){
+        			children.set(index2, copy);
+        			((ListChildren) parent).setChildren(children);
+        			System.out.println("True");
+        		}
+        		return this;
+        	}
+        	else
+        		System.out.println(addChild(parent, n, copy));
         	return this;
         }
         else if (m instanceof TransformMutation) {
         	Node transformed = ((TransformMutation) m).mutate(n);
-        	addChild(parent,n,transformed);
+        	System.out.println(addChild(parent,n,transformed));
         	return this;
         }
         else if (m instanceof InsertMutation){
         	((InsertMutation) m).setProgram(this);
         	Node insertNode = ((InsertMutation) m).mutate(n);
-        	addChild(parent, n, insertNode);
+        	System.out.println(addChild(parent, n, insertNode));
         	return this;
         }
         else if (m instanceof DuplicateMutation){
         	Node duplicateNode = ((DuplicateMutation) m).mutate(n);
-        	addChild(parent,n,duplicateNode);
+        	addChild(n,n,duplicateNode);
         	return this;
         }
         else{
@@ -147,13 +173,16 @@ public class ProgramImpl extends ListChildren implements Program {
     }
 
     public boolean addChild(Node parent, Node original, Node newNode) {
-    	if(newNode == null)
+    	if(newNode == null){
+    		System.out.println("Line 151");
     		return false;
+    	}
     	if (parent instanceof UnaryNode) {
     		if (((UnaryNode) parent).hasChild()){
     			((UnaryNode) parent).setChild(newNode);
     			return true;
     		}
+    		System.out.println("Line 159");
     		return false;
     	}
     	else if (parent instanceof BinaryChildren) {
@@ -165,8 +194,10 @@ public class ProgramImpl extends ListChildren implements Program {
     			((BinaryChildren) parent).setRight(newNode);
     			return true;
     		}
-    		else
+    		else{
+    			System.out.println("Line 172");
     			return false;
+    		}
     	}
     	else if (parent instanceof ListChildren) {
     		ArrayList<Node> children = ((ListChildren) parent).getChildren();
@@ -174,6 +205,7 @@ public class ProgramImpl extends ListChildren implements Program {
     		((ListChildren) parent).setChildren(children);
     		return true;
     	}
+    	System.out.println("line 180");
     	return false;
     }
     @Override
@@ -210,21 +242,16 @@ public class ProgramImpl extends ListChildren implements Program {
 	}
 	@Override
 	public Node findParent (int n) {
-		if (n>= size || n<= 0)
+		if (n>= size() || n<= 0)
 			return null;
 		int index = n;
 		Node m = nodeAt(n);
-		Node result = null;
+		Node result = this;
 		ArrayList<Node> temp = children();
 		while(!(temp.contains(m))){
 			int current = 0;
+			while(index > temp.get(current).size()){
 
-			while(current < temp.size() && index > temp.get(current).size()){
-				System.out.println("temp:" + temp);
-				System.out.println("current:" + current);
-				System.out.println("index:" + index);
-				System.out.println("temp size:" + temp.get(current).size());
-				System.out.println("m:" + m);
 				index -= temp.get(current).size();
 				current ++;
 			}
@@ -232,16 +259,24 @@ public class ProgramImpl extends ListChildren implements Program {
 			System.out.println("final current:" + current);
 			System.out.println("m:" + m);
 			result = temp.get(current);
-			temp = result.children();
+
+			//System.out.println(result.getClass());
+			temp = temp.get(current).children();
+
 			current = 0;
+			index --;
+			
 		}
 		return result;
 	}
 	@Override
 	public void setChildren(ArrayList<Node> n) {
 		ArrayList<Rule> temp = new ArrayList<Rule>();
-		for (Node instance: n)
+		//size = 1;
+		for (Node instance: n){
+			//size += instance.size();
 			temp.add((Rule) instance);
+		}
 		rules = temp;
 	}
 	
