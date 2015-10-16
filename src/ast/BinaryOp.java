@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import parse.Token;
 
+/**
+ * Representation of an arithmetic operation that takes two arguments, such as +, /, mod, etc.
+ */
 public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 
 	private Token Operation;
@@ -55,7 +58,7 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		return sb.append("(" + left.toString() + Operation.toString() + right.toString() + ")");
+		return sb.append("(" + left.toString() + " " + Operation.toString() + " " + right.toString() + ")");
 	}
 	
 	public String toString() {

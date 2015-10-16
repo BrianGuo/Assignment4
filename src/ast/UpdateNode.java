@@ -2,6 +2,11 @@ package ast;
 
 import java.util.ArrayList;
 
+/**
+ * A binary Node that represents an update to a memory location.
+ * {@code left}: The memory location.
+ * {@code right}: The value to update the memory location with.
+ */
 public class UpdateNode extends BinaryChildren implements Node {
 
 	private MemoryNode left;

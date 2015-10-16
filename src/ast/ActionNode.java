@@ -4,7 +4,11 @@ import java.util.ArrayList;
 
 import parse.Token;
 public class ActionNode extends UnaryNode implements Node,Tokenable {
-
+	/**
+	 * A Node that represents an Action.
+	 * {@code type} Represents the specific type of action--attack, wait, etc
+	 * {@code num} For use in tag and serve
+	 */
 	Token type;
 	Expr num;
 	//int size;

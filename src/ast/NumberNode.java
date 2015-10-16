@@ -3,6 +3,9 @@ package ast;
 import java.util.ArrayList;
 
 public class NumberNode extends UnaryNode implements Expr{
+	/**
+	 * Represents a single integer.
+	 */
 
 	private int num;
 	
@@ -25,7 +28,9 @@ public class NumberNode extends UnaryNode implements Expr{
 	@Override
 	public Node nodeAt(int index) {
 		if (index != 0)
-			throw new IndexOutOfBoundsException();
+			return null;
+			//throw new IndexOutOfBoundsException();
+
 		else
 			return this;
 	}

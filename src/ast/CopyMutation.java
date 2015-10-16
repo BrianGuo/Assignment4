@@ -59,6 +59,7 @@ public class CopyMutation implements ParentSpecificMutation {
 		int current = 0;
 		ArrayList<Node> candidates = new ArrayList<Node>();
 		while(current < size){
+
 			if (p.nodeAt(current).sameType(n) && !(p.nodeAt(current).equals(n))){
 				candidates.add(p.nodeAt(current));
 			}
