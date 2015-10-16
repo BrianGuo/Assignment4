@@ -12,12 +12,14 @@ public class DuplicateMutation implements Mutation {
 	
 	public Node mutate(Node n) {
 		if (n instanceof ListChildren) {
-			ArrayList<Node> children = ((ListChildren) n).getChildren();
-			Random r = new Random();
-			int index = r.nextInt(children.size());
-			children.add(children.get(index));
-			((ListChildren) n).setChildren(children);
-			return n;
+			if (((ListChildren) n).getChildren().size()> 0){
+				//System.out.println("This is true");
+				ArrayList<Node> children = ((ListChildren) n).getChildren();
+				Random r = new Random();
+				int index = r.nextInt(children.size());
+				return children.get(index);
+			}
+			return null;
 		}
 		else{
 			return null;

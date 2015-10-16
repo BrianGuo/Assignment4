@@ -15,16 +15,18 @@ public class ProgramTest {
     public void testMutate() throws Exception {
         Program prog = ParserFactory.getParser().parse(new FileReader("example-rules.txt"));
         System.out.println(prog.size());
-        for(int i = 0; i < prog.size(); i++) {
+        int size = prog.size();
+        for(int i = 0; i < 100; i++) {
 //            System.out.println(i);
             //Mutation mutation = MutationFactory.getReplace(); //replace is broken because nodeAt and getParent are broken
-            Mutation mutation = MutationFactory.getDuplicate();
+            Mutation mutation = MutationFactory.getInsert();
 
-            Program mutatedProg = prog.mutate(i, mutation);
+            Program mutatedProg = prog.mutate((int) (Math.random() * prog.size()), mutation);
             System.out.println(mutatedProg);
             prog = mutatedProg;
             assertTrue(testIdentity(prog));
         }
+//
 //        for(int i = 0; i < 10; i++){
 //            System.out.println(prog.size());
 //            System.out.println(prog);

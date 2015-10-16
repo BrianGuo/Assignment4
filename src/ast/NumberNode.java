@@ -3,6 +3,9 @@ package ast;
 import java.util.ArrayList;
 
 public class NumberNode extends UnaryNode implements Expr{
+	/**
+	 * Represents a single integer.
+	 */
 
 	private int num;
 	

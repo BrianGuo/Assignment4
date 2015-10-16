@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
-//import org.apache.commons.cli.*;
+
 
 public class Driver {
     public static void main(String[] args){
@@ -23,8 +23,7 @@ public class Driver {
                 Program prog = ParserFactory.getParser().parse(inputFile);
 
                 for(int i = 0; i < numMutations; i++){
-                prog.mutate();
-                //print out what got changed
+                	prog.mutate();
                     System.out.println(prog);
                 }
 
@@ -38,12 +37,13 @@ public class Driver {
         catch(FileNotFoundException e){
             System.out.println("File not found");
         }
-        /*
+
         catch (Exception e){
-            System.out.println("Usage:");
+            System.out.println("Usage: java -jar <jar_name> <input_file>\n" +
+                    "java -jar <jar_name> --mutate <n> <input_file>");
             System.exit(1);
         }
-        */
+
     }
 
 

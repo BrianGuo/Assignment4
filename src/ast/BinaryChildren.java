@@ -1,5 +1,8 @@
 package ast;
 
+/**
+ * For any type of Node which has two children.
+ */
 public abstract class BinaryChildren implements Node {
 	
 	Node left;

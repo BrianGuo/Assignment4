@@ -4,23 +4,27 @@ import java.util.ArrayList;
 
 import parse.Token;
 public class ActionNode extends UnaryNode implements Node,Tokenable {
-
+	/**
+	 * A Node that represents an Action.
+	 * {@code type} Represents the specific type of action--attack, wait, etc
+	 * {@code num} For use in tag and serve
+	 */
 	Token type;
 	Expr num;
-	int size;
+	//int size;
 	
 	public ActionNode(Token a, Expr r){
 		if (a.isAction())
 			type = a;
 		num = r;
-		size = 1+num.size();
+		//size = 1+num.size();
 	}
 	
 	public ActionNode(Token a) {
 		if (a.isAction())
 			type = a;
 		num = null;
-		size = 1;
+		//size = 1;
 	}
 
 	public ActionNode(ActionNode a) {
@@ -37,6 +41,9 @@ public class ActionNode extends UnaryNode implements Node,Tokenable {
 	}
 	@Override
 	public int size() {
+		int size = 1;
+		if (num!= null)
+			size += num.size();
 		return size;
 	}
 
@@ -85,8 +92,10 @@ public class ActionNode extends UnaryNode implements Node,Tokenable {
 	
 	@Override
 	public void setChild(Node n) {
-		if (n instanceof Expr)
+		if (n instanceof Expr){
 			num = ( Expr) n;
+			//size = 1 + num.size();
+		}
 	}
 	
 	@Override

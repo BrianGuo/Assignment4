@@ -119,12 +119,13 @@ class ParserImpl implements Parser {
         MemoryNode mem = parseMemory(t);
         consume(t, TokenType.ASSIGN);
         Expr e = parseExpression(t);
-//        System.out.println("e:" + e);
         update = new UpdateNode(mem, e);
-//        System.out.println("update:"+ update);
         return update;
     }
 
+    /*
+     * Uses the shunting yard algorithm in order to parse with proper precedence.
+     */
     public static Condition parseCondition(Tokenizer t) throws SyntaxError {
 
         //turns out I was describing the shunting yard algorithm
@@ -139,22 +140,15 @@ class ParserImpl implements Parser {
         while(t.peek().getType() == TokenType.OR  || t.peek().getType() == TokenType.AND){ //if there are more things...
             try {
                 Token cur = t.next(); //either OR or AND
-                //conditions.add(t.next());
-
                 conditions.push(cur);
-                //System.out.println("????");
                 literals.push(parseBrace(t)); //push the next literal onto the literals stack (or a subtree if it's a brace)
 
                 while(!conditions.empty()) {
-//                    System.out.println("??");
                     cur = conditions.pop();
-                    //System.out.println("cur:" + cur);
-                    //System.out.println("conditions:" + conditions);
                     if (conditions.isEmpty() || compare(cur, conditions.peek())) { //we should reduce now
                         Condition r = literals.pop(); //first one
                         Condition l = literals.pop(); //second one
                         Condition cond = new BinaryCondition(l, cur, r); //form the tree...
-                        //System.out.println("cond:" + cond);
                         literals.push(cond); //push tree onto literals!
 
                     } else { //none left
@@ -183,8 +177,8 @@ class ParserImpl implements Parser {
      * Compares precedence of operators
      * Works for both conditions and expressions
      * Return value of True means to pop and reduce, False means to push
-     * @param cur
-     * @param peek
+     * @param cur Current token that has just been read
+     * @param peek Top of the operators stack
      * @return true if precedence of cur <= precedence of top of stack (peek), talse if cur < precedence.
      */
     private static boolean compare(Token cur, Token peek) {
@@ -205,7 +199,6 @@ class ParserImpl implements Parser {
 
 
     private static Condition parseBrace(Tokenizer t) throws SyntaxError {
-        //System.out.println("??");
         Condition condition;
         if(t.peek().getType() == TokenType.LBRACE){
             consume(t, TokenType.LBRACE);
@@ -241,8 +234,6 @@ class ParserImpl implements Parser {
         Stack<Expr> literals = new Stack<>();
         Stack<Token> operations = new Stack<>();
         literals.push(parseParen(t));
-        //System.out.println("next token:" + t.peek().toString());
-        //TODO: Compare this logic to the fixed version in parseConditional and update if this is incorrect
         while(t.peek().isAddOp() || t.peek().isMulOp()){ //if there are more things...
             try {
                 Token cur = t.next(); //either OR or AND
@@ -295,11 +286,6 @@ class ParserImpl implements Parser {
         return expr;
     }
 
-    //Obsoleted by shunting-yard
-    public static Expr parseTerm(Tokenizer t) throws SyntaxError {
-        // TODO
-        throw new UnsupportedOperationException();
-    }
 
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
         Token cur = t.peek();
@@ -327,7 +313,6 @@ class ParserImpl implements Parser {
             sensor = new Sensor(cur);
         }
         else{
-            //Token type = t.peek();
             Expr expr;
             consume(t, TokenType.LBRACKET);
             expr = parseExpression(t);
@@ -336,10 +321,6 @@ class ParserImpl implements Parser {
         }
         return sensor;
     }
-
-    // TODO
-    // add more as necessary...
-
     /**
      * Consumes a token of the expected type.
      * @throws SyntaxError if the wrong kind of token is encountered.
