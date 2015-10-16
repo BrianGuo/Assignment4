@@ -122,7 +122,10 @@ public class Command extends ListChildren implements Node {
 			//size += action.size();
 		for(Node instance: n){
 			//size += instance.size();
-			temp.add((UpdateNode) instance);
+			if (instance instanceof UpdateNode)
+				temp.add((UpdateNode) instance);
+			else if (instance instanceof ActionNode)
+				action = (ActionNode) instance;
 		}
 		updates = temp;
 	}
