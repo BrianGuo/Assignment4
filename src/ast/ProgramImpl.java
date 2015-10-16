@@ -168,7 +168,7 @@ public class ProgramImpl extends ListChildren implements Program {
 
     public boolean addChild(Node parent, Node original, Node newNode) {
     	if(newNode == null){
-    		System.out.println("Line 151");
+    		
     		return false;
     	}
     	if (parent instanceof UnaryNode) {
@@ -176,7 +176,7 @@ public class ProgramImpl extends ListChildren implements Program {
     			((UnaryNode) parent).setChild(newNode);
     			return true;
     		}
-    		System.out.println("Line 159");
+    		
     		return false;
     	}
     	else if (parent instanceof BinaryChildren) {
@@ -189,7 +189,7 @@ public class ProgramImpl extends ListChildren implements Program {
     			return true;
     		}
     		else{
-    			System.out.println("Line 172");
+    			
     			return false;
     		}
     	}
@@ -199,7 +199,7 @@ public class ProgramImpl extends ListChildren implements Program {
     		((ListChildren) parent).setChildren(children);
     		return true;
     	}
-    	System.out.println("line 180");
+    	
     	return false;
     }
     @Override
