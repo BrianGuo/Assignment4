@@ -23,8 +23,7 @@ public class Driver {
                 Program prog = ParserFactory.getParser().parse(inputFile);
 
                 for(int i = 0; i < numMutations; i++){
-                prog.mutate();
-                //print out what got changed
+                	prog.mutate();
                     System.out.println(prog);
                 }
 
