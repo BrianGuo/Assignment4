@@ -103,11 +103,7 @@ public class Relation extends BinaryChildren implements Condition,Tokenable {
 	public Token getR(){
 		return R;
 	}
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	@Override
 	public Token getToken() {
 		return getR();

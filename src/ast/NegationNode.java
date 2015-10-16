@@ -55,11 +55,7 @@ public class NegationNode extends UnaryNode implements Expr {
 		return result;
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	@Override
 	public boolean hasChild() {
 		return (expression!= null);

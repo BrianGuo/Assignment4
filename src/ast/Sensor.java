@@ -107,11 +107,7 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 		return r;
 	}
 
-	@Override
-	public boolean sameType(Node n) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	@Override
 	public Token getToken() {
