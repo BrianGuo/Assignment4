@@ -26,15 +26,13 @@ public class ProgramTest {
             prog = mutatedProg;
             assertTrue(testIdentity(prog));
         }
-//
-//        for(int i = 0; i < 10; i++){
-//            System.out.println(prog.size());
-//            System.out.println(prog);
-//            Program mutatedProg = prog.mutate();
-//
-//            prog = mutatedProg;
-//            assertTrue(testIdentity(prog));
-//        }
+
+        for(int i = 0; i < size; i++){
+            Program mutatedProg = prog.mutate();
+
+            prog = mutatedProg;
+            assertTrue(testIdentity(prog));
+        }
 
     }
 
