@@ -52,6 +52,7 @@
 7. Division of work:
         To reiterate, the tasks:
             1. Creation of the Interpreter as well as adjusting all of the AST nodes to adhere to evaluations                        (sensors, memory, etc), creating the outcome class. This also includes creation of the critter class.                 Critter class means fixing mutations and creating new mutaitons. Work Level approx: 7/10
+            
             2. Creation of world and all of its methods, rock class, Food class. Work level approx: 4/10. Everything                 mostly straightforward.
             3. Creation of the simulator, loading from the simulator, advancing time steps. Work level approx: 4/10
             4. Creation of Test cases and a standard test suite to run for all classes. Work level approx: 5-7/10
