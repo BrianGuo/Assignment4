@@ -21,14 +21,14 @@
     Quick note: A critter should store the world it is in so that sensors can be evaluated. Ahead[5] could not return
     anything unless the critter knows what world it is in. This might mean that Sensor nodes themselves need to store the world that the critter is in. The idea here is to have every Eval function pass the world to its children, so that the sensor nodes at the very base will have the world. Confirmed with TAs. Also, theoretically, it should store a critter?? Maybe? because it needs to pass the critter. 
     Edit: Interpreter stores the critter and condition evaluates using the critter and the world as parameters. 
-    Outcome should return an action. The action should be one of a set of enums, and if the action is either tag or serve, read from the optional expression. /*If it is "updated" all it means is that no actual action was taken and the simulator should advance to the next critter.*/ Edit: a program that only updates will return wait. 
+    Outcome should contain an action. The action should be one of a set of enums, and if the action is either tag or serve, read from the optional expression. Outcome should also store a critter to modify. We want to be clear on how the two will function. If a critter updates its memory node at an index that is not one of the initial critical 8, it is the interpreter that will update it. If updating a memory node is directly related to an action, then the interpreter passes that action in the outcome to world, and it is world that performs that action. /*If it is "updated" all it means is that no actual action was taken and the simulator should advance to the next critter.*/ Edit: a program that only updates will return wait. 
     
 
 2. Simulator
     Simulator will definitely store a world
     I don't know if the simulator should store the critters or the world should store the critters. I think it should be the latter. Correction: it should be the latter. World files can spawn critters so it makes sense that they should be stored after spawned.
     Simulator MUST have method "advanceTime()." This should go to every critter and update it.
-    Simulator should have an interpreter. Interpreters should be passed critters and evaluate them to an outcome. 
+    Simulator should have an interpreter. Inter preters should be passed critters and evaluate them to an outcome. 
 
 3. World
     World file might store everything in a 2-D array / 2D arraylist of objects (subject to change. By all means offer better suggestions). should definitely be able to adjust critter position( method 1) remove objects( method 2) place objects (method 3) check objects (method 4)
@@ -51,10 +51,12 @@
 
 7. Division of work:
         To reiterate, the tasks:
-            1. Creation of the Interpreter as well as adjusting all of the AST nodes to adhere to evaluations                        (sensors, memory, etc), creating the outcome class. This also includes creation of the critter class.                 Critter class means fixing mutations and creating new mutaitons. Work Level approx: 7/10
             
+
+            1. Creation of the Interpreter as well as adjusting all of the AST nodes to adhere to evaluations                        (sensors, memory, etc), creating the outcome class. This also includes creation of the critter class.                 Critter class means fixing mutations and creating new mutaitons. Work Level approx: 7/10
             2. Creation of world and all of its methods, rock class, Food class. Work level approx: 4/10. Everything                 mostly straightforward.
-            3. Creation of the simulator, loading from the simulator, advancing time steps. Work level approx: 4/10
+            3. Creation of the simulator, loading from the simulator, advancing time steps. Console
+                Work level approx: 4/10
             4. Creation of Test cases and a standard test suite to run for all classes. Work level approx: 5-7/10
             5. Finishing written problems: Depending how hard they are, anywhere from 3-5/10. There are only four                    problems and two of them are questions about asymtotic complexity.
             6. Other: List here. Current Difficulty: 0/10
