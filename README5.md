@@ -75,6 +75,11 @@
     
     Before this: Test Interpreter using random testing of critters in this way.
                 Test that outcome returned is correct.
-                Test boundaries of outcome -> Each action, also make sure that actions with no expressions really have no expression.
-                Test eval by running on critter conditions and rules and making sure right boolean, expression is returned.
-
+                Test boundaries of outcome -> Test each action, also make sure that actions with no expressions really have no expression.
+                Test eval by running on critter conditions and rules and making sure right boolean or integer is returned.
+            
+    Testing In general: 
+            For the most part, we'd like to use a mix of blackbox and random testing. Blackbox testing will be implemented on each of the following sections of our assignment: The interpreter and its methods, the world and its methods, the simulator and time step advance, the console and its methods, and finally, the critter and its methods. This involves making sure everything evaluates properly as well as testing boundary cases such as a critter with one rule, a world with one square, an interpreter sent a null critter, etc. 
+            Testing the interpreter using a blackbox testing method involves generating the critters ourselves, so I intend to manufacture a bunch of critters with odd but valid attributes and rules, and to run the interpreter on this set.
+            Testing the world involves making sure the get(index x, index y) method works, as well as the movement of critters, the deletion of critters, and the deletion of food. This is primarily focused on making sure that the ascii representation works, which should be fairly straightforward. After that, we can print the ascii representation of the world at every time step. We are also making sure that it evaluates outcomes and moves critters accordingly in the correct way.
+            Testing the simlulator and the console involve going through some sort of random testing by generating random critters through a random set of mutations from a starting rule set. Of course, boundaries will be tested by inputting strange worlds or strange critters into the world. The funcitonality of these two mostly relies on making sure they can generate all the objects correctly and run time steps correctly, so random testing is very effective here; as we continue to perform more test cases, we continue to improve functionality. 
