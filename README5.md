@@ -15,13 +15,14 @@
     Edit: you need your own critter class. Or you should have one. It should store its own location. It should have a program. It should have an array. It does NOT need to have an interpreter inside it.
     
     So interpreter will pass Outcome over to simulator by interpreting a Critter's program.
+    Edit: Interpreter will have access to the world and to the critter. It does NOT need to pass outcome to the simulator. In fact, it should NOT pass outcome to the simulator. 
     Outcome, as of right now, is an interface containing absolutely nothing.
-    So we shuold invent the methods to put in there.
+    So we should invent the methods to put in there.
     Outcome should definitely have a slot for an action,
     Quick note: A critter should store the world it is in so that sensors can be evaluated. Ahead[5] could not return
     anything unless the critter knows what world it is in. This might mean that Sensor nodes themselves need to store the world that the critter is in. The idea here is to have every Eval function pass the world to its children, so that the sensor nodes at the very base will have the world. Confirmed with TAs. Also, theoretically, it should store a critter?? Maybe? because it needs to pass the critter. 
     Edit: Interpreter stores the critter and condition evaluates using the critter and the world as parameters. 
-    Outcome should contain an action. The action should be one of a set of enums, and if the action is either tag or serve, read from the optional expression. Outcome should also store a critter to modify. We want to be clear on how the two will function. If a critter updates its memory node at an index that is not one of the initial critical 8, it is the interpreter that will update it. If updating a memory node is directly related to an action, then the interpreter passes that action in the outcome to world, and it is world that performs that action. /*If it is "updated" all it means is that no actual action was taken and the simulator should advance to the next critter.*/ Edit: a program that only updates will return wait. 
+    Outcome should contain an action. The action should be one of a set of enums, and if the action is either tag or serve, read from the optional expression. Outcome should also store a critter to modify<-- subject to change. I can see situations in which it doesn't need to. For now, let's not have it store a critter. We want to be clear on how the two will function. If a critter updates its memory node at an index that is not one of the initial critical 8, it is the interpreter that will update it. If updating a memory node is directly related to an action, then the interpreter passes that action in the outcome to world, and it is world that performs that action. /*If it is "updated" all it means is that no actual action was taken and the simulator should advance to the next critter.*/ Edit: a program that only updates will return wait. 
     
 
 2. Simulator
@@ -59,12 +60,21 @@
                 Work level approx: 4/10
             4. Creation of Test cases and a standard test suite to run for all classes. Work level approx: 5-7/10
             5. Finishing written problems: Depending how hard they are, anywhere from 3-5/10. There are only four                    problems and two of them are questions about asymtotic complexity.
-            6. Other: List here. Current Difficulty: 0/10
+            7. Other: List here. Current Difficulty: 0/10
     
     I propose separating work in this manner: I will create the interpreter as well as adjust the AST Nodes (Brian). Will create the critter class and the outcomes.
     Creation of the world and its methods will be left to Max.
-    Creation of the Simulator will be handled by Brian
+    Creation of the Simulator and console will be handled by Brian
     Creation of Test cases will be handled by Max.
     Written problems will be split by the two of us. NOTE: WE MUST DISCUSS THE ONE CONCERNING LOOP INVARIANTS BEFORE WE SUBMIT. #3.
     If you agree to this, I will write down all the methods you will need from me and all of the methods I will be calling to the world from the simulator. 
     As of right now, I see no problem with the interpreter evaluating its own outcomes btw and making the critter act accordingly.
+    
+    Testing: Creating random critters from a base case by mutating them each a random number of times.
+    Place them all the world, test n time steps. 
+    
+    Before this: Test Interpreter using random testing of critters in this way.
+                Test that outcome returned is correct.
+                Test boundaries of outcome -> Each action, also make sure that actions with no expressions really have no expression.
+                Test eval by running on critter conditions and rules and making sure right boolean, expression is returned.
+
