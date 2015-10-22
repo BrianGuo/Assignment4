@@ -50,8 +50,13 @@ public class ProgramImpl extends ListChildren implements Program {
     public Node nodeAt(int index) {
         if (index == 0)
         	return this;
-        else if (index < 0 || index >= size())
+        else if (index < 0 || index >= size()){
+        	if (index < 0)
+        		System.out.println("less than zero");
+        	if (index >= size() )
+        		System.out.println("greater than size");
         	throw new IndexOutOfBoundsException();
+        }
         else{
         	int temp = index;
         	int currentRule = 0;
@@ -59,7 +64,6 @@ public class ProgramImpl extends ListChildren implements Program {
         		temp -= rules.get(currentRule).size();
         		currentRule++;
         	}
-			System.out.println("nodeAt " + index + ": " + rules.get(currentRule).nodeAt(temp-1));
         	return rules.get(currentRule).nodeAt(temp-1);
         }
     }
@@ -80,6 +84,7 @@ public class ProgramImpl extends ListChildren implements Program {
     				ArrayList<Node> temp = findParent(selected).children();
     				temp.remove(nodeAt(selected));
     				((ListChildren) findParent(selected)).setChildren(temp);
+    				return this;
     			}
     		}
     		return mutate(selected, m);
@@ -163,6 +168,7 @@ public class ProgramImpl extends ListChildren implements Program {
         	System.out.println("It was a success.");
         else
         	System.out.println("It didn't work");
+        System.out.println(this);
         return this;
     }
 
@@ -249,9 +255,6 @@ public class ProgramImpl extends ListChildren implements Program {
 				index -= temp.get(current).size();
 				current ++;
 			}
-			System.out.println("final temp:" + temp);
-			System.out.println("final current:" + current);
-			System.out.println("m:" + m);
 			result = temp.get(current);
 
 			//System.out.println(result.getClass());

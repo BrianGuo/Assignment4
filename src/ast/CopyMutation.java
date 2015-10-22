@@ -3,6 +3,8 @@ package ast;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import parse.TokenType;
+
 public class CopyMutation implements ParentSpecificMutation {
 
 	Program p;

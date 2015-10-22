@@ -89,6 +89,8 @@ public class InsertMutation implements Mutation {
 					temp.add((Condition) current);
 			}
 			Collections.shuffle(temp);
+			if (temp.size() == 0)
+				return null;
 			Node copyTemplate =  temp.get(0);
 			Node newCopy = CopyMutation.copy(n);
 			int randomness = r.nextInt(2);

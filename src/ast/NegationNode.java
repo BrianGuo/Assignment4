@@ -2,6 +2,9 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
+import world.World;
+
 public class NegationNode extends UnaryNode implements Expr {
 	/**
 	 * Represents the unary negation operator.  Negates the value of {@code} expression.  Can be chained together for double or more negatives.
@@ -72,5 +75,16 @@ public class NegationNode extends UnaryNode implements Expr {
 	@Override
 	public Node getChild(){
 		return expression;
+	}
+
+	@Override
+	public boolean sameType(Node n) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int evaluate(Critter c, World w) {
+		return -1 * expression.evaluate(c, w);
 	}
 }

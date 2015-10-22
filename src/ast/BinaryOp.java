@@ -2,7 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
 import parse.Token;
+import parse.TokenType;
+import world.World;
 
 /**
  * Representation of an arithmetic operation that takes two arguments, such as +, /, mod, etc.
@@ -66,23 +69,24 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 		return prettyPrint(s).toString();
 	}
 	
-	/*public int evaluate() {
+	@Override
+	public int evaluate(Critter c, World w) {
 		int a = 0;
 		int b = 0;
 		try{
-			a = left.evaluate();
-			b = right.evaluate();
+			a = left.evaluate(c,w);
+			b = right.evaluate(c,w);
 		}
 		catch (ArithmeticException e){
 			System.out.println("You've divided by zero. Just letting you know");
 			return 0;
 		}
-		switch(Operation){
+		switch(Operation.getType()){
 		case PLUS:
 			return a + b;
 		case MINUS:
 			return a-b;
-		case MULT:
+		case MUL:
 			return a * b;
 		case DIV:
 			return a/b;
@@ -92,7 +96,7 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 			break;
 		}
 		return 0;
-	}*/
+	}
 	
 	
 
@@ -147,6 +151,10 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 		if (t.isAddOp() || t.isMulOp())
 			Operation = t;
 	}
+
 	
 
+	
+	
+	
 }

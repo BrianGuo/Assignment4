@@ -18,16 +18,33 @@ public class TransformMutation implements ParentSpecificMutation {
 	@Override
 	public Node mutate(Node n) {
 		if (n instanceof Tokenable) {
-			Token t = ((Tokenable) n).getToken();
-			TokenType t2 = t.getType();
-			TokenCategory t3 = TokenType.getCategory(t2);
-			ArrayList<TokenType> temp = TokenType.getAlloftype(t3);
-			temp.remove(t2);
-			Collections.shuffle(temp);
-			TokenType newTokenType = temp.get(0);
-			Token newToken = new Token(newTokenType, -1);
-			((Tokenable) n).setToken(newToken);
-			return n;
+			if (n instanceof ActionNode && (((Tokenable) n).getToken().getType().equals(TokenType.TAG)||((Tokenable) n).getToken().getType().equals(TokenType.SERVE))){
+				Random r = new Random();
+				int which = r.nextInt(2);
+				if (which == 0){
+					Token newToken = new Token(TokenType.TAG, -1);
+					((Tokenable) n).setToken(newToken);
+				}
+				else {
+					Token newToken = new Token(TokenType.SERVE,-1);
+					((Tokenable) n).setToken(newToken);
+				}
+				return n;
+			}
+			else {
+				Token t = ((Tokenable) n).getToken();
+				TokenType t2 = t.getType();
+				TokenCategory t3 = TokenType.getCategory(t2);
+				ArrayList<TokenType> temp = TokenType.getAlloftype(t3);
+				temp.remove(t2);
+				temp.remove(TokenType.TAG);
+				temp.remove(TokenType.SERVE);
+				Collections.shuffle(temp);
+				TokenType newTokenType = temp.get(0);
+				Token newToken = new Token(newTokenType, -1);
+				((Tokenable) n).setToken(newToken);
+				return n;
+			}
 		}
 		else if (n instanceof NumberNode){
 			Random r = new Random();

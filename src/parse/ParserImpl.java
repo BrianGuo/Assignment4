@@ -296,7 +296,6 @@ class ParserImpl implements Parser {
         else if (cur.getType() == TokenType.MINUS){ //unary negation
             consume(t, TokenType.MINUS);
             factor = new NegationNode(parseFactor(t));
-            System.out.println("factor:" + factor);
             return factor;
         }
         else if (cur.isNum()){ //regular number
@@ -304,7 +303,6 @@ class ParserImpl implements Parser {
             return factor;
         }
         else if (cur.getType() == TokenType.LPAREN){
-            System.out.println("cur:" + cur);
             factor = parseParen(t);
             return factor;
         }

@@ -13,21 +13,20 @@ public class ProgramTest {
 
     @Test
     public void testMutate() throws Exception {
-        Program prog = ParserFactory.getParser().parse(new FileReader("example-rules.txt"));
+        Program prog = ParserFactory.getParser().parse(new FileReader("examples/example-rules.txt"));
         System.out.println(prog.size());
         int size = prog.size();
         for(int i = 0; i < 100; i++) {
 //            System.out.println(i);
             //Mutation mutation = MutationFactory.getReplace(); //replace is broken because nodeAt and getParent are broken
-            Mutation mutation = MutationFactory.getInsert();
+            Mutation mutation = MutationFactory.getTransform();
 
             Program mutatedProg = prog.mutate((int) (Math.random() * prog.size()), mutation);
-            System.out.println(mutatedProg);
             prog = mutatedProg;
             assertTrue(testIdentity(prog));
         }
 
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < 1000; i++){
             Program mutatedProg = prog.mutate();
 
             prog = mutatedProg;
@@ -39,7 +38,7 @@ public class ProgramTest {
 
     @Test
     public void testPrintParse() throws Exception {
-        Program prog = ParserFactory.getParser().parse(new FileReader("example-rules.txt"));
+        Program prog = ParserFactory.getParser().parse(new FileReader("examples/example-rules.txt"));
         assertTrue(testIdentity(prog));
     }
 

@@ -2,6 +2,9 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
+import world.World;
+
 public class NumberNode extends UnaryNode implements Expr{
 	/**
 	 * Represents a single integer.
@@ -67,6 +70,13 @@ public class NumberNode extends UnaryNode implements Expr{
 	@Override
 	public Node getChild() {
 		return null;
+	}
+
+	
+
+	@Override
+	public int evaluate(Critter c, World w) {
+		return num;
 	}
 	
 }
