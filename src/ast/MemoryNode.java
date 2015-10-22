@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
 import parse.Token;
 import parse.TokenType;
+import world.World;
 
 /**
  * Represents a memory access, such as mem[5].  Also handles syntactic sugar for memory locations.
@@ -142,6 +144,12 @@ public class MemoryNode extends UnaryNode implements Expr {
 	@Override
 	public Node getChild() {
 		return expression;
+	}
+	
+	@Override
+	public int evaluate(Critter c, World w) {
+		int n = expression.evaluate(c, w);
+		return c.getAttributeAtIndex(n);
 	}
 	
 }

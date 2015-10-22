@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
 import parse.Token;
 import parse.TokenType;
+import world.World;
 
 /**
  * A representation of a binary Boolean condition: 'and' or 'or'
@@ -141,6 +143,17 @@ public class BinaryCondition extends BinaryChildren implements Condition, Tokena
 			op = t;
 	}
 	
+	@Override
+	public boolean evaluate(Critter c, World w) {
+		switch(op.getType()) {
+		case AND:
+			return (left.evaluate(c, w) && right.evaluate(c,w));
+		case OR:
+			return (left.evaluate(c,w) || right.evaluate(c,w));
+		default:
+			return false;
+		}
+	}
 	
 	
 }

@@ -14,6 +14,7 @@ class ParserImpl implements Parser {
     public Program parse(Reader r) {
         Tokenizer tokenizer = new Tokenizer(r);
         try{
+
             return parseProgram(tokenizer);
         }
         catch(SyntaxError e){
@@ -266,7 +267,6 @@ class ParserImpl implements Parser {
             Expr cond = new BinaryOp(l,r, operations.pop());
             literals.push(cond);
         }
-
         return literals.pop();
     }
 
@@ -296,9 +296,15 @@ class ParserImpl implements Parser {
         else if (cur.getType() == TokenType.MINUS){ //unary negation
             consume(t, TokenType.MINUS);
             factor = new NegationNode(parseFactor(t));
+            return factor;
         }
         else if (cur.isNum()){ //regular number
             factor = new NumberNode(t.next().toNumToken().getValue());
+            return factor;
+        }
+        else if (cur.getType() == TokenType.LPAREN){
+            factor = parseParen(t);
+            return factor;
         }
         else{ //sensor
             factor = parseSensor(t);

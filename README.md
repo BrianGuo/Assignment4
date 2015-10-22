@@ -1,44 +1,50 @@
-# Asssignment 4: Parsing and Fault Injection
-##Max Zhou (mz282), Brian Guo (bg379)
-****
-###Abstract Syntax Tree
-* contains a `Program` Node as the root.
-* The AST will contain a `Program` Node as the root node. 
-*  The `Program` Node stores an ArrayList of `RuleNodes`.
-*  `RuleNode` represents the relationship between a condition and a command. 
-	 * Contains a `ConditionNode` and a `CommandNode`.
-*  `ConditionNode` represents a condition (either `True` or `False`). 
-	* Implemented by `BinaryCondition` and `Relation`
-		* A `BinaryCondition` holds 2 `ConditionNodes` as fields and links them with an operator of `&&` or `||`. Since `BinaryOp` is a condition, a `BinaryCondition` can store more `BinaryConditions` in order to store an arbitrary number of `BinaryConditions` (...`||`...`&&`...).
-		* A `Relation` holds two expressions and links them with a relational operator (`<`, `>`, `==`, etc.).  
-	* If `Condition` is True, it permits the `Rule` to evaluate and perform the `CommandNode`.
-*  `CommandNode` holds a list of updates and an action, initially set to null. 
-* `Update` is a Node that symbolizes the relationship `mem[expr] := expr`", and thus holds two nodes: a `MemoryNode` and an `Expression` Node. 
-* `ActionNode` of a `CommandNode` is a `Node` that symbolizes one unique action (`wait`, `forward`, `backward`, etc.) and holds a String representing which `Action` it is, as well as a possible `Expression`, originally set to null, since some actions may contain expressions.
-*  `Expression` is a sub-interface of Node which contains two classes: `NumberNode` and `BinaryOperation`. 
-	* `NumberNode` is a Node representing one number. 
-	* `BinaryOperation` is a node which contains two expressions and one operation (+,-,/,*) which it applies to them. Therefore, an expression will ALWAYS evaluate to a number, if the inputs are correct. 
- 
-***
-###Parsing
-Standard recursive descent parser.
-From inspection, it appears every operation is left-associative (except unary negation), and "and" has precedence over "or."  Conditionals and expressions are handled using the shunting-yard algorithm, which means there is no need for separate parse methods for conjunction/relation and factor/term.  Unary negation can be handled in parseFactor() transparently.
-***
-### Mutations
-Mutation may be one of the more difficult processes to implement. Mutations themselves are described in detail in the project specification and are fairly straightforward. Deciding whether or not to mutate is simply a matter of calling Math.random(), as is deciding whether to mutate an attribute or a rule set. The most difficult task may be giving each node an equal probability to be mutated. I would like to find some way to do it without traversing through the tree and counting each individual Node, but I do not, as of yet, see a way to. Considering that there may be up to 999 rules, though, I imagine that counting a rule and its sub-Nodes may be rather slow. Still, perhaps it is the fact that the number of rules is arbitrary that makes it difficult to find a method that gives each node an equal opportunity, without counting each Node.
+# Assignment5
+###World
+* In addition to what's in the class diagram, world should have methods to move, add, and remove objects.
+* World also will contain all constants.  They could have gone in either Simulator or World, but we are putting most methods in World.
+* World will be fairly "heavy": a lot of interpreter logic will be handled here.
 
-Perhaps we could store all Nodes in an ArrayList of some kind as well as in the standard tree structure.  This would make mutations in general easier, particularly finding a random Node to be mutated, but would make the removal and addition mutations slightly harder, due to having to remove every Node.
-***
-### Dividing work
+###Simulator
+ - Simulator holds the World and advances time steps, and not much else.
 
-Work will be split primarily through packages.  The entire AST package will be handled by Brian, while Parsing will be handled by Max.  By "the entire package," we mean that if a method needs to be implemented in a certain package, it will be implemented by that respective person. The main method, since it involves  parsing the input into tokens, will be handled by Max. The written problems will be coordinated by splitting the work and then checking and discussing the responses of the other person. This method of division of work will involve some gray-areas, which is something we are both aware of. For instance, parserImpl.java will need to call the appropriate constructors when using a top-down approach, which is something that will be discussed between the two of us in the midst of our project.  Since this is a small internal project, collaboration on the repo will be handled with branching.  This will also allow us with more flexibility in crossing over in work if necessary.
-***
-### Fault injector
-The implementation of the fault injector will provide us with many sample critters that we can test to make sure our Pretty-Printer and Parser, at the very least, compiles. To test that it produces the right output, we believe Pretty-Printer and Parser can test each other. If we can keep track of what mutaton was made to which Node in each test, we can check where the process fails. The testing should involve mutating a critter, pretty-printing the output, parsing the print, and checking the resulting generated tree to see if it matches the mutated tree prior to pretty-printing. If they do not, we can check the pretty-printed document to see if the process failed in the pretty-printing or in the parsing.
-***
-###Pretty printing
-One possible approach is to use the visitor pattern, which for a small upfront amount of work, should mostly trivialize pretty printing as it will make it independent of the code for each Node.  We could also use toString() helper functions or just recursively prettyPrint() everything instead.
+###Console
+ - Console just interfaces with the Simulator.
 
-###Miscellaneous
-- Each Node has a children() method that returns an ArrayList of all of its children.  Mutation methods can use this to provide a general interface for both list-like and tree-like nodes, and do other things (like check if the Node actually has children).
-- Currently, swap mutations only swap the first 2 children.
+###Critters and WorldObjects
+ - WorldObjects are stored in the World.  WorldObjects do not know what World they are in, so anything that deals with a separate object (mate, ahead[], etc) requires a call to the World "supervisor" which has the necessary information.  This is also why a great deal of interpreter logic is at the world level.
+ - Critters store the last rule executed for use with the console and have a helper variable for use with mating.
+
+###Updates to AST:
+ - Every `Expr` and `Condition` has an evaluate function; this allows for evaluation to be handled in a similar manner as pretty-printing (recursive calls).
+ - Mutations must be updated to have 1/4 chance of them actually occurring.
+ - Sensor and memory now evaluate to numbers
+ - Fix errors in mutations
+
+###Updates to parser:
+ - Fix edge cases with `-(something)` and chained negatives (`--`).
+
+###User interface
+ * Fairly straightforward with regards to design.  Just a slog to write the methods.
+
+###Written problems:
+* Evenly split.  Probably should collaborate on the loop invariant problem.
+
+
+###Testing. 
+* Unit testing--first, bootstrap in some Critters and a World, and then run some constant tests (to check evaluation works correctly, to check interpreting + interpreting Outcomes works correctly, etc).
+* Make sure that Actions with no Exprs actually don't have any.
+* World testing mainly revolves around making sure object interaction works correctly (walking into a rock, eating food, **mating** especially).  Likely to be done with a specially-constructed set of rules.
+* After proper mating and mutation code is in, we can test with a "seed stock" of rules, randomly create critters based off them, and then mate and ensure it works.
+* In addition, ensure proper use of energy!!
+* It may be possible to write a program that randomly generates ASTs to test `eval()`.
+* Test ASCII printing with a single critter that does a known thing--the spiral critter would be very useful here.
+* Finally, read in a bunch of random Critters and set them free!  And hope nothing crashes.
+
+###Division of work:
+1. Creation of the Interpreter as well as adjusting all of the AST nodes to adhere to evaluations                        (sensors, memory, etc), creating the outcome class. This also includes creation of the critter class.                 Critter class means fixing mutations and creating new mutations. Work Level approx: 5/10. Brian
+2. Creation of world. Food class. Work level approx: 4/10. Everything                 mostly straightforward.  Max.
+3. Creation of the simulator, loading from the simulator, advancing time steps. Console
+                Work level approx: 4/10.  Brian.
+4. Creation of Test cases and a standard test suite to run for all classes. Work level approx: 5-7/10.  Mostly Max.
+5. Finishing written problems: Depending how hard they are, anywhere from 3-5/10. 
+6. Anything that involves parsing a file: Max

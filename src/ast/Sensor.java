@@ -10,7 +10,7 @@ import parse.TokenType;
  * {@code sense}: Represents the type of sensor.
  * {@code r}: For use with nearby, ahead, and random.  Meaningless for smell.
  */
-public class Sensor extends UnaryNode implements Expr, Tokenable {
+public class Sensor extends UnaryNode implements Expr {
 
 	private Token sense;
 	private Expr r;
@@ -109,12 +109,7 @@ public class Sensor extends UnaryNode implements Expr, Tokenable {
 
 	
 
-	@Override
-	public Token getToken() {
-		return getSense();
-	}
 
-	@Override
 	public void setToken(Token t) {
 		if (t.isSensor())
 			sense = t;

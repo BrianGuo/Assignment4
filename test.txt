@@ -1,0 +1,9 @@
+PASS = 1 --> TAG := ENERGY PASS := 2 ;
+//(TAG mod 1000) < 6 --> PASS := 1 eat;
+//-(mem[(SIZE + 10)] mod 6) <= 3 --> right;
+//(mem[8] mod 6) >= 3 --> left;
+//ahead[1] = 0 --> forward;
+//{{ahead[1] != 1 and ahead[1] != 2} and ahead[1] != (0 - 1)} --> attack;
+//ahead[1] > 0 --> tag[1];
+//{ENERGY > (SIZE * 100) and SIZE < (10 + POSTURE)} --> grow;
+//ENERGY > 1000 --> POSTURE := (POSTURE + PASS) bud;

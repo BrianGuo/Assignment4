@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
 import parse.Token;
-
+import world.World;
+import parse.TokenType;
 /**
  * Represents a typical relation between two arithmetic expressions (<=, !=, >, etc).
  */
@@ -113,4 +115,29 @@ public class Relation extends BinaryChildren implements Condition,Tokenable {
 		if (t.isRelOp())
 			R = t;
 	}
+	
+	@Override
+	public boolean evaluate(Critter c, World w) {
+		int a = left.evaluate(c, w);
+		int b = right.evaluate(c, w);
+		switch(R.getType()) {
+		case LT:
+			return a < b;
+		case GT:
+			return a > b;
+		case EQ:
+			return a == b;
+		case NE:
+			return a != b;
+		case LE:
+			return a <= b;
+		case GE:
+			return a >= b;
+		default:
+			break;
+		}
+		return false;
+	}
+	
+	
 }
