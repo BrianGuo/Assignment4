@@ -10,6 +10,7 @@
 ###Critters and WorldObjects
  - WorldObjects are stored in the World.  WorldObjects do not know what World they are in, so anything that deals with a separate object (mate, ahead[], etc) requires a call to the World "supervisor" which has the necessary information.  This is also why a great deal of interpreter logic is at the world level.
  - Critters store the last rule executed for use with the console and have a helper variable for use with mating.
+
 ###Updates to AST:
  - Every `Expr` and `Condition` has an evaluate function; this allows for evaluation to be handled in a similar manner as pretty-printing (recursive calls).
  - Mutations must be updated to have 1/4 chance of them actually occurring.
