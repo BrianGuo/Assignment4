@@ -68,6 +68,7 @@ Nodes are given number indices in the order they would be visited by a pre-order
 *	Insert is messy, but should work on any unary node, expressions, and conditions.
 *	Transform works on numbers, unary nodes, arithmetic expressions, and any node that implements `Tokenable`.
 *	Copy works on any node except the root.
+*	We interpreted "apply mutations *n* times" as to simply *attempt* to apply *n* mutations.  If a mutation fails or does not have any effect, it still counts as as one for the purposes of the main method.
 
 ***
 ### Dividing work
@@ -85,7 +86,6 @@ For example, `1 + 2 + 3` would be printed out as `((1 + 2) + 3)`.  This ensures 
 ***
 ###Miscellaneous
  - Each Node has a children() method that returns an ArrayList of all of its children.  Mutation methods can use this to provide a general interface for both list-like and tree-like nodes, and do other things (like check if the Node actually has children).
- - Currently, swap mutations only swap the first 2 children.
 ***
 ###Known problems
  - The remove mutation does not appear to fully work--certain nodes don't seem to be affected, when they should.
