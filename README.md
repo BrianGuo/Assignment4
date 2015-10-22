@@ -3,10 +3,13 @@
 * In addition to what's in the class diagram, world should have methods to move, add, and remove objects.
 * World also will contain all constants.  They could have gone in either Simulator or World, but we are putting most methods in World.
 * World will be fairly "heavy": a lot of interpreter logic will be handled here.
+
 ###Simulator
  - Simulator holds the World and advances time steps, and not much else.
+
 ###Console
-  - Console just interfaces with the Simulator.
+ - Console just interfaces with the Simulator.
+
 ###Critters and WorldObjects
  - WorldObjects are stored in the World.  WorldObjects do not know what World they are in, so anything that deals with a separate object (mate, ahead[], etc) requires a call to the World "supervisor" which has the necessary information.  This is also why a great deal of interpreter logic is at the world level.
  - Critters store the last rule executed for use with the console and have a helper variable for use with mating.
@@ -21,7 +24,7 @@
  - Fix edge cases with `-(something)` and chained negatives (`--`).
 
 ###User interface
-   * Fairly straightforward with regards to design.  Just a slog to write the methods.
+ * Fairly straightforward with regards to design.  Just a slog to write the methods.
 
 ###Written problems:
 * Evenly split.  Probably should collaborate on the loop invariant problem.
