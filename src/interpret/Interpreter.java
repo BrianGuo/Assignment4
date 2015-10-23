@@ -3,6 +3,7 @@ package interpret;
 import ast.Condition;
 import ast.Expr;
 import ast.Program;
+import ast.UpdateNode;
 
 /**
  * An example interface for interpreting a critter program. This is just a starting
@@ -33,4 +34,10 @@ public interface Interpreter {
      * @return an integer that results from evaluating e.
      */
     int eval(Expr e);
+    
+    /**
+     * Performs the given updateNode
+     * @param u		The updateNode to perform
+     */
+    void perform(UpdateNode u);
 }

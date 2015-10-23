@@ -1,9 +1,16 @@
 package interpret;
 
+import java.util.ArrayList;
+
+
+import ast.Command;
 import ast.Condition;
 import ast.Expr;
 import ast.Program;
+import ast.Rule;
+import ast.UpdateNode;
 import critter.Critter;
+import parse.TokenType;
 import world.World;
 
 public class CritterInterpreter implements Interpreter {
@@ -13,8 +20,34 @@ public class CritterInterpreter implements Interpreter {
 	
 	@Override
 	public Outcome interpret(Program p) {
-		// TODO Auto-generated method stub
-		return null;
+		assert(cr.getProgram().equals(p));
+		ArrayList<Rule> rules = p.getRules();
+		int current = 0;
+		while (current < rules.size()){
+			Rule r = rules.get(current);
+			if (((Condition)r.getLeft()).evaluate(cr, w)){
+				Command com = (Command) r.getRight();
+				ArrayList<UpdateNode> updates = com.getUpdates();
+				if (updates != null){
+					for (UpdateNode u: updates){
+						perform(u);
+					}
+				}
+				if (com.getAction() != null){
+					return new CritterOutcome(cr,com.getAction().getToken().getType(),com.getAction().getNum());
+				}
+				current = 0;
+			}
+			else
+				current++;
+		}
+		return new CritterOutcome(cr, TokenType.WAIT, null);
+	}
+	@Override
+	public void perform(UpdateNode u){
+		int left = u.getLeft().evaluate(cr, w);
+		int right = u.getRight().evaluate(cr, w);
+		cr.UpdateNodeAt(left,right);
 	}
 	
 	@Override
@@ -24,8 +57,7 @@ public class CritterInterpreter implements Interpreter {
 
 	@Override
 	public int eval(Expr e) {
-		// TODO Auto-generated method stub
-		return 0;
+		return e.evaluate(cr, w);
 	}
 	
 }

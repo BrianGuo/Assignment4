@@ -1,5 +1,11 @@
 package ast;
 
+import java.util.ArrayList;
+
+import critter.Critter;
+import interpret.Outcome;
+import world.World;
+
 /**
  * An abstraction of a critter program.
  */
@@ -23,4 +29,6 @@ public interface Program extends Node {
     Program mutate(int index, Mutation m);
     
     Node findParent(int n);
+    
+    ArrayList<Rule> getRules();
 }

@@ -3,6 +3,10 @@ package ast;
 import java.util.ArrayList;
 import java.util.Random;
 
+import critter.Critter;
+import interpret.Outcome;
+import world.World;
+
 /**
  * A data structure representing a critter program.
  *
@@ -30,6 +34,7 @@ public class ProgramImpl extends ListChildren implements Program {
     	this.rules = p.getRules();
     }
     
+    @Override
     public ArrayList<Rule> getRules(){
     	return rules;
     }
@@ -276,6 +281,7 @@ public class ProgramImpl extends ListChildren implements Program {
 		}
 		rules = temp;
 	}
+	
 	
 
 }

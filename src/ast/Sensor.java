@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import critter.Critter;
 import parse.Token;
 import parse.TokenType;
+import world.World;
 
 /**
  * A representation of a sensor--nearby, ahead, random, and smell.
@@ -113,5 +115,37 @@ public class Sensor extends UnaryNode implements Expr {
 	public void setToken(Token t) {
 		if (t.isSensor())
 			sense = t;
+	}
+
+	
+
+	@Override
+	public int evaluate(Critter c, World w) {
+		int direction = c.getDirection();
+		int[] coordinates = c.getCoordinates();
+		int[] newCoordinates = new int[1];
+		switch (direction){
+		case 0:
+			newCoordinates = new int[]{coordinates[0],coordinates[1]+1};
+			break;
+		case 1:
+			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]+1};
+			break;
+		case 2:
+			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]};
+			break;
+		case 3:
+			newCoordinates = new int[]{coordinates[0],coordinates[1]-1};
+			break;
+		case 4:
+			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]-1};
+			break;
+		case 5:
+			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]};
+			break;
+		default:
+			break;
+		}
+		return w.hex(newCoordinates);
 	}
 }

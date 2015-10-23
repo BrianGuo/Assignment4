@@ -11,37 +11,25 @@ public class Command extends ListChildren implements Node {
 	
 	public Command() {
 		updates = new ArrayList<>();
-		//size = 1;
 		action = null;
 	}
 	
 	public Command(Command c){
 		this.updates = c.getUpdates();
 		this.action = c.getAction();
-		//this.size = c.size();
 	}
 	
 	public Command(ActionNode a){
 		action = a;
-		//size = a.size();
 	}
 
 	public Command(ArrayList<UpdateNode> updates){
 		action = null;
 		this.updates = updates;
-		//size = 1;
-		//for(UpdateNode u: updates)
-			//size += u.size();
 	}
 	public Command(ArrayList<UpdateNode> updates, ActionNode a){
 		this.updates = updates;
 		action = a;
-		/*int temp = 0;
-		for (int i = 0; i < updates.size(); i++){
-			temp += updates.get(i).size();
-		}
-		temp += action.size;
-		size = temp +1;*/
 	}
 	public ArrayList<UpdateNode> getUpdates(){
 		return updates;
