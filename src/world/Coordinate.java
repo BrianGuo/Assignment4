@@ -11,7 +11,8 @@ public class Coordinate {
     private int x;
     private int y;
 
-    public Coordinate(int x, int y){
+    public Coordinate(int x, int y) throws IllegalCoordinateException{
+        checkBounds(x,y);
         this.x = x;
         this.y = y;
     }

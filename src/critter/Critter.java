@@ -1,8 +1,9 @@
 package critter;
 
 import ast.Program;
+import world.Entity;
 
-public class Critter{
+public class Critter extends Entity{
 	
 	Program p;
 	String species;

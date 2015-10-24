@@ -1,15 +1,22 @@
 package world;
+import critter.*;
+import interpret.Outcome;
+
+import java.util.LinkedList;
 
 /**
  * A representation of the world.
+ * Class invariant: critters contains references to all critters in the world
  */
 public class World{
-    /**
+    /*
      * Entities are accessed via map[column][row]
      */
     private Entity[][] map;
     private final int COLUMNS;
     private final int ROWS;
+
+    LinkedList<Critter> critters;
 
     public int hex(int[] n){
 		return 0;
@@ -35,4 +42,10 @@ public class World{
     public boolean inBounds(Coordinate c){
         return inBounds(c.getX(), c.getY());
     }
+
+    public boolean evaluate(Outcome outcome){
+        //TODO Implement this
+        return false;
+    }
+
 }
