@@ -48,3 +48,9 @@
 4. Creation of Test cases and a standard test suite to run for all classes. Work level approx: 5-7/10.  Mostly Max.
 5. Finishing written problems: Depending how hard they are, anywhere from 3-5/10. 
 6. Anything that involves parsing a file: Max
+
+###Checklist:
+1. Creation of the Interpreter[80?%]
+   Creation of the outcome Class[100%]
+   Creation of the critter class[90%]
+   fixing mutations and creating new ones[50%]
