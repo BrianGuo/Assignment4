@@ -1,4 +1,4 @@
-package critter;
+package world;
 
 import ast.Program;
 import world.Entity;
@@ -45,5 +45,17 @@ public class Critter extends Entity{
 			return;
 		else
 			attributes[index] = value;
+	}
+
+	public String toString(){
+		//TODO
+		return "";
+	}
+
+	@Override
+	public int appearance() {
+
+		//TODO
+		return 0;
 	}
 }

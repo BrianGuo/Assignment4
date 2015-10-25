@@ -5,27 +5,27 @@ import exceptions.IllegalCoordinateException;
 
 /**
  * A class that represents a location on the world.
- * Class invariant: x>= 0, y >= 0
+ * Class invariant: col>= 0, y >= 0
  */
 public class Coordinate {
-    private int x;
-    private int y;
+    private int col;
+    private int row;
 
-    public Coordinate(int x, int y) throws IllegalCoordinateException{
-        checkBounds(x,y);
-        this.x = x;
-        this.y = y;
+    public Coordinate(int col, int row) throws IllegalCoordinateException{
+        checkBounds(col,row);
+        this.col = col;
+        this.row = row;
     }
 
     /**
-     * Preserves the class invariant of x >= 0, y >= 0
-     * @param x X coordinate of the point
-     * @param y Y coordinate of the point
+     * Preserves the class invariant of col >= 0, row >= 0
+     * @param col X coordinate of the point
+     * @param row Y coordinate of the point
      * @throws IllegalCoordinateException
      */
 
-    public void checkBounds(int x, int y) throws IllegalCoordinateException{
-        if(x < 0 || y < 0){
+    public void checkBounds(int col, int row) throws IllegalCoordinateException{
+        if(col < 0 || row < 0){
             throw new IllegalCoordinateException();
         }
     }
@@ -38,16 +38,16 @@ public class Coordinate {
      */
     public void move(int destX, int destY) throws IllegalCoordinateException {
         checkBounds(destX, destY);
-        x = destX;
-        y = destY;
+        col = destX;
+        row = destY;
     }
 
-    public int getX() {
-        return x;
+    public int getCol() {
+        return col;
     }
 
-    public int getY() {
-        return y;
+    public int getRow() {
+        return row;
     }
 
 }

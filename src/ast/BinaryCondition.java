@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-import critter.Critter;
+import world.Critter;
 import parse.Token;
 import parse.TokenType;
 import world.World;

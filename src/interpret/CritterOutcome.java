@@ -2,7 +2,7 @@ package interpret;
 
 import parse.TokenType;
 import ast.Expr;
-import critter.Critter;
+import world.Critter;
 public class CritterOutcome implements Outcome {
 	
 	Critter cr;
@@ -14,4 +14,10 @@ public class CritterOutcome implements Outcome {
 		this.action = action;
 		this.num = num;
 	}
+
+	public Critter getCritter(){
+		return cr;
+	}
+	//public
+
 }

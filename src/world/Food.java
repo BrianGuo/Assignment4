@@ -1,8 +1,13 @@
 package world;
 
 
-public class Food extends Entity{
+import exceptions.IllegalCoordinateException;
 
+/**
+ * amt is always > 0
+ */
+public class Food extends Entity{
+    private int amt; //amount of food remaining
     @Override
     public String toString(){
         //TODO: Implement
@@ -10,7 +15,13 @@ public class Food extends Entity{
     }
 
     public int appearance(){
-        //TODO: implement
-        return 0;
+        return amt;
+    }
+    public Food(int c, int r, int amt) throws IllegalCoordinateException, IllegalArgumentException {
+        super(c,r);
+        if(amt <= 0){
+            throw new IllegalArgumentException();
+        }
+        this.amt = amt;
     }
 }

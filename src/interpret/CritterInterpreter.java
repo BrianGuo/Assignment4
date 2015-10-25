@@ -9,7 +9,7 @@ import ast.Expr;
 import ast.Program;
 import ast.Rule;
 import ast.UpdateNode;
-import critter.Critter;
+import world.Critter;
 import parse.TokenType;
 import world.World;
 

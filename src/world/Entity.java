@@ -28,4 +28,15 @@ abstract public class Entity {
         this.location = new Coordinate(x,y);
     }
 
+    public Coordinate getLocation(){
+        return location;
+    }
+
+    public int getCol(){
+        return location.getCol();
+    }
+
+    public int getRow(){
+        return location.getRow();
+    }
 }

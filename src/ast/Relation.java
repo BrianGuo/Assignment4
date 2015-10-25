@@ -2,10 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
-import critter.Critter;
+import world.Critter;
 import parse.Token;
 import world.World;
-import parse.TokenType;
+
 /**
  * Represents a typical relation between two arithmetic expressions (<=, !=, >, etc).
  */
