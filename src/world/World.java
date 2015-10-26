@@ -128,7 +128,7 @@ public class World{
 
         cur = sc.nextLine().split("\\s+");
         while(!cur[0].equals("name")){
-            cur = sc.nextLine().split("\\s+");
+            cur = sc.nextLine().split("\\s+", 1);
         }
         String name = cur[1];
 
@@ -136,7 +136,7 @@ public class World{
         while(!cur[0].equals("size")){
             cur = sc.nextLine().split("\\s+");
         }
-        World world = Factory.getWorld(name, cur[1], cur[2]);
+        World world = Factory.getWorld(cur[1], cur[2], name);
 
         while(sc.hasNext()){
             cur = sc.nextLine().split("\\s+");
