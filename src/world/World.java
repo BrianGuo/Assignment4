@@ -189,7 +189,7 @@ public class World{
         return false;
     }
 
-    private void add(Entity e) {
+    public void add(Entity e) {
         if (inBounds(e.getLocation())) {
             map[e.getRow()][e.getCol()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
@@ -197,7 +197,16 @@ public class World{
             }
         }
     }
-    
+
+    public void addRandom(Entity e){
+        try{
+            e.move(getRandomUnoccupiedLocation());
+        }
+        catch(IllegalCoordinateException ex){
+            //this shouldn't happen
+        }
+    }
+
     public LinkedList<Critter> getCritters(){
     	return critters;
     }

@@ -43,7 +43,7 @@ public class NegationNode extends UnaryNode implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		sb.append("-" + expression.toString());
+		sb.append("- " + expression.toString());
 		return sb;
 	}
 

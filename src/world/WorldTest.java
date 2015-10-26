@@ -6,10 +6,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class WorldTest {
+    World w;
 
     @Before
     public void setUp() throws Exception {
-        World w = Factory.getRandomWorld();
+        w = Factory.getRandomWorld();
     }
 
     @Test
@@ -28,17 +29,15 @@ public class WorldTest {
     }
 
     @Test
-    public void testInBounds1() throws Exception {
-
-    }
-
-    @Test
     public void testEvaluate() throws Exception {
 
     }
 
     @Test
     public void testAdd() throws Exception {
-
+        w.add(new Rock(4,5 ));
+        assertTrue(w.getCritters().isEmpty());
+        assertTrue(w.hexAt(4,5) instanceof Rock);
+        assertTrue(w.hexAt(4,5) == w.hexAt(new Coordinate(4,5)));
     }
 }

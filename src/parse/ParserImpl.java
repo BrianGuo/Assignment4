@@ -290,6 +290,7 @@ class ParserImpl implements Parser {
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
         Token cur = t.peek();
         Expr factor;
+
         if(cur.getType() == TokenType.MEM || cur.isMemSugar()){
             factor = parseMemory(t);
         }

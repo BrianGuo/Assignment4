@@ -66,6 +66,6 @@ public class Simulator {
 	}
 	public void putCritterRandomly(String filename) {
 		Critter c = Factory.getCritter(filename);
-		world.putCritterRandomly(c);
+		world.addRandom(c);
 	}
 }

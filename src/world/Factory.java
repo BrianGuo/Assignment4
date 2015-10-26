@@ -20,9 +20,15 @@ public class Factory {
         return new World(Integer.parseInt(cols), Integer.parseInt(rows), name);
     }
 
-    public static World getRandomWorld() throws SyntaxError{
-        return new World();
+    public static World getRandomWorld() {
+        try {
+            return new World();
+        } catch (SyntaxError e) {
+            //this shouldn't happen
+            return null;
+        }
     }
+
 
     /**
      * Creates a world.
@@ -35,7 +41,7 @@ public class Factory {
         return World.parseWorld(r);
     }
 
-    public static Critter getCritter(String file) throws IllegalCoordinateException{
+    public static Critter getCritter(String file){
         //TODO
         return null;
     }
