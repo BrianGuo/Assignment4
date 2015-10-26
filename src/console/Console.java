@@ -44,12 +44,7 @@ public class Console {
         case "critters": {
             String filename = scan.next();
             int n = scan.nextInt();
-            try{
-            	loadCritters(filename, n);
-            }
-            catch(MissingElementException e){
-            	System.out.println("You have not loaded a world");
-            }
+            loadCritters(filename, n);
             break;
         }
         case "step": {
@@ -127,11 +122,8 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n) throws MissingElementException {
-        if (!(sim.hasWorld()))
-        	sim.putCritterRandomly(filename);
-        else
-        	throw new MissingElementException("World");
+    private void loadCritters(String filename, int n)  {
+        sim.putCritterRandomly(filename);
     }
 
     /**
@@ -139,7 +131,7 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void advanceTime(int n) throws MissingElementException {
+    private void advanceTime(int n) throws MissingElementException{
         if(sim != null)
         	sim.advance(n);
         else

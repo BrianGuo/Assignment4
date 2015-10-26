@@ -125,34 +125,37 @@ public class Sensor extends UnaryNode implements Expr {
 	public int evaluate(Critter c, World w) {
 		int direction = c.getDirection();
 		int[] coordinates = c.getCoordinates();
-		Coordinate newCoordinates;
+		Coordinate newCoordinates = null;
+		if (r == null )
+			return 0;
+		int coefficient = r.evaluate(c, w);
 		try{
 			switch (direction){
 			case 0:
-				newCoordinates = new Coordinate(coordinates[0],coordinates[1]+1);
+				newCoordinates = new Coordinate(coordinates[0],coordinates[1]+1*coefficient);
 				break;
 			case 1:
-				newCoordinates = new Coordinate(coordinates[0]+1,coordinates[1]+1);
+				newCoordinates = new Coordinate(coordinates[0]+1*coefficient,coordinates[1]+1*coefficient);
 				break;
 			case 2:
-				newCoordinates = new Coordinate(coordinates[0]+1,coordinates[1]);
+				newCoordinates = new Coordinate(coordinates[0]+1*coefficient,coordinates[1]);
 				break;
 			case 3:
-				newCoordinates = new Coordinate(coordinates[0],coordinates[1]-1);
+				newCoordinates = new Coordinate(coordinates[0],coordinates[1]-1*coefficient);
 				break;
 			case 4:
-				newCoordinates = new Coordinate(coordinates[0]-1,coordinates[1]-1);
+				newCoordinates = new Coordinate(coordinates[0]-1*coefficient,coordinates[1]-1*coefficient);
 				break;
 			case 5:
-				newCoordinates = new Coordinate(coordinates[0]-1,coordinates[1]);
+				newCoordinates = new Coordinate(coordinates[0]-1*coefficient,coordinates[1]);
 				break;
 			default:
 				break;
 			}
+			return w.hexAt(newCoordinates).appearance();
 		}
 		catch(IllegalCoordinateException e){
 			return 0;
 		}
-		return w.hex(newCoordinates);
 	}
 }

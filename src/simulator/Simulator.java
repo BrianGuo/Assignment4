@@ -64,8 +64,10 @@ public class Simulator {
 	public boolean hasWorld() {
 		return (world != null);
 	}
-	public void putCritterRandomly(String filename) {
+	public void putCritterRandomly(String filename) throws MissingElementException{
 		Critter c = Factory.getCritter(filename);
+		if (world == null)
+			throw new MissingElementException();
 		world.putCritterRandomly(c);
 	}
 }
