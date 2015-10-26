@@ -6,6 +6,8 @@ import exceptions.SyntaxError;
 import java.io.Reader;
 
 public class Factory {
+
+
     /**
      * //TODO: THIS SHOULD RETURN A RANDOMZIED WORLD
      * Creates a blank world.  Handles String conversions and stuff.
@@ -14,8 +16,12 @@ public class Factory {
      * @param name # name of the world
      * @return An empty world
      */
-    protected static World getWorld( String cols, String rows, String name){
+    protected static World getWorld( String cols, String rows, String name) throws SyntaxError{
         return new World(Integer.parseInt(cols), Integer.parseInt(rows), name);
+    }
+
+    public static World getRandomWorld() throws SyntaxError{
+        return new World();
     }
 
     /**

@@ -26,7 +26,6 @@ public class World{
 
     LinkedList<Critter> critters;
 
-
     /**
      * Front-end using coordinate.
      * @param c coordinate to look at
@@ -95,7 +94,7 @@ public class World{
      * @param rows height of the world in rows
      * @param name name of the world
      */
-    World(int columns, int rows, String name){
+    World(int columns, int rows, String name) throws SyntaxError{
         //invalid world dimensions
         if (2*rows + columns > 0){
         	throw new SyntaxError();
@@ -109,7 +108,7 @@ public class World{
     /**
      * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
      */
-    World(){
+    World() throws SyntaxError{
         this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
         populate();
     }
@@ -229,6 +228,7 @@ public class World{
      * @param c The heretic to be smited
      */
     public void kill(Critter c){
+        //TODO Turn critter into food
         map[c.getCol()][c.getRow()] = null;
         critters.remove(c);
     }
