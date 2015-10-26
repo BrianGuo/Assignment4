@@ -29,11 +29,15 @@ public class Factory {
         return World.parseWorld(r);
     }
 
-    public static Critter getCritter(String file, String col, String row, String direction) throws IllegalCoordinateException{
+    public static Critter getCritter(String file) throws IllegalCoordinateException{
         //TODO
         return null;
     }
 
+    public static Critter getCritter(String name, String col, String row, String direction) {
+        //TODO
+        return null;
+    }
     public static Rock getRock(String col, String row) throws IllegalCoordinateException{
         return new Rock(Integer.parseInt(col), Integer.parseInt(row));
     }
@@ -42,5 +46,6 @@ public class Factory {
         //TODO: Implement FOOD_PER_SIZE
         return new Food(Integer.parseInt(col), Integer.parseInt(row), Integer.parseInt(amt));
     }
+
 
 }

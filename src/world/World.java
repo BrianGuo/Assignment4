@@ -4,12 +4,13 @@ import exceptions.SyntaxError;
 import interpret.Outcome;
 
 import java.io.Reader;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * A representation of the world.
  * Class invariant: critters contains references to all critters in the world
+ * Each element in map either contains a Critter, Food, or Rock object, or null if empty.
+ * In hindsight, using the observer pattern would make removing things from the world much easier...
  */
 public class World{
     /*
@@ -18,28 +19,101 @@ public class World{
     private Entity[][] map;
     private final int COLUMNS;
     private final int ROWS;
+    static final int DEFAULT_COLS = 25;
+    static final int DEFAULT_ROWS = (int) (DEFAULT_COLS * 1.37);
+    static final double ROCK_FREQUENCY = 0.15;
     private String name;
 
     LinkedList<Critter> critters;
 
-    public int hex(Coordinate c){
-		return 0;
-	}
-   
-    
-    protected World(int columns, int rows, String name){
-        //TODO: deal with invalid world sizes
+
+    /**
+     * Front-end using coordinate.
+     * @param c coordinate to look at
+     * @return Entity at that location, or null if empty
+     */
+    public Entity hexAt(Coordinate c){
+        return hexAt(c.getCol(), c.getRow());
+    }
+
+    /**
+     * Requires: c, r are valid
+     * @param c column to look at
+     * @param r row to look at
+     * @return Entity at that location, or null if empty
+     */
+    public Entity hexAt(int c, int r){
+        return map[c][r];
+    }
+
+    /**
+     * Prints out a visual representation of what is on the given hex
+     * @param col column of the desired entity
+     * @param row row of the desired entity
+     * @return string representation of the entity (or "-" if empty)
+     */
+    public String hexToString(int col, int row){
+        try{
+            return map[col][row].toString();
+        }
+        catch(NullPointerException e){
+            return "-";
+        }
+    }
+
+    /**
+     * Front-end for hexToString() that takes a coordinate
+     * @param c
+     * @return string representation of the entity whose location is at c (or "-" if empty)
+     */
+    public String hexToString(Coordinate c){
+        return hexToString(c.getCol(), c.getRow());
+    }
+
+    /**
+     * Populates an empty world with rocks, with a ROCK_FREQUENCY chance per hex.
+     * Requires: World is empty.  Otherwise it can overwrite a critter, which is really bad.
+     */
+    private void populate(){
+        for(int i = 0; i < COLUMNS; i++){
+            for(int j = 0; j < ROWS; j++){
+                if(Math.random() < ROCK_FREQUENCY){
+                    try{
+                        map[i][j] = new Rock(i,j);
+                    }
+                    catch(IllegalCoordinateException e){
+                        //This will never happen
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The standard constructor for a world.
+     * @param columns width of the world in columns
+     * @param rows height of the world in rows
+     * @param name name of the world
+     */
+    World(int columns, int rows, String name){
+        //invalid world dimensions
+        if (2*rows + columns > 0){
+        	throw new SyntaxError();
+        }
         COLUMNS = columns;
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
     }
 
-    private World(String columns, String rows, String name){
-        this(Integer.parseInt(columns), Integer.parseInt(rows), name);
+    /**
+     * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
+     */
+    World(){
+        this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
+        populate();
     }
 
-    //TODO: ADD A METHOD TO SET UP A RANDOM WORLD
     /**
      * Creates a world, given a reader.  Intended for use with a factory method.
      * Ignores any line that does not start with "name", "size", "rock", "food", or "critter",
@@ -116,7 +190,7 @@ public class World{
         return false;
     }
 
-    public void add(Entity e) {
+    private void add(Entity e) {
         if (inBounds(e.getLocation())) {
             map[e.getRow()][e.getCol()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
@@ -129,4 +203,41 @@ public class World{
     	return critters;
     }
 
+    /**
+     * Finds a random, unoccupied location in the world
+     * @return a random, unoccupied Coordinate
+     */
+    private Coordinate getRandomUnoccupiedLocation() throws IllegalCoordinateException{
+        ArrayList<Coordinate> coords = new ArrayList<>();
+        for(int i = 0; i < COLUMNS; i++){
+            for(int j = 0; j < ROWS; j++){
+                if(map[i][j] == null){
+                        coords.add(new Coordinate(i, j));
+                }
+            }
+        }
+        //no unoccupied locations!
+        if(coords.isEmpty()) {
+            throw new IllegalCoordinateException("No legal spots remaining in the world");
+        }
+        Collections.shuffle(coords);
+        return coords.get(0);
+    }
+
+    /**
+     * Kills a critter that has run out of energy and removes it from the map and critter list
+     * @param c The heretic to be smited
+     */
+    public void kill(Critter c){
+        map[c.getCol()][c.getRow()] = null;
+        critters.remove(c);
+    }
+
+    /**
+     * Removes a piece of food that has been completely eaten
+     * @param f The food object to remove
+     */
+    public void clean(Food f){
+        map[f.getCol()][f.getRow()] = null;
+    }
 }

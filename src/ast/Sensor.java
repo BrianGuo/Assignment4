@@ -2,6 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
+import exceptions.IllegalCoordinateException;
+import world.Coordinate;
 import world.Critter;
 import parse.Token;
 import parse.TokenType;
@@ -123,28 +125,33 @@ public class Sensor extends UnaryNode implements Expr {
 	public int evaluate(Critter c, World w) {
 		int direction = c.getDirection();
 		int[] coordinates = c.getCoordinates();
-		int[] newCoordinates = new int[1];
-		switch (direction){
-		case 0:
-			newCoordinates = new int[]{coordinates[0],coordinates[1]+1};
-			break;
-		case 1:
-			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]+1};
-			break;
-		case 2:
-			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]};
-			break;
-		case 3:
-			newCoordinates = new int[]{coordinates[0],coordinates[1]-1};
-			break;
-		case 4:
-			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]-1};
-			break;
-		case 5:
-			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]};
-			break;
-		default:
-			break;
+		Coordinate newCoordinates;
+		try{
+			switch (direction){
+			case 0:
+				newCoordinates = new Coordinate(coordinates[0],coordinates[1]+1);
+				break;
+			case 1:
+				newCoordinates = new Coordinate(coordinates[0]+1,coordinates[1]+1);
+				break;
+			case 2:
+				newCoordinates = new Coordinate(coordinates[0]+1,coordinates[1]);
+				break;
+			case 3:
+				newCoordinates = new Coordinate(coordinates[0],coordinates[1]-1);
+				break;
+			case 4:
+				newCoordinates = new Coordinate(coordinates[0]-1,coordinates[1]-1);
+				break;
+			case 5:
+				newCoordinates = new Coordinate(coordinates[0]-1,coordinates[1]);
+				break;
+			default:
+				break;
+			}
+		}
+		catch(IllegalCoordinateException e){
+			return 0;
 		}
 		return w.hex(newCoordinates);
 	}

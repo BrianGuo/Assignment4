@@ -10,8 +10,7 @@ public class Food extends Entity{
     private int amt; //amount of food remaining
     @Override
     public String toString(){
-        //TODO: Implement
-        return "";
+        return "F";
     }
 
     public int appearance(){
