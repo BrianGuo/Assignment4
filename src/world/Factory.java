@@ -1,10 +1,32 @@
 package world;
 
 import exceptions.IllegalCoordinateException;
+import exceptions.SyntaxError;
+
+import java.io.Reader;
 
 public class Factory {
-    public static World getWorld( String cols, String rows, String name){
+    /**
+     * //TODO: THIS SHOULD RETURN A RANDOMZIED WORLD
+     * Creates a blank world.  Handles String conversions and stuff.
+     * @param cols # of cols int he world
+     * @param rows # of rows int he world
+     * @param name # name of the world
+     * @return An empty world
+     */
+    protected static World getWorld( String cols, String rows, String name){
         return new World(Integer.parseInt(cols), Integer.parseInt(rows), name);
+    }
+
+    /**
+     * Creates a world.
+     * Called from simulator
+     * @param r Reader to read from
+     * @return World read from r
+     * @throws SyntaxError if the world file has invalid irrecoverable syntax errors
+     */
+    public static World getWorld(Reader r) throws SyntaxError{
+        return World.parseWorld(r);
     }
 
     public static Critter getCritter(String file, String col, String row, String direction) throws IllegalCoordinateException{

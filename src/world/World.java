@@ -32,9 +32,13 @@ public class World{
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
-        //TODO: add randomness
     }
 
+    private World(String columns, String rows, String name){
+        this(Integer.parseInt(columns), Integer.parseInt(rows), name);
+    }
+
+    //TODO: ADD A METHOD TO SET UP A RANDOM WORLD
     /**
      * Creates a world, given a reader.  Intended for use with a factory method.
      * Ignores any line that does not start with "name", "size", "rock", "food", or "critter",
@@ -44,7 +48,7 @@ public class World{
      * @throws SyntaxError if the world file has invalid irrecoverable syntax errors
      * (ex. rock -1 0 or rock asdf)
      */
-    public World parseWorld(Reader r) throws SyntaxError{
+    protected static World parseWorld(Reader r) throws SyntaxError{
         Scanner sc = new Scanner(r);
         String[] cur;
 
@@ -81,7 +85,7 @@ public class World{
             //IllegalCoordinate is for negative coords, array index for too few args
             //IllegalArg if wrong type is provided or food amount <= 0
             catch(IllegalCoordinateException | ArrayIndexOutOfBoundsException | IllegalArgumentException e){
-                e.getStackTrace();
+                //e.getStackTrace();
                 throw new SyntaxError("Syntax error in world file");
             }
 
