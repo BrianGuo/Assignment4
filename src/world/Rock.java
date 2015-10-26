@@ -6,8 +6,7 @@ import exceptions.IllegalCoordinateException;
 public class Rock extends Entity{
     @Override
     public String toString() {
-        //TODO
-        return null;
+        return "#";
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Coordinate {
 
     public void checkBounds(int col, int row) throws IllegalCoordinateException{
         if(col < 0 || row < 0){
-            throw new IllegalCoordinateException();
+            throw new IllegalCoordinateException("Negative value for either column or row");
         }
     }
 
