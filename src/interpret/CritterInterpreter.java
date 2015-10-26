@@ -60,4 +60,12 @@ public class CritterInterpreter implements Interpreter {
 		return e.evaluate(cr, w);
 	}
 	
+	public void setWorld(World w) {
+		this.w = w;
+	}
+	
+	public void setCritter(Critter c) {
+		this.cr = c;
+	}
+	
 }

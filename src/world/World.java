@@ -26,6 +26,7 @@ public class World{
 
     LinkedList<Critter> critters;
 
+<<<<<<< HEAD
     /**
      * Front-end using coordinate.
      * @param c coordinate to look at
@@ -196,6 +197,10 @@ public class World{
                 critters.add((Critter) e);
             }
         }
+    }
+    
+    public LinkedList<Critter> getCritters(){
+    	return critters;
     }
 
     /**
