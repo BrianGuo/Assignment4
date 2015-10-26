@@ -96,7 +96,7 @@ public class World{
      */
     World(int columns, int rows, String name) throws SyntaxError{
         //invalid world dimensions
-        if (2*rows + columns > 0){
+        if (2*rows - columns < 0){
         	throw new SyntaxError();
         }
         COLUMNS = columns;
@@ -108,7 +108,7 @@ public class World{
     /**
      * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
      */
-    World() throws SyntaxError{
+    public World() throws SyntaxError{
         this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
         populate();
     }

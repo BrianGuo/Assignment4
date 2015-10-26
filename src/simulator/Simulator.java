@@ -15,10 +15,12 @@ public class Simulator {
 	Interpreter interpreter;
 	World world;
 	
+	
 	public Simulator (World w, Interpreter i) {
 		interpreter = i;
 		world = w;
-		((CritterInterpreter)interpreter).setWorld(world);
+		if (interpreter != null)
+			((CritterInterpreter)interpreter).setWorld(world);
 	}
 	public Simulator (Interpreter i) {
 		interpreter = i;
