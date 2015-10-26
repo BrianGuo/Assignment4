@@ -236,8 +236,8 @@ public class World{
         ArrayList<Coordinate> coords = new ArrayList<>();
         for(int i = 0; i < COLUMNS; i++){
             for(int j = 0; j < ROWS; j++){
-                if(map[i][j] == null){
-                        coords.add(new Coordinate(i, j));
+                if(map[i][j] == null && inBounds(i,j)){
+                    coords.add(new Coordinate(i, j));
                 }
             }
         }
