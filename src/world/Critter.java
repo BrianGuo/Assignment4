@@ -1,5 +1,7 @@
 package world;
 
+import java.util.Random;
+
 import ast.Program;
 import world.Entity;
 
@@ -57,5 +59,41 @@ public class Critter extends Entity{
 
 		//TODO
 		return 0;
+	}
+	private void mutateAttr() {
+		Random r = new Random();
+		int i = r.nextInt(3);
+		switch(i) {
+		case 0:
+			if (r.nextBoolean())
+				attributes[0]++;
+			else if(attributes[0] > 8)
+				attributes[0]--;
+			break;
+		case 1:
+			if (r.nextBoolean())
+				attributes[1]++;
+			else if (attributes[1] > 1)
+				attributes[1]--;
+			break;
+		case 2:
+			if (r.nextBoolean())
+				attributes[2]++;
+			else if (attributes[2]>1)
+				attributes[2]--;
+			break;
+		default:
+			break;
+		}
+	}
+	public void mutate() {
+		Random r = new Random();
+		int counter = 1;
+		while(r.nextInt((int) Math.pow(4, counter)) == 0){
+			if (r.nextBoolean())
+				mutateAttr();
+			else
+				p.mutate();
+		}
 	}
 }

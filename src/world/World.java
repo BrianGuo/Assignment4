@@ -106,5 +106,9 @@ public class World{
             }
         }
     }
+    
+    public LinkedList<Critter> getCritters(){
+    	return critters;
+    }
 
 }
