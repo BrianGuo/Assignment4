@@ -22,10 +22,11 @@ public class World{
 
     LinkedList<Critter> critters;
 
-    public int hex(int[] n){
+    public int hex(Coordinate c){
 		return 0;
 	}
-
+   
+    
     protected World(int columns, int rows, String name){
         //TODO: deal with invalid world sizes
         COLUMNS = columns;

@@ -1,11 +1,19 @@
 package console;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
+
+import interpret.CritterInterpreter;
+import simulator.Simulator;
+import world.World;
+import exceptions.MissingElementException;
 
 /** The console user interface for Assignment 5. */
 public class Console {
     private Scanner scan;
     public boolean done;
+    private Simulator sim;
 
     //TODO world representation...
 
@@ -19,7 +27,7 @@ public class Console {
     }
 
     /**
-     * Processes a single console command provided by the user.
+     * Processes a single console command provided by the user. 
      */
     void handleCommand() {
         String command = scan.next();
@@ -36,12 +44,22 @@ public class Console {
         case "critters": {
             String filename = scan.next();
             int n = scan.nextInt();
-            loadCritters(filename, n);
+            try{
+            	loadCritters(filename, n);
+            }
+            catch(MissingElementException e){
+            	System.out.println("You have not loaded a world");
+            }
             break;
         }
         case "step": {
             int n = scan.nextInt();
-            advanceTime(n);
+            try{
+            	advanceTime(n);
+            }
+            catch(MissingElementException e) {
+            	System.out.println("You have not loaded a world");
+            }
             break;
         }
         case "info": {
@@ -79,7 +97,11 @@ public class Console {
      * Starts new random world simulation.
      */
     private void newWorld() {
-        //TODO implement
+    	CritterInterpreter c = new CritterInterpreter();
+    	World w = Factory.getRandomWorld();
+    	c.setWorld(w);
+        Simulator s = new Simulator(w,c);
+        this.sim = s;
     }
 
     /**
@@ -87,7 +109,15 @@ public class Console {
      * @param filename
      */
     private void loadWorld(String filename) {
-        //TODO implement
+    	CritterInterpreter c = new CritterInterpreter();
+    	try{
+	    	FileReader f = new FileReader(filename);
+	        Simulator s = new Simulator(c);
+	        s.parseWorld(f);
+    	}
+    	catch(FileNotFoundException e) {
+    		System.out.println("File Not Found");
+    	}
     }
 
     /**
@@ -95,17 +125,25 @@ public class Console {
      * n critters with that definition into the world.
      * @param filename
      * @param n
+     * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n) {
-        //TODO implement
+    private void loadCritters(String filename, int n) throws MissingElementException {
+        if (!(sim.hasWorld()))
+        	sim.putCritterRandomly(filename);
+        else
+        	throw new MissingElementException("World");
     }
 
     /**
      * Advances the world by n time steps.
      * @param n
+     * @throws MissingElementException 
      */
-    private void advanceTime(int n) {
-        //TODO implement
+    private void advanceTime(int n) throws MissingElementException {
+        if(sim != null)
+        	sim.advance(n);
+        else
+        	throw new MissingElementException("Simulator");
     }
 
     /**
