@@ -27,26 +27,41 @@ public class World{
 	}
 
     protected World(int columns, int rows, String name){
+        //TODO: deal with invalid world sizes
         COLUMNS = columns;
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
-        //TODO: add randomness
     }
 
+    private World(String columns, String rows, String name){
+        this(Integer.parseInt(columns), Integer.parseInt(rows), name);
+    }
+
+    //TODO: ADD A METHOD TO SET UP A RANDOM WORLD
     /**
      * Creates a world, given a reader.  Intended for use with a factory method.
+     * Ignores any line that does not start with "name", "size", "rock", "food", or "critter",
+     * including blank lines and comments.
      * @param r Reader input.
      * @return The created world, as according to the file.
      * @throws SyntaxError if the world file has invalid irrecoverable syntax errors
      * (ex. rock -1 0 or rock asdf)
      */
-    public World parseWorld(Reader r) throws SyntaxError{
+    protected static World parseWorld(Reader r) throws SyntaxError{
         Scanner sc = new Scanner(r);
         String[] cur;
+
         cur = sc.nextLine().split("\\s+");
+        while(!cur[0].equals("name")){
+            cur = sc.nextLine().split("\\s+");
+        }
         String name = cur[1];
+
         cur = sc.nextLine().split("\\s+");
+        while(!cur[0].equals("size")){
+            cur = sc.nextLine().split("\\s+");
+        }
         World world = Factory.getWorld(name, cur[1], cur[2]);
 
         while(sc.hasNext()){
@@ -54,22 +69,24 @@ public class World{
             try {
                 switch (cur[0]) {
                     case "rock":
-                        add(Factory.getRock(cur[1],cur[2]));
+                        world.add(Factory.getRock(cur[1],cur[2]));
                         break;
                     case "food":
-                        add(Factory.getFood(cur[1], cur[2], cur[3]));
+                        world.add(Factory.getFood(cur[1], cur[2], cur[3]));
                         break;
                     case "critter":
-                        add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
+                        world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
                         break;
                     default:
-                        throw new SyntaxError();
+                        //ignore
+                        break;
                 }
             }
             //IllegalCoordinate is for negative coords, array index for too few args
             //IllegalArg if wrong type is provided or food amount <= 0
             catch(IllegalCoordinateException | ArrayIndexOutOfBoundsException | IllegalArgumentException e){
-                throw new SyntaxError();
+                //e.getStackTrace();
+                throw new SyntaxError("Syntax error in world file");
             }
 
         }
@@ -101,7 +118,7 @@ public class World{
     public void add(Entity e) {
         if (inBounds(e.getLocation())) {
             map[e.getRow()][e.getCol()] = e;
-            if(e instanceof Critter){ //I tried to keep this land free of downcasting, but alas, I have failed.  Forgive me
+            if(e instanceof Critter){ //Forgive me father, for I have sinned
                 critters.add((Critter) e);
             }
         }
