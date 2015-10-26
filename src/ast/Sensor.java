@@ -146,6 +146,7 @@ public class Sensor extends UnaryNode implements Expr {
 		default:
 			break;
 		}
-		return w.hex(newCoordinates);
+		//return w.hex(newCoordinates);
+		return 0;
 	}
 }

@@ -9,7 +9,7 @@ public class WorldTest {
 
     @Before
     public void setUp() throws Exception {
-
+        World w = Factory.getRandomWorld();
     }
 
     @Test
