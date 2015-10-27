@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import exceptions.IllegalCoordinateException;
 import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.*;
@@ -88,7 +89,47 @@ public class Simulator {
 		world.addRandom(c);
 	}
 	
+	public String hexLine(int c, int r) {
+		String result;
+		if (c == 1)
+			result = "  ";
+		else
+			result = "";
+		while (world.inBounds(c,r)){
+			Entity entity = world.hexAt(c,r);
+			if (entity == null)
+				result += "-";
+			else
+				result += entity.toString();
+			result += "   ";
+			c += 2;
+			r += 1;
+		}
+		return result;
+	}
+	
+	
 	public ArrayList<String> hexWorld() {
-		
+		ArrayList<String> results = new ArrayList<String>();
+		int columns = world.getColumns();
+		int c;
+		int r = 0;
+		if (columns %2 == 1) {
+			c = 1;
+		}
+		else{
+			c = 0;
+		}
+		while(world.inBounds(c,r)){
+			results.add(hexLine(c,r));
+			if (c == 0){
+				c = 1;
+				r ++;
+			}
+			else{
+				c = 0;
+			}
+		}
+		return results;
 	}
 }
