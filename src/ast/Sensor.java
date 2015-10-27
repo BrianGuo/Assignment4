@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import exceptions.IllegalCoordinateException;
 import world.Coordinate;
@@ -119,16 +120,10 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	
-
-	@Override
-	public int evaluate(Critter c, World w) {
+	public int evaluateAhead(Critter c, World w, int coefficient){
+		Coordinate newCoordinates = null;
 		int direction = c.getDirection();
 		Coordinate coordinates = c.getCoordinates();
-		Coordinate newCoordinates = null;
-		if (r == null )
-			return 0;
-		int coefficient = r.evaluate(c, w);
 		try{
 			switch (direction){
 			case 0:
@@ -155,7 +150,42 @@ public class Sensor extends UnaryNode implements Expr {
 			return w.hexAt(newCoordinates).appearance();
 		}
 		catch(IllegalCoordinateException e){
+			return -1;
+		}
+	}
+	
+	public int evaluateRandom(Critter c, World w) {
+		Random r = new Random();
+		int endpoint = this.r.evaluate(c, w);
+		return r.nextInt(endpoint);
+	}
+	
+	public int evaluateNearby(Critter c, World w){
+		int direction = r.evaluate(c, w);
+		if (direction > 5 || direction < 0) {
+			direction = Math.abs(direction%6);
+		}
+		int originalDirection = c.getDirection();
+		c.setDirection(direction);
+		int result = evaluateAhead(c,w,1);
+		c.setDirection(originalDirection);
+		return result;
+	}
+
+	@Override
+	public int evaluate(Critter c, World w) {
+		if (r == null)
 			return 0;
+		else if (sense.getType() == TokenType.AHEAD) {
+			int coefficient = r.evaluate(c, w);
+			return evaluateAhead(c,w,coefficient);
+		}
+		else if (sense.getType() == TokenType.NEARBY){
+			return evaluateNearby(c,w);
+		}
+		else {
+			assert(sense.getType() == TokenType.RANDOM);
+			return evaluateRandom(c,w);
 		}
 	}
 }

@@ -135,7 +135,8 @@ public class Console {
      * map of the simulation.
      */
     private void worldInfo() {
-        //TODO implement
+        System.out.println(sim.getTimesteps());
+        System.out.println(sim.getNumCritters());
     }
 
     /**
@@ -144,7 +145,7 @@ public class Console {
      * @param r row of hex
      */
     private void hexInfo(int c, int r) {
-        //TODO implement
+        Entity e = 
     }
 
     /**

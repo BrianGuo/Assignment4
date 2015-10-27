@@ -4,6 +4,7 @@ import world.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import exceptions.MissingElementException;
@@ -15,6 +16,7 @@ public class Simulator {
 	
 	Interpreter interpreter;
 	World world;
+	int timesteps;
 	
 	public Simulator() {}
 	public Simulator (World w, Interpreter i) {
@@ -22,9 +24,11 @@ public class Simulator {
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
+		timesteps = 0;
 	}
 	public Simulator (Interpreter i) {
 		interpreter = i;
+		timesteps = 0;
 	}
 	public void advance(int n){
 		if (world != null){
@@ -36,6 +40,7 @@ public class Simulator {
 					world.evaluate(o);
 				}
 			}
+			timesteps ++;
 		}
 		else{
 			System.out.println("You haven't loaded a world");
@@ -67,7 +72,12 @@ public class Simulator {
 		}
 		
 	}
-	
+	public int getTimesteps() {
+		return timesteps;
+	}
+	public int getNumCritters() {
+		return world.getCritters().size();
+	}
 	public boolean hasWorld() {
 		return (world != null);
 	}
@@ -76,5 +86,9 @@ public class Simulator {
 		if (world == null)
 			throw new MissingElementException();
 		world.addRandom(c);
+	}
+	
+	public ArrayList<String> hexWorld() {
+		
 	}
 }

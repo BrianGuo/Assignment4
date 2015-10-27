@@ -100,4 +100,10 @@ public class Critter extends Entity{
 				p.mutate();
 		}
 	}
+	
+	public void setDirection (int n) {
+		if (0<= n  && n<= 5) {
+			direction = n;
+		}
+	}
 }

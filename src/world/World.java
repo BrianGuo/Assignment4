@@ -40,7 +40,7 @@ public class World{
      * @param c coordinate to look at
      * @return Entity at that location, or null if empty
      */
-    public Entity hexAt(Coordinate c){
+    public Entity hexAt(Coordinate c) throws IllegalCoordinateException{
         return hexAt(c.getCol(), c.getRow());
     }
 
@@ -50,8 +50,13 @@ public class World{
      * @param r row to look at
      * @return Entity at that location, or null if empty
      */
-    public Entity hexAt(int c, int r){
-        return map[c][r];
+    public Entity hexAt(int c, int r) throws IllegalCoordinateException{
+    	try{
+    		return map[c][r];
+    	}
+    	catch(ArrayIndexOutOfBoundsException e){
+    		throw new IllegalCoordinateException("Out of bounds");
+    	}
     }
 
     /**
@@ -207,12 +212,17 @@ public class World{
      */
     public void add(Entity e) {
         //System.out.println(e.getLocation().getRow());
-        if (inBounds(e.getLocation()) && hexAt(e.getLocation()) == null) {
-            map[e.getCol()][e.getRow()] = e;
-            if(e instanceof Critter){ //Forgive me father, for I have sinned
-                critters.add((Critter) e);
-            }
-        }
+    	try{
+	        if (hexAt(e.getLocation()) == null) {
+	            map[e.getCol()][e.getRow()] = e;
+	            if(e instanceof Critter){ //Forgive me father, for I have sinned
+	                critters.add((Critter) e);
+	            }
+	        }
+    	}
+    	catch(IllegalCoordinateException e2) {
+    		System.out.println("You tried to place an entity out of bounds");
+    	}
     }
 
     public void addRandom(Entity e){
