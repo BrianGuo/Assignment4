@@ -70,6 +70,6 @@ public class Simulator {
 		Critter c = Factory.getCritter(filename);
 		if (world == null)
 			throw new MissingElementException();
-		world.putCritterRandomly(c);
+		world.addRandom(c);
 	}
 }

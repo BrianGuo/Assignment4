@@ -1,17 +1,15 @@
 package exceptions;
 
+	
+	
+/**
+ * Created by ball9 on 10/26/2015.
+ */
 public class MissingElementException extends Exception {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public MissingElementException(){
-	}
-	
-	public MissingElementException(String c){
-		super("You are missing a " + c.toString());
-	}
+    public MissingElementException(){
+        super();
+    }
+    public MissingElementException(String msg){
+        super(msg);
+    }
 }

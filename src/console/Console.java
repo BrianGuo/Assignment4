@@ -4,8 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
 
+import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import simulator.Simulator;
+import world.Factory;
 import world.World;
 import exceptions.MissingElementException;
 
@@ -93,7 +95,8 @@ public class Console {
      */
     private void newWorld() {
     	CritterInterpreter c = new CritterInterpreter();
-    	World w = Factory.getRandomWorld();
+        World w = Factory.getRandomWorld();
+
     	c.setWorld(w);
         Simulator s = new Simulator(w,c);
         this.sim = s;

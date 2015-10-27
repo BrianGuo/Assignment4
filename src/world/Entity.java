@@ -39,4 +39,8 @@ abstract public class Entity {
     public int getRow(){
         return location.getRow();
     }
+
+    public void move (Coordinate c) throws IllegalCoordinateException{
+        location.move(c.getCol(), c.getRow());
+    }
 }

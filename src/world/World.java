@@ -17,6 +17,15 @@ public class World{
      * Entities are accessed via map[column][row]
      */
     private Entity[][] map;
+
+    public int getRows() {
+        return ROWS;
+    }
+
+    public int getColumns() {
+        return COLUMNS;
+    }
+
     private final int COLUMNS;
     private final int ROWS;
     static final int DEFAULT_COLS = 25;
@@ -97,12 +106,13 @@ public class World{
     World(int columns, int rows, String name) throws SyntaxError{
         //invalid world dimensions
         if (2*rows - columns < 0){
-        	throw new SyntaxError();
+            throw new SyntaxError();
         }
         COLUMNS = columns;
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
+        critters = new LinkedList<>();
     }
 
     /**
@@ -177,7 +187,7 @@ public class World{
      * True otherwise.
      */
     public boolean inBounds(int c, int r){
-        return !(c>= COLUMNS || c < 0 || 2*r -c > 0 || 2*r - c >= 2*ROWS-COLUMNS);
+        return !(c>= COLUMNS || c < 0 || 2*r -c < 0 || 2*r - c >= 2*ROWS-COLUMNS);
     }
 
     public boolean inBounds(Coordinate c){
@@ -189,15 +199,31 @@ public class World{
         return false;
     }
 
-    private void add(Entity e) {
-        if (inBounds(e.getLocation())) {
-            map[e.getRow()][e.getCol()] = e;
+    /**
+     * Adds an entity to the world.
+     * Precondition: e is a valid location and the location to be added onto is empty.
+     * Silently fails otherwise.
+     * @param e Entity to be added.
+     */
+    public void add(Entity e) {
+        //System.out.println(e.getLocation().getRow());
+        if (inBounds(e.getLocation()) && hexAt(e.getLocation()) == null) {
+            map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
                 critters.add((Critter) e);
             }
         }
     }
-    
+
+    public void addRandom(Entity e){
+        try{
+            e.move(getRandomUnoccupiedLocation());
+        }
+        catch(IllegalCoordinateException ex){
+            //this shouldn't happen
+        }
+    }
+
     public LinkedList<Critter> getCritters(){
     	return critters;
     }
@@ -206,12 +232,12 @@ public class World{
      * Finds a random, unoccupied location in the world
      * @return a random, unoccupied Coordinate
      */
-    private Coordinate getRandomUnoccupiedLocation() throws IllegalCoordinateException{
+    public Coordinate getRandomUnoccupiedLocation() throws IllegalCoordinateException{
         ArrayList<Coordinate> coords = new ArrayList<>();
         for(int i = 0; i < COLUMNS; i++){
             for(int j = 0; j < ROWS; j++){
-                if(map[i][j] == null){
-                        coords.add(new Coordinate(i, j));
+                if(map[i][j] == null && inBounds(i,j)){
+                    coords.add(new Coordinate(i, j));
                 }
             }
         }
