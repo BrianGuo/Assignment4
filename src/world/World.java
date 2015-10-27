@@ -158,9 +158,9 @@ public class World{
                     case "food":
                         world.add(Factory.getFood(cur[1], cur[2], cur[3]));
                         break;
-                    case "critter":
-                        world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
-                        break;
+                    //case "critter":
+                        //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
+                       // break;
                     default:
                         //ignore
                         break;

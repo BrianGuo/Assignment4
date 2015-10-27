@@ -38,7 +38,7 @@ public class ProgramTest {
 
     @Test
     public void testPrintParse() throws Exception {
-        Program prog = ParserFactory.getParser().parse(new FileReader("examples/double_negative.txt"));
+        Program prog = ParserFactory.getParser().parse(new FileReader("examples/example-rules.txt"));
         assertTrue(testIdentity(prog));
     }
 

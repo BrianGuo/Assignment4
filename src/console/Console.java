@@ -51,12 +51,7 @@ public class Console {
         }
         case "step": {
             int n = scan.nextInt();
-            try{
-            	advanceTime(n);
-            }
-            catch(MissingElementException e) {
-            	System.out.println("You have not loaded a world");
-            }
+            advanceTime(n);
             break;
         }
         case "info": {
@@ -108,14 +103,8 @@ public class Console {
      */
     private void loadWorld(String filename) {
     	CritterInterpreter c = new CritterInterpreter();
-    	try{
-	    	FileReader f = new FileReader(filename);
-	        Simulator s = new Simulator(c);
-	        s.parseWorld(f);
-    	}
-    	catch(FileNotFoundException e) {
-    		System.out.println("File Not Found");
-    	}
+	    Simulator s = new Simulator(c);
+	    s.parseWorld(filename);
     }
 
     /**
@@ -134,11 +123,11 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void advanceTime(int n) throws MissingElementException{
+    private void advanceTime(int n) {
         if(sim != null)
         	sim.advance(n);
         else
-        	throw new MissingElementException("Simulator");
+        	System.out.println("You haven't loaded a simulator");
     }
 
     /**

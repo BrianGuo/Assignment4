@@ -11,8 +11,7 @@ public class Rock extends Entity{
 
     @Override
     public int appearance() {
-        //TODO
-        return 0;
+        return -1;
     }
 
     public Rock(int c, int r) throws IllegalCoordinateException{

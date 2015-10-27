@@ -2,6 +2,7 @@ package simulator;
 
 import world.*;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
 
@@ -15,7 +16,7 @@ public class Simulator {
 	Interpreter interpreter;
 	World world;
 	
-	
+	public Simulator() {}
 	public Simulator (World w, Interpreter i) {
 		interpreter = i;
 		world = w;
@@ -25,7 +26,7 @@ public class Simulator {
 	public Simulator (Interpreter i) {
 		interpreter = i;
 	}
-	public void advance(int n) throws MissingElementException {
+	public void advance(int n){
 		if (world != null){
 			LinkedList<Critter> critters = world.getCritters();
 			for (int i =0; i< n; i++ ){
@@ -37,7 +38,7 @@ public class Simulator {
 			}
 		}
 		else{
-			throw new MissingElementException("World");
+			System.out.println("You haven't loaded a world");
 		}
 	}
 	public void setWorld(World w){
@@ -51,14 +52,18 @@ public class Simulator {
 		if (world != null)
 			((CritterInterpreter)interpreter).setWorld(world);
 	}
-	public void parseWorld(FileReader f){
+	public void parseWorld(String filename){
 		try {
+			FileReader f = new FileReader(filename);
 			this.world = Factory.getWorld(f);
 			if (interpreter != null)
 				((CritterInterpreter) interpreter).setWorld(world);
 		}
 		catch (SyntaxError e) {
 			System.out.println("Your world file has syntax errors");
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("Your File was not found");
 		}
 		
 	}
