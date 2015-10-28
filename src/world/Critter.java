@@ -13,15 +13,19 @@ public class Critter extends Entity{
 	int direction;
 	Coordinate coordinates;
 	int[] attributes;
-	int memsize;
 	Rule LastRule;
 	
-	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize) {
+	public Critter(int[] attributes, int direction, String species) {
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
-		this.coordinates = coordinates;
-		this.memsize = memsize;
+	}
+	
+	public Critter(int[] attributes, int direction, String species, Coordinate c) {
+		this.attributes = attributes;
+		this.direction = direction;
+		this.species = species;
+		this.coordinates = c;
 	}
 	
 	public int getAttributeAtIndex(int n){
@@ -55,12 +59,16 @@ public class Critter extends Entity{
 		return coordinates;
 	}
 	public void UpdateNodeAt(int index, int value){
-		if (index < 7 || index > memsize)
+		if (index < 7 || index > attributes[0])
 			return;
 		else if (index == 7 && (value < 0 || value > 99))
 			return;
 		else
 			attributes[index] = value;
+	}
+	
+	public void setNodeAt(int index, int value) {
+		attributes[index] = value;
 	}
 
 	public String toString(){
