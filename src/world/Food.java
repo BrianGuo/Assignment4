@@ -13,6 +13,9 @@ public class Food extends Entity{
         return "F";
     }
 
+    public int getAmt() {
+    	return amt;
+    }
     public int appearance(){
         return -1* amt - 1;
     }

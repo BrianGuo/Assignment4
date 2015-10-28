@@ -40,8 +40,8 @@ public class Simulator {
 					Outcome o = interpreter.interpret(c.getProgram());
 					world.evaluate(o);
 				}
+				timesteps ++;
 			}
-			timesteps ++;
 		}
 		else{
 			System.out.println("You haven't loaded a world");
@@ -108,8 +108,31 @@ public class Simulator {
 		return result;
 	}
 	
-	
-	public ArrayList<String> hexWorld() {
+	public void hexLocation(int c, int r) {
+		Entity e = world.hexAt(c, r);
+		if (!world.inBounds(c, r))
+			System.out.println("This coordinate is out of bounds");
+		else if (e == null)
+			System.out.println("There is nothing at this coordinate");
+		else if (e instanceof Rock)
+			System.out.println("This coordinate contains a rock");
+		else if (e instanceof Food) {
+			System.out.println("This coordinate contains food");
+			System.out.println("The amount of food is: " + ((Food)e).getAmt());
+		}
+		else {
+			assert(e instanceof Critter);
+			Critter cr = (Critter) e;
+			System.out.println("This coordinate contains a critter");
+			System.out.println("This critter is of species: " +cr.getSpecies());
+			for (int i = 0; i < cr.getAttributeAtIndex(0); i++) {
+				System.out.println("The attribute at index " + i + " is the value " + cr.getAttributeAtIndex(i));
+			}
+			System.out.println("The program is:\n" + cr.getProgram().toString());
+			System.out.println("The last Rule executed was" + cr.getLastRule().toString());
+		}
+	}
+	public void hexWorld() {
 		ArrayList<String> results = new ArrayList<String>();
 		int columns = world.getColumns();
 		int c;
@@ -130,6 +153,7 @@ public class Simulator {
 				c = 0;
 			}
 		}
-		return results;
+		for (int i = results.size()-1; i >= 0; i--)
+			System.out.println(results.get(i));
 	}
 }

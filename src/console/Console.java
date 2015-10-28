@@ -83,6 +83,7 @@ public class Console {
     public Console() {
         scan = new Scanner(System.in);
         done = false;
+        sim = new Simulator(); //Piazza question mentioned we should start a new simulator on every loadup
     }
 
     /**
@@ -105,6 +106,7 @@ public class Console {
     	CritterInterpreter c = new CritterInterpreter();
 	    Simulator s = new Simulator(c);
 	    s.parseWorld(filename);
+	    this.sim = s;
     }
 
     /**
@@ -135,8 +137,9 @@ public class Console {
      * map of the simulation.
      */
     private void worldInfo() {
-        System.out.println(sim.getTimesteps());
-        System.out.println(sim.getNumCritters());
+        System.out.println("Timesteps: " +sim.getTimesteps());
+        System.out.println("Number of Critters: " + sim.getNumCritters());
+        sim.hexWorld();
     }
 
     /**
@@ -145,7 +148,7 @@ public class Console {
      * @param r row of hex
      */
     private void hexInfo(int c, int r) {
-        Entity e = 
+        sim.hexLocation(c, r);
     }
 
     /**

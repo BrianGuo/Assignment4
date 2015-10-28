@@ -3,6 +3,7 @@ package world;
 import java.util.Random;
 
 import ast.Program;
+import ast.Rule;
 import world.Entity;
 
 public class Critter extends Entity{
@@ -13,6 +14,7 @@ public class Critter extends Entity{
 	Coordinate coordinates;
 	int[] attributes;
 	int memsize;
+	Rule LastRule;
 	
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize) {
 		this.attributes = attributes;
@@ -30,7 +32,19 @@ public class Critter extends Entity{
 			return 0;
 		}
 	}
+	public String getLastRule() {
+		if (LastRule != null)
+			return LastRule.toString();
+		else
+			return null;
+	}
 	
+	public void setLastRule(Rule r) {
+		LastRule = r;
+	}
+	public String getSpecies() {
+		return species;
+	}
 	public Program getProgram() {
 		return p;
 	}
