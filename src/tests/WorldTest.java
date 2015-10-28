@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import world.*;
 
+import java.io.FileReader;
+
 import static org.junit.Assert.*;
 
 public class WorldTest {
@@ -24,7 +26,7 @@ public class WorldTest {
 
     @Test
     public void testParseWorld() throws Exception {
-
+        World newWorld = Factory.getWorld(new FileReader("world.txt"));
     }
 
     @Test
@@ -47,7 +49,7 @@ public class WorldTest {
     public void testGetters() throws Exception {
         assertTrue(w.getCritters().isEmpty());
         assertTrue(w.hexAt(4, 5) instanceof Rock);
-        assertTrue(w.hexAt(4,5).appearance() == 0);
+        assertTrue(w.hexAt(4,5).appearance() == w.ROCK_VALUE);
         assertTrue(w.hexAt(4, 5).toString().equals("#"));
         assertTrue(w.hexAt(4, 5) == w.hexAt(new Coordinate(4, 5)));
     }
@@ -99,4 +101,6 @@ public class WorldTest {
     }
 
     //TODO: write a similar one for kill()
+
+
 }
