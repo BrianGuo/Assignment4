@@ -40,7 +40,7 @@ public class World{
      * @param c coordinate to look at
      * @return Entity at that location, or null if empty
      */
-    public Entity hexAt(Coordinate c){
+    public Entity hexAt(Coordinate c) {
         return hexAt(c.getCol(), c.getRow());
     }
 
@@ -51,7 +51,11 @@ public class World{
      * @return Entity at that location, or null if empty
      */
     public Entity hexAt(int c, int r){
-        return map[c][r];
+    	if (inBounds(c,r))
+    		return map[c][r];
+    	else{
+    		return null;
+    	}
     }
 
     /**
@@ -118,7 +122,7 @@ public class World{
     /**
      * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
      */
-    World() throws SyntaxError{
+    public World() throws SyntaxError{
         this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
         populate();
     }
@@ -158,9 +162,9 @@ public class World{
                     case "food":
                         world.add(Factory.getFood(cur[1], cur[2], cur[3]));
                         break;
-                    case "critter":
-                        world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
-                        break;
+                    //case "critter":
+                        //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
+                       // break;
                     default:
                         //ignore
                         break;
@@ -207,7 +211,7 @@ public class World{
      */
     public void add(Entity e) {
         //System.out.println(e.getLocation().getRow());
-        if (inBounds(e.getLocation()) && hexAt(e.getLocation()) == null) {
+        if (hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
                 critters.add((Critter) e);

@@ -13,8 +13,11 @@ public class Food extends Entity{
         return "F";
     }
 
+    public int getAmt() {
+    	return amt;
+    }
     public int appearance(){
-        return amt;
+        return -1* amt - 1;
     }
     public Food(int c, int r, int amt) throws IllegalCoordinateException, IllegalArgumentException {
         super(c,r);

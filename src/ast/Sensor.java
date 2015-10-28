@@ -1,7 +1,10 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import exceptions.IllegalCoordinateException;
+import world.Coordinate;
 import world.Critter;
 import parse.Token;
 import parse.TokenType;
@@ -117,36 +120,72 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
+	public int evaluateAhead(Critter c, World w, int coefficient){
+		Coordinate newCoordinates = null;
+		int direction = c.getDirection();
+		Coordinate coordinates = c.getCoordinates();
+		try{
+			switch (direction){
+			case 0:
+				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*coefficient);
+				break;
+			case 1:
+				newCoordinates = new Coordinate(coordinates.getCol()+1*coefficient,coordinates.getRow()+1*coefficient);
+				break;
+			case 2:
+				newCoordinates = new Coordinate(coordinates.getCol()+1*coefficient,coordinates.getRow());
+				break;
+			case 3:
+				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()-1*coefficient);
+				break;
+			case 4:
+				newCoordinates = new Coordinate(coordinates.getCol()-1*coefficient,coordinates.getRow()-1*coefficient);
+				break;
+			case 5:
+				newCoordinates = new Coordinate(coordinates.getCol()-1*coefficient,coordinates.getRow());
+				break;
+			default:
+				break;
+			}
+			return w.hexAt(newCoordinates).appearance();
+		}
+		catch(IllegalCoordinateException e){
+			return -1;
+		}
+	}
 	
+	public int evaluateRandom(Critter c, World w) {
+		Random r = new Random();
+		int endpoint = this.r.evaluate(c, w);
+		return r.nextInt(endpoint);
+	}
+	
+	public int evaluateNearby(Critter c, World w){
+		int direction = r.evaluate(c, w);
+		if (direction > 5 || direction < 0) {
+			direction = Math.abs(direction%6);
+		}
+		int originalDirection = c.getDirection();
+		c.setDirection(direction);
+		int result = evaluateAhead(c,w,1);
+		c.setDirection(originalDirection);
+		return result;
+	}
 
 	@Override
 	public int evaluate(Critter c, World w) {
-		int direction = c.getDirection();
-		int[] coordinates = c.getCoordinates();
-		int[] newCoordinates = new int[1];
-		switch (direction){
-		case 0:
-			newCoordinates = new int[]{coordinates[0],coordinates[1]+1};
-			break;
-		case 1:
-			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]+1};
-			break;
-		case 2:
-			newCoordinates = new int[]{coordinates[0]+1,coordinates[1]};
-			break;
-		case 3:
-			newCoordinates = new int[]{coordinates[0],coordinates[1]-1};
-			break;
-		case 4:
-			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]-1};
-			break;
-		case 5:
-			newCoordinates = new int[]{coordinates[0]-1,coordinates[1]};
-			break;
-		default:
-			break;
+		if (r == null)
+			return 0;
+		else if (sense.getType() == TokenType.AHEAD) {
+			int coefficient = r.evaluate(c, w);
+			return evaluateAhead(c,w,coefficient);
 		}
-		//return w.hex(newCoordinates);
-		return 0;
+		else if (sense.getType() == TokenType.NEARBY){
+			return evaluateNearby(c,w);
+		}
+		else {
+			assert(sense.getType() == TokenType.RANDOM);
+			return evaluateRandom(c,w);
+		}
 	}
 }

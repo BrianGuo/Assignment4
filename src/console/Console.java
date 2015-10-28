@@ -46,22 +46,12 @@ public class Console {
         case "critters": {
             String filename = scan.next();
             int n = scan.nextInt();
-            try{
-            	loadCritters(filename, n);
-            }
-            catch(MissingElementException e){
-            	System.out.println("You have not loaded a world");
-            }
+            loadCritters(filename, n);
             break;
         }
         case "step": {
             int n = scan.nextInt();
-            try{
-            	advanceTime(n);
-            }
-            catch(MissingElementException e) {
-            	System.out.println("You have not loaded a world");
-            }
+            advanceTime(n);
             break;
         }
         case "info": {
@@ -93,6 +83,7 @@ public class Console {
     public Console() {
         scan = new Scanner(System.in);
         done = false;
+        sim = new Simulator(); //Piazza question mentioned we should start a new simulator on every loadup
     }
 
     /**
@@ -113,14 +104,9 @@ public class Console {
      */
     private void loadWorld(String filename) {
     	CritterInterpreter c = new CritterInterpreter();
-    	try{
-	    	FileReader f = new FileReader(filename);
-	        Simulator s = new Simulator(c);
-	        s.parseWorld(f);
-    	}
-    	catch(FileNotFoundException e) {
-    		System.out.println("File Not Found");
-    	}
+	    Simulator s = new Simulator(c);
+	    s.parseWorld(filename);
+	    this.sim = s;
     }
 
     /**
@@ -130,11 +116,8 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n) throws MissingElementException {
-        if (!(sim.hasWorld()))
-        	sim.putCritterRandomly(filename);
-        else
-        	throw new MissingElementException("World");
+    private void loadCritters(String filename, int n)  {
+        sim.putCritterRandomly(filename);
     }
 
     /**
@@ -142,11 +125,11 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void advanceTime(int n) throws MissingElementException {
+    private void advanceTime(int n) {
         if(sim != null)
         	sim.advance(n);
         else
-        	throw new MissingElementException("Simulator");
+        	System.out.println("You haven't loaded a simulator");
     }
 
     /**
@@ -154,7 +137,9 @@ public class Console {
      * map of the simulation.
      */
     private void worldInfo() {
-        //TODO implement
+        System.out.println("Timesteps: " +sim.getTimesteps());
+        System.out.println("Number of Critters: " + sim.getNumCritters());
+        sim.hexWorld();
     }
 
     /**
@@ -163,7 +148,7 @@ public class Console {
      * @param r row of hex
      */
     private void hexInfo(int c, int r) {
-        //TODO implement
+        sim.hexLocation(c, r);
     }
 
     /**

@@ -3,6 +3,7 @@ package world;
 import java.util.Random;
 
 import ast.Program;
+import ast.Rule;
 import world.Entity;
 
 public class Critter extends Entity{
@@ -10,11 +11,12 @@ public class Critter extends Entity{
 	Program p;
 	String species;
 	int direction;
-	int[] coordinates = new int[2];
+	Coordinate coordinates;
 	int[] attributes;
 	int memsize;
+	Rule LastRule;
 	
-	public Critter(int[] attributes, int direction, String species, int[] coordinates, int memsize) {
+	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize) {
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
@@ -30,14 +32,26 @@ public class Critter extends Entity{
 			return 0;
 		}
 	}
+	public String getLastRule() {
+		if (LastRule != null)
+			return LastRule.toString();
+		else
+			return null;
+	}
 	
+	public void setLastRule(Rule r) {
+		LastRule = r;
+	}
+	public String getSpecies() {
+		return species;
+	}
 	public Program getProgram() {
 		return p;
 	}
 	public int getDirection() {
 		return direction;
 	}
-	public int[] getCoordinates() {
+	public Coordinate getCoordinates() {
 		return coordinates;
 	}
 	public void UpdateNodeAt(int index, int value){
@@ -56,9 +70,13 @@ public class Critter extends Entity{
 
 	@Override
 	public int appearance() {
-
-		//TODO
-		return 0;
+		if (attributes != null && attributes.length >= 8) {
+			return attributes[3] * 100000 + attributes[6] + 1000 + attributes[7] * 10 + direction;
+		}
+		else{
+			System.out.println("Something's wrong with your critter, the attributes are not valid");
+			return 0;
+		}
 	}
 	private void mutateAttr() {
 		Random r = new Random();
@@ -94,6 +112,12 @@ public class Critter extends Entity{
 				mutateAttr();
 			else
 				p.mutate();
+		}
+	}
+	
+	public void setDirection (int n) {
+		if (0<= n  && n<= 5) {
+			direction = n;
 		}
 	}
 }
