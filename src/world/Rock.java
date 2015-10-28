@@ -1,4 +1,5 @@
 package world;
+//import static world.World.ROCK_
 
 
 import exceptions.IllegalCoordinateException;

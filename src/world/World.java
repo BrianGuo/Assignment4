@@ -3,8 +3,11 @@ import exceptions.IllegalCoordinateException;
 import exceptions.SyntaxError;
 import interpret.Outcome;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 import java.util.*;
+
 
 /**
  * A representation of the world.
@@ -26,12 +29,15 @@ public class World{
         return COLUMNS;
     }
 
-    private final int COLUMNS;
-    private final int ROWS;
-    static final int DEFAULT_COLS = 25;
-    static final int DEFAULT_ROWS = (int) (DEFAULT_COLS * 1.37);
     static final double ROCK_FREQUENCY = 0.15;
+    private final int ROWS;
+    private final int COLUMNS;
     private String name;
+    public int BASE_DAMAGE, ENERGY_PER_SIZE, FOOD_PER_SIZE, MAX_SMELL_DISTANCE, ROCK_VALUE,
+            DEFAULT_COLS, DEFAULT_ROWS, MAX_RULES_PER_TURN, SOLAR_FLUX, MOVE_COST, ATTACK_COST,
+            GROW_COST, BUD_COST, MATE_COST, RULE_COST, ABILITY_COST, INITIAL_ENERGY, MIN_MEMORY;
+    public double DAMAGE_INC;
+
 
     LinkedList<Critter> critters;
 
@@ -51,11 +57,11 @@ public class World{
      * @return Entity at that location, or null if empty
      */
     public Entity hexAt(int c, int r){
-    	if (inBounds(c,r))
-    		return map[c][r];
-    	else{
-    		return null;
-    	}
+        if (inBounds(c,r))
+            return map[c][r];
+        else{
+            return null;
+        }
     }
 
     /**
@@ -108,9 +114,17 @@ public class World{
      * @param name name of the world
      */
     World(int columns, int rows, String name) throws SyntaxError{
+
         //invalid world dimensions
         if (2*rows - columns < 0){
             throw new SyntaxError();
+        }
+        try {
+            initializeConstants(new FileReader("constants.txt"));
+        }
+        catch(FileNotFoundException e) {
+            System.out.println("No constants file found.");
+            System.exit(1);
         }
         COLUMNS = columns;
         ROWS = rows;
@@ -121,9 +135,21 @@ public class World{
 
     /**
      * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
+     * Java didn't let me call the constructor with parameters -.-
      */
     public World() throws SyntaxError{
-        this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
+        try {
+            initializeConstants(new FileReader("constants.txt"));
+        }
+        catch(FileNotFoundException e) {
+            System.out.println("No constants file found.");
+            System.exit(1);
+        }
+        COLUMNS = DEFAULT_COLS;
+        ROWS = DEFAULT_ROWS;
+        map = new Entity[COLUMNS][ROWS];
+        name = new Date(System.currentTimeMillis()).toString();
+        critters = new LinkedList<>();
         populate();
     }
 
@@ -163,8 +189,8 @@ public class World{
                         world.add(Factory.getFood(cur[1], cur[2], cur[3]));
                         break;
                     //case "critter":
-                        //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
-                       // break;
+                    //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
+                    // break;
                     default:
                         //ignore
                         break;
@@ -230,7 +256,7 @@ public class World{
     }
 
     public LinkedList<Critter> getCritters(){
-    	return critters;
+        return critters;
     }
 
     /**
@@ -271,4 +297,81 @@ public class World{
     public void clean(Food f){
         map[f.getCol()][f.getRow()] = null;
     }
+
+
+
+
+    public void initializeConstants(Reader r){
+        Scanner sc = new Scanner(r);
+        String[] next = sc.nextLine().split(" ", 1);
+
+        //at least there's only one double value...
+        //didn't want to have to get constants out of a map.
+        //java doesn't seem to support the level of reflection required to avoid this switch case block
+
+        int value = Integer.parseInt(next[1]);
+
+        switch (next[0]){
+            case "BASE_DAMAGE":
+                BASE_DAMAGE = value;
+                break;
+            case "ENERGY_PER_SIZE":
+                ENERGY_PER_SIZE = value;
+                break;
+            case "FOOD_PER_SIZE":
+                FOOD_PER_SIZE = value;
+                break;
+            case "MAX_SMELL_DISTANCE":
+                MAX_SMELL_DISTANCE = value;
+                break;
+            case "ROCK_VALUE":
+                ROCK_VALUE = value;
+                break;
+            case "COLUMNS":
+                DEFAULT_COLS = value;
+                break;
+            case "ROWS":
+                DEFAULT_ROWS = value;
+                break;
+            case "MAX_RULES_PER_TURN":
+                MAX_RULES_PER_TURN  = value;
+                break;
+            case "SOLAR_FLUX":
+                SOLAR_FLUX = value;
+                break;
+            case "MOVE_COST":
+                MOVE_COST = value;
+                break;
+            case "ATTACK_COST":
+                ATTACK_COST = value;
+                break;
+            case "GROW_COST":
+                GROW_COST = value;
+                break;
+            case "BUD_COST":
+                BUD_COST = value;
+                break;
+            case "MATE_COST":
+                MATE_COST = value;
+                break;
+            case "RULE_COST":
+                RULE_COST = value;
+                break;
+            case "ABILITY_COST":
+                ABILITY_COST = value;
+                break;
+            case "INITIAL_ENERGY":
+                INITIAL_ENERGY = value;
+                break;
+            case "MIN_MEMORY":
+                MIN_MEMORY = value;
+                break;
+            case "DAMAGE_INC":
+                DAMAGE_INC = Double.parseDouble(next[1]);
+                break;
+
+
+        }
+    }
+}
 }
