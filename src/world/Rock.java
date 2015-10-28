@@ -12,10 +12,10 @@ public class Rock extends Entity{
 
     @Override
     public int appearance() {
-        return -1;
+        return constants.ROCK_VALUE;
     }
 
-    public Rock(int c, int r) throws IllegalCoordinateException{
-        super(c,r);
+    public Rock(int c, int r, WorldConstants constants) throws IllegalCoordinateException{
+        super(c,r, constants);
     }
 }

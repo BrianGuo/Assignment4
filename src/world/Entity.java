@@ -7,6 +7,7 @@ import exceptions.IllegalCoordinateException;
  */
 abstract public class Entity {
     private Coordinate location;
+    protected final WorldConstants constants;
 
     /**
      * What the Entity looks like when printed to the console
@@ -17,15 +18,20 @@ abstract public class Entity {
      * What the Entity looks like when sensed
      */
     public abstract int appearance();
-
-    public Entity(Coordinate location){
-        this.location = location;
-    }
     public Entity(){
-        location = null;
+        throw new UnsupportedOperationException();
     }
-    public Entity(int x, int y) throws IllegalCoordinateException{
+    public Entity(Coordinate location, WorldConstants constants){
+        this.location = location;
+        this.constants = constants;
+    }
+    public Entity(WorldConstants constants){
+        location = null;
+        this.constants = constants;
+    }
+    public Entity(int x, int y, WorldConstants constants) throws IllegalCoordinateException{
         this.location = new Coordinate(x,y);
+        this.constants = constants;
     }
 
     public Coordinate getLocation(){

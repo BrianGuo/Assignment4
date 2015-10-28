@@ -16,7 +16,7 @@ public class Critter extends Entity{
 	int memsize;
 	Rule LastRule;
 	
-	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize) {
+	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize, WorldConstants constants) {
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;

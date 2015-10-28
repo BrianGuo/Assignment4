@@ -19,8 +19,8 @@ public class Food extends Entity{
     public int appearance(){
         return -1* amt - 1;
     }
-    public Food(int c, int r, int amt) throws IllegalCoordinateException, IllegalArgumentException {
-        super(c,r);
+    public Food(int c, int r, int amt, WorldConstants constants) throws IllegalCoordinateException, IllegalArgumentException {
+        super(c,r, constants);
         if(amt <= 0){
             throw new IllegalArgumentException();
         }

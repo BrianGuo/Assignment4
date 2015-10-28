@@ -95,7 +95,7 @@ public class World{
             for(int j = 0; j < ROWS; j++){
                 if(Math.random() < ROCK_FREQUENCY){
                     try{
-                        map[i][j] = new Rock(i,j);
+                        map[i][j] = new Rock(i,j, constants);
                     }
                     catch(IllegalCoordinateException e){
                         //This will never happen
@@ -185,10 +185,10 @@ public class World{
             try {
                 switch (cur[0]) {
                     case "rock":
-                        world.add(Factory.getRock(cur[1],cur[2]));
+                        world.add(Factory.getRock(cur[1],cur[2],world.constants));
                         break;
                     case "food":
-                        world.add(Factory.getFood(cur[1], cur[2], cur[3]));
+                        world.add(Factory.getFood(cur[1], cur[2], cur[3],world.constants));
                         break;
                     //case "critter":
                     //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
@@ -238,7 +238,7 @@ public class World{
      * @param e Entity to be added.
      */
     public void add(Entity e) {
-        //System.out.println(e.getLocation().getRow());
+        System.out.println(e.getLocation().getRow());
         if (hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
