@@ -218,6 +218,7 @@ public class World{
     public void addRandom(Entity e){
         try{
             e.move(getRandomUnoccupiedLocation());
+            add(e);
         }
         catch(IllegalCoordinateException ex){
             //this shouldn't happen
