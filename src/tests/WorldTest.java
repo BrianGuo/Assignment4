@@ -49,7 +49,7 @@ public class WorldTest {
     public void testGetters() throws Exception {
         assertTrue(w.getCritters().isEmpty());
         assertTrue(w.hexAt(4, 5) instanceof Rock);
-        assertTrue(w.hexAt(4,5).appearance() == w.ROCK_VALUE);
+        assertTrue(w.hexAt(4,5).appearance() == w.constants.ROCK_VALUE);
         assertTrue(w.hexAt(4, 5).toString().equals("#"));
         assertTrue(w.hexAt(4, 5) == w.hexAt(new Coordinate(4, 5)));
     }
