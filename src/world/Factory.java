@@ -20,6 +20,7 @@ public class Factory {
         return new World(Integer.parseInt(cols), Integer.parseInt(rows), name);
     }
 
+
     public static World getRandomWorld() {
         try {
             return new World();
@@ -41,22 +42,21 @@ public class Factory {
         return World.parseWorld(r);
     }
 
-    public static Critter getCritter(String file){
+    public static Critter getCritter(String file, WorldConstants constants){
         //TODO
         return null;
     }
 
-    public static Critter getCritter(String name, String col, String row, String direction) {
+    public static Critter getCritter(String name, String col, String row, String direction, WorldConstants constants) {
         //TODO
         return null;
     }
-    public static Rock getRock(String col, String row) throws IllegalCoordinateException{
-        return new Rock(Integer.parseInt(col), Integer.parseInt(row));
+    public static Rock getRock(String col, String row, WorldConstants constants) throws IllegalCoordinateException{
+        return new Rock(Integer.parseInt(col), Integer.parseInt(row), constants);
     }
 
-    public static Food getFood(String col, String row, String amt) throws IllegalCoordinateException{
-        //TODO: Implement FOOD_PER_SIZE
-        return new Food(Integer.parseInt(col), Integer.parseInt(row), Integer.parseInt(amt));
+    public static Food getFood(String col, String row, String amt, WorldConstants constants) throws IllegalCoordinateException{
+        return new Food(Integer.parseInt(col), Integer.parseInt(row), Integer.parseInt(amt), constants);
     }
 
 

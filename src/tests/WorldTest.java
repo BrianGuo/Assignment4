@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import world.*;
 
+import java.io.FileReader;
+
 import static org.junit.Assert.*;
 
 public class WorldTest {
@@ -13,7 +15,7 @@ public class WorldTest {
     @Before
     public void setUp() throws Exception {
         w = Factory.getRandomWorld();
-        Rock r = new Rock(4,5);
+        Rock r = new Rock(4,5, w.constants);
         w.add(r);
     }
 
@@ -24,7 +26,7 @@ public class WorldTest {
 
     @Test
     public void testParseWorld() throws Exception {
-
+        World newWorld = Factory.getWorld(new FileReader("world.txt"));
     }
 
     @Test
@@ -47,19 +49,19 @@ public class WorldTest {
     public void testGetters() throws Exception {
         assertTrue(w.getCritters().isEmpty());
         assertTrue(w.hexAt(4, 5) instanceof Rock);
-        assertTrue(w.hexAt(4,5).appearance() == 0);
+        assertTrue(w.hexAt(4,5).appearance() == w.constants.ROCK_VALUE);
         assertTrue(w.hexAt(4, 5).toString().equals("#"));
         assertTrue(w.hexAt(4, 5) == w.hexAt(new Coordinate(4, 5)));
     }
 
     @Test(expected= IllegalArgumentException.class)
     public void testNegativeFood() throws Exception {
-        Food f = new Food(4, 5, -5);
+        Food f = new Food(4, 5, -5,w.constants);
     }
 
     @Test(expected= IllegalCoordinateException.class)
     public void testNegativeCoords() throws Exception {
-        Food f = new Food(-4, 5, 5);
+        Food f = new Food(-4, 5, 5,w.constants);
     }
 
     //TODO: replace with ExpectedException
@@ -67,7 +69,7 @@ public class WorldTest {
     public void testFullUnoccupied() throws Exception {
         for(int i = 0; i < w.getColumns(); i++){
             for(int j = 0; j < w.getRows(); j++){
-                w.add(new Rock(i,j));
+                w.add(new Rock(i,j, w.constants));
             }
         }
         w.getRandomUnoccupiedLocation();
@@ -75,7 +77,7 @@ public class WorldTest {
 
     @Test
     public void testOverlap() throws Exception{
-        Food f = new Food(4,5, 10);
+        Food f = new Food(4,5, 10,w.constants);
         w.add(f);
         assertFalse(w.hexAt(4, 5) instanceof Food);
         assertTrue(w.hexAt(4,5) instanceof Rock);
@@ -91,12 +93,20 @@ public class WorldTest {
 
     @Test
     public void testClean() throws Exception{
-        Food f = new Food(4,6,10);
+        Food f = new Food(4,6,10, w.constants);
+        //random world generation can place a rock on the spot we're looking for
+        while(!(w.hexAt(4,6) == null)) {
+            w = Factory.getRandomWorld();
+        }
         w.add(f);
-        assertTrue(w.hexAt(4,6) instanceof Food);
+        System.out.println(w.hexAt(4, 6));
+        assertTrue(w.hexAt(4, 6) instanceof Food);
         w.clean(f);
-        assertNull(w.hexAt(4,6));
+        assertNull(w.hexAt(4, 6));
+
     }
 
     //TODO: write a similar one for kill()
+
+
 }

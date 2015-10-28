@@ -3,8 +3,11 @@ import exceptions.IllegalCoordinateException;
 import exceptions.SyntaxError;
 import interpret.Outcome;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 import java.util.*;
+
 
 /**
  * A representation of the world.
@@ -26,12 +29,13 @@ public class World{
         return COLUMNS;
     }
 
-    private final int COLUMNS;
-    private final int ROWS;
-    static final int DEFAULT_COLS = 25;
-    static final int DEFAULT_ROWS = (int) (DEFAULT_COLS * 1.37);
     static final double ROCK_FREQUENCY = 0.15;
+    private final int ROWS;
+    private final int COLUMNS;
     private String name;
+
+    public WorldConstants constants;
+
 
     LinkedList<Critter> critters;
 
@@ -51,11 +55,11 @@ public class World{
      * @return Entity at that location, or null if empty
      */
     public Entity hexAt(int c, int r){
-    	if (inBounds(c,r))
-    		return map[c][r];
-    	else{
-    		return null;
-    	}
+        if (inBounds(c,r))
+            return map[c][r];
+        else{
+            return null;
+        }
     }
 
     /**
@@ -91,7 +95,7 @@ public class World{
             for(int j = 0; j < ROWS; j++){
                 if(Math.random() < ROCK_FREQUENCY){
                     try{
-                        map[i][j] = new Rock(i,j);
+                        map[i][j] = new Rock(i,j, constants);
                     }
                     catch(IllegalCoordinateException e){
                         //This will never happen
@@ -108,9 +112,17 @@ public class World{
      * @param name name of the world
      */
     World(int columns, int rows, String name) throws SyntaxError{
+
         //invalid world dimensions
         if (2*rows - columns < 0){
             throw new SyntaxError();
+        }
+        try {
+            initializeConstants(new FileReader("constants.txt"));
+        }
+        catch(FileNotFoundException e) {
+            System.out.println("No constants file found.");
+            System.exit(1);
         }
         COLUMNS = columns;
         ROWS = rows;
@@ -121,10 +133,26 @@ public class World{
 
     /**
      * Creates a new world, populated by rocks with frequency ROCK_FREQUENCY
+     * Java didn't let me call the constructor with parameters -.-
      */
     public World() throws SyntaxError{
-        this(DEFAULT_COLS, DEFAULT_ROWS, new Date(System.currentTimeMillis()).toString());
+        try {
+            initializeConstants(new FileReader("constants.txt"));
+        }
+        catch(FileNotFoundException e) {
+            System.out.println("No constants file found.");
+            System.exit(1);
+        }
+        COLUMNS = constants.DEFAULT_COLS;
+        ROWS = constants.DEFAULT_ROWS;
+        map = new Entity[COLUMNS][ROWS];
+        name = new Date(System.currentTimeMillis()).toString();
+        critters = new LinkedList<>();
         populate();
+    }
+
+    private void initializeConstants(FileReader fileReader) {
+        constants = new WorldConstants(fileReader);
     }
 
     /**
@@ -157,14 +185,14 @@ public class World{
             try {
                 switch (cur[0]) {
                     case "rock":
-                        world.add(Factory.getRock(cur[1],cur[2]));
+                        world.add(Factory.getRock(cur[1],cur[2],world.constants));
                         break;
                     case "food":
-                        world.add(Factory.getFood(cur[1], cur[2], cur[3]));
+                        world.add(Factory.getFood(cur[1], cur[2], cur[3],world.constants));
                         break;
                     //case "critter":
-                        //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
-                       // break;
+                    //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
+                    // break;
                     default:
                         //ignore
                         break;
@@ -210,7 +238,7 @@ public class World{
      * @param e Entity to be added.
      */
     public void add(Entity e) {
-        //System.out.println(e.getLocation().getRow());
+        System.out.println(e.getLocation().getRow());
         if (hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
@@ -222,6 +250,7 @@ public class World{
     public void addRandom(Entity e){
         try{
             e.move(getRandomUnoccupiedLocation());
+            add(e);
         }
         catch(IllegalCoordinateException ex){
             //this shouldn't happen
@@ -229,7 +258,7 @@ public class World{
     }
 
     public LinkedList<Critter> getCritters(){
-    	return critters;
+        return critters;
     }
 
     /**
@@ -270,4 +299,9 @@ public class World{
     public void clean(Food f){
         map[f.getCol()][f.getRow()] = null;
     }
+
+
+
+
+
 }

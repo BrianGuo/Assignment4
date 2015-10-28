@@ -18,20 +18,25 @@ public class Console {
     private Simulator sim;
 
     //TODO world representation...
-
+//TODO fix the exception business
     public static void main(String[] args) {
         Console console = new Console();
 
         while (!console.done) {
             System.out.print("Enter a command or \"help\" for a list of commands.\n> ");
-            console.handleCommand();
+            try {
+                console.handleCommand();
+            }
+            catch(MissingElementException e){
+                System.out.println("Why does this happen?");
+            }
         }
     }
 
     /**
      * Processes a single console command provided by the user. 
      */
-    void handleCommand() {
+    void handleCommand() throws MissingElementException{
         String command = scan.next();
         switch (command) {
         case "new": {
@@ -116,7 +121,7 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n)  {
+    private void loadCritters(String filename, int n)  throws MissingElementException{
         sim.putCritterRandomly(filename);
     }
 
