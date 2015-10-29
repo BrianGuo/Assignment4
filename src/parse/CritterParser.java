@@ -40,22 +40,23 @@ public class CritterParser {
                 case "species":
                     species = next[1];
                 case "memsize":
-                    memsize = value;
+                    memsize = Math.max(value, 8);
                     break;
                 case "defense":
-                    defense = value;
+                    defense = Math.max(value, 1);
                     break;
                 case "offense":
-                    offense = value;
+                    offense = Math.max(value, 1);
                     break;
                 case "size":
-                    size = value;
+                    size = Math.max(value, 1);
                     break;
                 case "energy":
-                    energy = value;
+                    energy = Math.max(value,1 );
                     break;
                 case "posture":
-                    posture = value;
+                    //values out of bounds are set to their respective bounds
+                    posture = Math.max(0, Math.min(value, 99));
                     break;
                 default:
                     break;

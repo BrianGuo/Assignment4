@@ -17,7 +17,7 @@ import world.World;
 public class SimulatorTest {
 
 	@Test
-	public void testSimulatorWorldInterpreter() throws SyntaxError {
+	public void testSimulatorWorldInterpreter() throws Exception {
 		FileReader f = null;
 		try{
 			f = new FileReader("examples/world.txt");
@@ -45,7 +45,7 @@ public class SimulatorTest {
 	}
 
 	@Test
-	public void testSetWorld() throws SyntaxError {
+	public void testSetWorld() throws Exception {
 		FileReader f = null;
 		try{
 			f = new FileReader("examples/world.txt");
@@ -75,7 +75,7 @@ public class SimulatorTest {
 	}
 
 	@Test
-	public void testHasWorld() throws SyntaxError {
+	public void testHasWorld() throws Exception{
 		Simulator s = new Simulator();
 		assertFalse(s.hasWorld());
 		FileReader f = null;
@@ -95,7 +95,7 @@ public class SimulatorTest {
 	}
 	
 	@Test
-	public void testHexWorld() throws SyntaxError{
+	public void testHexWorld() throws Exception{
 		Simulator s = new Simulator();
 		FileReader f = null;
 		try{

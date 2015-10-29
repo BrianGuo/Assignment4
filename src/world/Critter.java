@@ -4,16 +4,16 @@ import java.util.Random;
 
 import ast.Program;
 import ast.Rule;
-import world.Entity;
 
 public class Critter extends Entity{
 	
 	Program p;
 	String species;
 	int direction;
-	Coordinate coordinates;
+	//Coordinate location;
 	int[] attributes;
 	Rule LastRule;
+	Coordinate coordinates;
 	
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
@@ -65,9 +65,10 @@ public class Critter extends Entity{
 	public int getDirection() {
 		return direction;
 	}
-	public Coordinate getCoordinates() {
-		return coordinates;
-	}
+	/*
+	public Coordinate getLocation() {
+		return location;
+	}*/
 	public void UpdateNodeAt(int index, int value){
 		if (index < 7 || index > attributes[0])
 			return;

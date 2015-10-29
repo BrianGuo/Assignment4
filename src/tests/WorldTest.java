@@ -27,6 +27,11 @@ public class WorldTest {
     @Test
     public void testParseWorld() throws Exception {
         World newWorld = Factory.getWorld(new FileReader("world.txt"));
+        assertEquals(newWorld.name, "Small world");
+        assertEquals(newWorld.hexAt(2, 2).appearance(), newWorld.constants.ROCK_VALUE);
+        assertTrue(newWorld.hexAt(2, 5) instanceof Critter);
+        assertEquals(newWorld.getCritters().getFirst().getAttributeAtIndex(0), 9);
+        assertEquals(newWorld.getCritters().getFirst().getSpecies(), "example");
     }
 
     @Test
@@ -99,7 +104,7 @@ public class WorldTest {
             w = Factory.getRandomWorld();
         }
         w.add(f);
-        System.out.println(w.hexAt(4, 6));
+        //System.out.println(w.hexAt(4, 6));
         assertTrue(w.hexAt(4, 6) instanceof Food);
         w.clean(f);
         assertNull(w.hexAt(4, 6));

@@ -6,7 +6,7 @@ import exceptions.IllegalCoordinateException;
  * Represents something in the world.
  */
 abstract public class Entity {
-    private Coordinate location;
+    protected Coordinate location;
     protected final WorldConstants constants;
 
     /**
@@ -19,7 +19,8 @@ abstract public class Entity {
      */
     public abstract int appearance();
     public Entity(){
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        constants = null;
     }
     public Entity(Coordinate location, WorldConstants constants){
         this.location = location;

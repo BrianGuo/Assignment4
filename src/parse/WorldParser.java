@@ -24,9 +24,9 @@ public class WorldParser {
         Scanner sc = new Scanner(r);
         String[] cur;
 
-        cur = sc.nextLine().split("\\s+");
+        cur = sc.nextLine().split("\\s+", 2);
         while(!cur[0].equals("name")){
-            cur = sc.nextLine().split("\\s+", 1);
+            cur = sc.nextLine().split("\\s+", 2);
         }
         String name = cur[1];
 
