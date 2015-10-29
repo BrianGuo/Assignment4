@@ -46,10 +46,29 @@ public class Factory {
         return ParserFactory.getWorldParser().parseWorld(r);
     }
 
+    /**
+     * Reads in  a critter from a file to be placed at a random location with random direction.
+     * @param file file specifying the critter
+     * @param constants constants file
+     * @return A new critter with dummy location and random direction
+     * @throws SyntaxError If critter file has errors
+     * @throws FileNotFoundException If critter file does not exist
+     */
     public static Critter getCritter(String file, WorldConstants constants) throws SyntaxError, FileNotFoundException{
         return CritterParser.parseCritter(new FileReader(file), constants);
     }
 
+    /**
+     * Reads in a critter from a file and places it at a specified location with specified direction.
+     * @param file file specifying the critter
+     * @param col column to place the critter
+     * @param row row to place the critter
+     * @param direction direction the critter should face
+     * @param constants constants file
+     * @return A new critter at the given location with given direction
+     * @throws SyntaxError if critter file has errors
+     * @throws FileNotFoundException if critter file does not exist
+     */
     public static Critter getCritter(String file, String col, String row,
                                      String direction, WorldConstants constants) throws SyntaxError, FileNotFoundException {
         Critter critter = getCritter(file, constants);
@@ -57,10 +76,28 @@ public class Factory {
         critter.setDirection(Integer.parseInt(direction));
         return critter;
     }
+
+    /**
+     * Creates a rock on a certain position.
+     * @param col Col to place the rock
+     * @param row Row to place the rock
+     * @param constants constants file
+     * @return Rock at the given position
+     * @throws IllegalCoordinateException
+     */
     public static Rock getRock(String col, String row, WorldConstants constants) throws IllegalCoordinateException{
         return new Rock(Integer.parseInt(col), Integer.parseInt(row), constants);
     }
 
+    /**
+     * Creates a food on a certain position.
+     * @param col Col to place the food
+     * @param row Row to place the food
+     * @param amt Amount of food to place, before multiplying by FOOD_PER_SIZE
+     * @param constants constants file
+     * @return A new Food object at the given position
+     * @throws IllegalCoordinateException
+     */
     public static Food getFood(String col, String row, String amt, WorldConstants constants) throws IllegalCoordinateException{
         return new Food(Integer.parseInt(col), Integer.parseInt(row), Integer.parseInt(amt), constants);
     }
