@@ -156,62 +156,6 @@ public class World{
     }
 
     /**
-     * Creates a world, given a reader.  Intended for use with a factory method.
-     * Ignores any line that does not start with "name", "size", "rock", "food", or "critter",
-     * including blank lines and comments.
-     * @param r Reader input.
-     * @return The created world, as according to the file.
-     * @throws SyntaxError if the world file has invalid irrecoverable syntax errors
-     * (ex. rock -1 0 or rock asdf)
-     */
-    protected static World parseWorld(Reader r) throws SyntaxError{
-        Scanner sc = new Scanner(r);
-        String[] cur;
-
-        cur = sc.nextLine().split("\\s+");
-        while(!cur[0].equals("name")){
-            cur = sc.nextLine().split("\\s+", 1);
-        }
-        String name = cur[1];
-
-        cur = sc.nextLine().split("\\s+");
-        while(!cur[0].equals("size")){
-            cur = sc.nextLine().split("\\s+");
-        }
-        World world = Factory.getWorld(cur[1], cur[2], name);
-
-        while(sc.hasNext()){
-            cur = sc.nextLine().split("\\s+");
-            try {
-                switch (cur[0]) {
-                    case "rock":
-                        world.add(Factory.getRock(cur[1],cur[2],world.constants));
-                        break;
-                    case "food":
-                        world.add(Factory.getFood(cur[1], cur[2], cur[3],world.constants));
-                        break;
-                    //case "critter":
-                    //world.add(Factory.getCritter(cur[1], cur[2], cur[3], cur[4]));
-                    // break;
-                    default:
-                        //ignore
-                        break;
-                }
-            }
-            //IllegalCoordinate is for negative coords, array index for too few args
-            //IllegalArg if wrong type is provided or food amount <= 0
-            catch(IllegalCoordinateException | ArrayIndexOutOfBoundsException | IllegalArgumentException e){
-                //e.getStackTrace();
-                throw new SyntaxError("Syntax error in world file");
-            }
-
-        }
-        //TODO: Complete the rest...?
-        return world;
-
-    }
-
-    /**
      * Checks if a given coordinate is off the edge of the world
      * @param c Column of the hex
      * @param r Row of the hex
@@ -287,8 +231,8 @@ public class World{
      * @param c The heretic to be smited
      */
     public void kill(Critter c){
-        //TODO Turn critter into food
-        map[c.getCol()][c.getRow()] = null;
+        map[c.getCol()][c.getRow()] = null; //just in case
+        map[c.getCol()][c.getRow()] = new Food(c.getCol(), c.getRow(), c.size(), constants);
         critters.remove(c);
     }
 

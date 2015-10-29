@@ -16,14 +16,27 @@ public class Critter extends Entity{
 	int memsize;
 	Rule LastRule;
 	
-	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize, WorldConstants constants) {
+	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
+				   Program program) {
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
 		this.coordinates = coordinates;
-		this.memsize = memsize;
+		this.memsize = constants.MIN_MEMORY;
+		p = program;
+
+		//if memsize is greater than 8, we need to add slots for the extra memory locations
+		if(attributes.length < memsize){
+			int[] temp = new int[memsize];
+			System.arraycopy(attributes, 0, temp, 0, attributes.length);
+			this.attributes = temp;
+		}
+		else{
+			this.attributes = attributes;
+		}
+
 	}
-	
+
 	public int getAttributeAtIndex(int n){
 		if (n < attributes.length)
 			return attributes[n];
@@ -119,5 +132,9 @@ public class Critter extends Entity{
 		if (0<= n  && n<= 5) {
 			direction = n;
 		}
+	}
+
+	public int size(){
+		return getAttributeAtIndex(3);
 	}
 }
