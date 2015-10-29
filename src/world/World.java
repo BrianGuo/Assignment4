@@ -173,14 +173,54 @@ public class World{
     }
 
     public boolean evaluate(Outcome outcome) {
-        Critter cur = outcome.getCritter();
+        Critter critter = outcome.getCritter();
         TokenType action = outcome.getAction();
+        int expr = 0;
+        if(action == TAG || action == SERVE){
+            expr = outcome.getExpr().evaluate(critter, this);
+        }
 
         switch(action){
             case FORWARD:
                 //cur.move()
+                break;
+            case BACKWARD:
+                break;
+            case WAIT:
+                critter.absorb();
+                break;
+            case LEFT:
+                critter.turn(LEFT);
+                break;
+            case RIGHT:
+                critter.turn(RIGHT);
+                break;
+            case EAT:
+                critter.eat(/*The food in front of it*/);
+                break;
+            case ATTACK:
+                break;
+            case GROW:
+                break;
+            case BUD:
+                break;
+            case MATE:
+                break;
+            case TAG:
+                //expr
+                break;
+            case SERVE:
+                Food dinner = critter.serve(expr);
+                if(dinner != null){
+                    //add will fail if the space is occupied
+                    add(dinner);
+                }
+                break;
+
 
         }
+        //kill the critter if it died.
+        judge(critter);
         return false;
     }
 
@@ -242,7 +282,8 @@ public class World{
      */
     public void kill(Critter c){
         map[c.getCol()][c.getRow()] = null; //just in case
-        map[c.getCol()][c.getRow()] = new Food(c.getCol(), c.getRow(), c.size(), constants);
+        map[c.getCol()][c.getRow()] = new Food(c.getCol(), c.getRow(),
+                c.size() * constants.FOOD_PER_SIZE, constants);
         critters.remove(c);
     }
 

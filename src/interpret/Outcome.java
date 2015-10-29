@@ -1,6 +1,7 @@
 package interpret;
 
 
+import ast.Expr;
 import parse.TokenType;
 import world.Critter;
 
@@ -21,5 +22,11 @@ public interface Outcome {
      */
     public TokenType getAction();
 
+
+    /**
+     * Returns the expr contained in the outcome, or null if the action does not require one
+     * @return evaluated expr
+     */
+    public Expr getExpr();
 
 }

@@ -20,4 +20,6 @@ public class CritterOutcome implements Outcome {
 	}
 	//public
 	public TokenType getAction() { return action; }
+
+	public Expr getExpr() { return num; }
 }
