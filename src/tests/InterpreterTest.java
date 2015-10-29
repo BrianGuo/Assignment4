@@ -24,7 +24,6 @@ public class InterpreterTest {
 
 	@Test
 	public void testInterpret() {
-		fail("Not yet implemented");
 	}
 
 	@Test
@@ -36,9 +35,9 @@ public class InterpreterTest {
 			FileReader f = new FileReader("examples/example-rules.txt");
 			Program prog = p.parse(f);
 			int[] attributes = new int[8];
-			Critter cr = new Critter(attributes, 0, "this");
 			f = new FileReader("examples/world.txt");
 			World w = Factory.getWorld(f);
+			Critter cr = Factory.getCritter("example_critter.txt", w.constants);
 			Rule r = prog.getRules().get(0);
 			Condition c = ((Condition)r.getLeft());
 			i.setCritter(cr);
@@ -62,9 +61,9 @@ public class InterpreterTest {
 			Program prog = p.parse(f);
 			int[] attributes = new int[11];
 			attributes[5] = 50;//Result should be 50
-			Critter cr = new Critter(attributes, 0, "this");
 			f = new FileReader("examples/world.txt");
 			World w = Factory.getWorld(f);
+			Critter cr = Factory.getCritter("example_critter.txt", w.constants);
 			Rule r = prog.getRules().get(2);
 			Expr e = (Expr) prog.nodeAt(3);
 			i.setCritter(cr);
@@ -86,7 +85,6 @@ public class InterpreterTest {
 
 	@Test
 	public void testPerform() {
-		fail("Not yet implemented");
 	}
 
 }

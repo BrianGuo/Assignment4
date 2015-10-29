@@ -77,7 +77,7 @@ public class Simulator {
 			System.out.println("Your world file has syntax errors");
 		}
 		catch (FileNotFoundException e) {
-			System.out.println("Your File was not found");
+			System.out.println("Your File Was Not Found");
 		}
 		
 	}
@@ -91,11 +91,13 @@ public class Simulator {
 		return (world != null);
 	}
 	//TODO: Handle these exceptions
-	public void putCritterRandomly(String filename) throws MissingElementException, FileNotFoundException, SyntaxError{
+	public void putCritterRandomly(String filename, int n) throws MissingElementException, FileNotFoundException, SyntaxError{
 		if (world == null)
 			throw new MissingElementException();
-		Critter c = Factory.getCritter(filename,world.constants);
-		world.addRandom(c);
+		for (int i = 0 ; i < n; i++ ){
+			Critter c = Factory.getCritter(filename,world.constants);
+			world.addRandom(c);
+		}
 	}
 	
 	public String hexLine(int c, int r) {

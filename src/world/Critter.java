@@ -13,7 +13,6 @@ public class Critter extends Entity{
 	//Coordinate location;
 	int[] attributes;
 	Rule LastRule;
-	Coordinate coordinates;
 	
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
@@ -22,7 +21,7 @@ public class Critter extends Entity{
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
-		this.coordinates = coordinates;
+		this.location = coordinates;
 		p = program;
 
 		//if memsize is greater than 8, we need to add slots for the extra memory locations
@@ -83,8 +82,7 @@ public class Critter extends Entity{
 	}
 
 	public String toString(){
-		//TODO
-		return "";
+		return "" + direction;
 	}
 
 	@Override
