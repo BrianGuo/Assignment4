@@ -35,7 +35,7 @@ public class CritterParser {
             catch(NumberFormatException e){
                 //ignore and deal with later
             }
-
+            //TODO Take maximum of the value and the mininum value. Or keep inside bounds. 
             switch (next[0]) {
                 case "species":
                     species = next[1];

@@ -120,7 +120,7 @@ public class World{
             throw new SyntaxError();
         }
         try {
-            initializeConstants(new FileReader("constants.txt"));
+            initializeConstants(new FileReader("Constants.txt"));
         }
         catch(FileNotFoundException e) {
             System.out.println("No constants file found.");
@@ -139,7 +139,7 @@ public class World{
      */
     public World() throws SyntaxError{
         try {
-            initializeConstants(new FileReader("constants.txt"));
+            initializeConstants(new FileReader("Constants.txt"));
         }
         catch(FileNotFoundException e) {
             System.out.println("No constants file found.");

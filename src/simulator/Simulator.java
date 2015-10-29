@@ -90,6 +90,7 @@ public class Simulator {
 	public boolean hasWorld() {
 		return (world != null);
 	}
+
 	//TODO: Handle these exceptions
 	public void putCritterRandomly(String filename) throws MissingElementException, FileNotFoundException, SyntaxError{
 		if (world == null)
