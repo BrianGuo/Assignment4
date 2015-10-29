@@ -2,6 +2,8 @@ package world;
 import exceptions.IllegalCoordinateException;
 import exceptions.SyntaxError;
 import interpret.Outcome;
+import static parse.TokenType.*;
+import parse.TokenType;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -171,7 +173,14 @@ public class World{
     }
 
     public boolean evaluate(Outcome outcome) {
-        //TODO Implement this
+        Critter cur = outcome.getCritter();
+        TokenType action = outcome.getAction();
+
+        switch(action){
+            case FORWARD:
+                //cur.move()
+
+        }
         return false;
     }
 
