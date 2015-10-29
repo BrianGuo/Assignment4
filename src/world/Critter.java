@@ -4,14 +4,13 @@ import java.util.Random;
 
 import ast.Program;
 import ast.Rule;
-import world.Entity;
 
 public class Critter extends Entity{
 	
 	Program p;
 	String species;
 	int direction;
-	Coordinate coordinates;
+	//Coordinate location;
 	int[] attributes;
 	int memsize;
 	Rule LastRule;
@@ -21,7 +20,7 @@ public class Critter extends Entity{
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
-		this.coordinates = coordinates;
+		this.location = coordinates;
 		this.memsize = constants.MIN_MEMORY;
 		p = program;
 
@@ -64,9 +63,10 @@ public class Critter extends Entity{
 	public int getDirection() {
 		return direction;
 	}
-	public Coordinate getCoordinates() {
-		return coordinates;
-	}
+	/*
+	public Coordinate getLocation() {
+		return location;
+	}*/
 	public void UpdateNodeAt(int index, int value){
 		if (index < 7 || index > memsize)
 			return;

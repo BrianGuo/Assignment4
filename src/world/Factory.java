@@ -4,7 +4,6 @@ import exceptions.IllegalCoordinateException;
 import exceptions.SyntaxError;
 import parse.CritterParser;
 import parse.ParserFactory;
-import parse.WorldParser;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -72,7 +71,7 @@ public class Factory {
     public static Critter getCritter(String file, String col, String row,
                                      String direction, WorldConstants constants) throws SyntaxError, FileNotFoundException {
         Critter critter = getCritter(file, constants);
-        critter.coordinates = new Coordinate(Integer.parseInt(col), Integer.parseInt(row));
+        critter.location = new Coordinate(Integer.parseInt(col), Integer.parseInt(row));
         critter.setDirection(Integer.parseInt(direction));
         return critter;
     }

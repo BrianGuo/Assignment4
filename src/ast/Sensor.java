@@ -123,7 +123,7 @@ public class Sensor extends UnaryNode implements Expr {
 	public int evaluateAhead(Critter c, World w, int coefficient){
 		Coordinate newCoordinates = null;
 		int direction = c.getDirection();
-		Coordinate coordinates = c.getCoordinates();
+		Coordinate coordinates = c.getLocation();
 		try{
 			switch (direction){
 			case 0:

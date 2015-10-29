@@ -30,13 +30,21 @@ public class Console {
             catch(MissingElementException e){
                 System.out.println("Why does this happen?");
             }
+            catch(FileNotFoundException e){
+                System.out.println("File not found.");
+                System.out.println(e.getMessage());
+            }
+            catch(SyntaxError e){
+                System.out.println("Syntax error in file.");
+                System.out.println(e.getMessage());
+            }
         }
     }
 
     /**
      * Processes a single console command provided by the user. 
      */
-    void handleCommand() throws MissingElementException{
+    void handleCommand() throws MissingElementException, FileNotFoundException, SyntaxError{
         String command = scan.next();
         switch (command) {
         case "new": {
@@ -121,7 +129,7 @@ public class Console {
      * @param n
      * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n)  throws MissingElementException{
+    private void loadCritters(String filename, int n)  throws MissingElementException, FileNotFoundException, SyntaxError{
         sim.putCritterRandomly(filename);
     }
 

@@ -32,7 +32,7 @@ public class World{
     static final double ROCK_FREQUENCY = 0.15;
     private final int ROWS;
     private final int COLUMNS;
-    private String name;
+    public String name;
 
     public WorldConstants constants;
 
@@ -182,7 +182,8 @@ public class World{
      * @param e Entity to be added.
      */
     public void add(Entity e) {
-        System.out.println(e.getLocation().getRow());
+        //System.out.println(e.getClass());
+        //System.out.println(e.getLocation().getRow());
         if (hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
