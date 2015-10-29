@@ -1,17 +1,24 @@
 package simulator;
 
+import ast.Program;
+import parse.ParserFactory;
 import world.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 import exceptions.IllegalCoordinateException;
 import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.*;
 import interpret.CritterInterpreter;
+
+
 
 public class Simulator {
 	
@@ -31,6 +38,7 @@ public class Simulator {
 		interpreter = i;
 		timesteps = 0;
 	}
+
 	public void advance(int n){
 		if (world != null){
 			LinkedList<Critter> critters = world.getCritters();
@@ -82,7 +90,8 @@ public class Simulator {
 	public boolean hasWorld() {
 		return (world != null);
 	}
-	public void putCritterRandomly(String filename) throws MissingElementException{
+	//TODO: Handle these exceptions
+	public void putCritterRandomly(String filename) throws MissingElementException, FileNotFoundException, SyntaxError{
 		if (world == null)
 			throw new MissingElementException();
 		Critter c = Factory.getCritter(filename,world.constants);

@@ -16,19 +16,28 @@ public class Critter extends Entity{
 	Rule LastRule;
 	
 
-	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, int memsize, WorldConstants constants) {
+	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
+				   Program program) {
+		assert(attributes[0] >= 8);
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
+		this.coordinates = coordinates;
+		p = program;
+
+		//if memsize is greater than 8, we need to add slots for the extra memory locations
+		if(attributes.length < attributes[0]){
+			int[] temp = new int[attributes[0]];
+			System.arraycopy(attributes, 0, temp, 0, attributes.length);
+			this.attributes = temp;
+		}
+		else{
+			this.attributes = attributes;
+		}
+
+
 	}
-	
-	public Critter(int[] attributes, int direction, String species, Coordinate c) {
-		this.attributes = attributes;
-		this.direction = direction;
-		this.species = species;
-		this.coordinates = c;
-	}
-	
+
 	public int getAttributeAtIndex(int n){
 		if (n < attributes.length)
 			return attributes[n];
@@ -92,10 +101,17 @@ public class Critter extends Entity{
 		int i = r.nextInt(3);
 		switch(i) {
 		case 0:
-			if (r.nextBoolean())
+			if (r.nextBoolean()){
 				attributes[0]++;
-			else if(attributes[0] > 8)
+				if(attributes.length < attributes[0]){
+					int[] temp = new int[attributes[0]];
+					System.arraycopy(attributes, 0, temp, 0, attributes.length);
+					this.attributes = temp;
+				}
+			}
+			else if(attributes[0] > 8){
 				attributes[0]--;
+			}
 			break;
 		case 1:
 			if (r.nextBoolean())
@@ -128,5 +144,9 @@ public class Critter extends Entity{
 		if (0<= n  && n<= 5) {
 			direction = n;
 		}
+	}
+
+	public int size(){
+		return getAttributeAtIndex(3);
 	}
 }

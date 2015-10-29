@@ -14,4 +14,20 @@ public class ParserFactory {
     public static Parser getParser() {
         return new ParserImpl();
     }
+
+    /**
+     * Return a parser that can parse Critter files.
+     * @return A Critter text parser
+     */
+    public static CritterParser getCritterParser(){
+        return new CritterParser();
+    }
+
+    /**
+     * Return a parser that can parse World files.
+     * @return A world text parser.
+     */
+    public static WorldParser getWorldParser(){
+        return new WorldParser();
+    }
 }
