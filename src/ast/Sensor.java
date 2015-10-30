@@ -146,13 +146,15 @@ public class Sensor extends UnaryNode implements Expr {
 				default:
 					break;
 			}
+
 		return newCoordinates;
+
 	}
 
 	public int evaluateAhead(Critter c, World w, int distance){
-		try{
+		try {
 			Coordinate newCoordinate = coordAheadAt(c, w, distance);
-			if (!w.inBounds(newCoordinate)){
+			if (!w.inBounds(newCoordinate)) {
 				return w.constants.ROCK_VALUE;
 			}
 			if (w.hexAt(newCoordinate) == null)
@@ -161,7 +163,7 @@ public class Sensor extends UnaryNode implements Expr {
 				return w.hexAt(newCoordinate).appearance();
 			}
 		}
-		catch(IllegalCoordinateException e) {
+		catch(IllegalCoordinateException e){
 			return w.constants.ROCK_VALUE;
 		}
 	}

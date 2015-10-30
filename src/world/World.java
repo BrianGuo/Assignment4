@@ -180,6 +180,7 @@ public class World{
         if(action == TAG || action == SERVE){
             expr = outcome.getExpr().evaluate(critter, this);
         }
+
         switch(action){
             //only the world knows whether the location is valid or not
             //...so if the critter can't move, the world has to manually deduct energy.
@@ -216,7 +217,7 @@ public class World{
                 	critter.consumeEnergy(critter.size() * constants.MOVE_COST);
             		return false;
             	}
-                
+
             case WAIT:
                 critter.absorb();
                 break;
@@ -242,23 +243,43 @@ public class World{
                 break;
             case ATTACK:
             	try{
-	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	Critter attacked = critter.attack(hexAt(forward));
+                    judge(attacked);
 	            	return true;
             	}
             	catch(IllegalCoordinateException e) {
             		critter.consumeEnergy(critter.size()*constants.ATTACK_COST);
             		return false;
             	}
-                //judge(attacked);
-               
+
             case GROW:
                 critter.grow();
                 return true;
                 
             case BUD:
+                try {
+                    Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+                    add(critter.bud(backward));
+                }
+                catch(IllegalCoordinateException e){
+                    critter.consumeEnergy(critter.size() * constants.BUD_COST);
+                }
                 break;
             case MATE:
+                try {
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Critter baby = critter.woo(hexAt(forward), getRandomNearbyUnoccupiedLocation(critter.getLocation()));
+                    add(baby);
+                    try {
+                        judge((Critter) hexAt(forward));
+                    } catch (ClassCastException e) {
+                        //pls don't mate with rocks
+                    }
+                }
+                catch(IllegalCoordinateException e){
+
+                }
                 break;
             case TAG:
             	try{
@@ -282,7 +303,7 @@ public class World{
 
         }
         //kill the critter if it died.
-        //judge(critter);
+        judge(critter);
         return false;
     }
 
@@ -295,7 +316,7 @@ public class World{
     public void add(Entity e) {
         //System.out.println(e.getClass());
         //System.out.println(e.getLocation().getRow());
-        if (hexAt(e.getLocation()) == null) {
+        if (e != null && hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
                 critters.add((Critter) e);
@@ -415,7 +436,13 @@ public class World{
         map[f.getCol()][f.getRow()] = null;
     }
 
-
+    public void judge(Critter c){
+        if(c != null){
+            if(c.isDead()){
+                kill(c);
+            }
+        }
+    }
 
 
 
