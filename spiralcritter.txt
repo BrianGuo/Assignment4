@@ -1,0 +1,20 @@
+species: spiral
+memsize: 10
+defense: 1
+offense: 1
+size: 1
+energy: 500
+posture: 10
+ahead[1] < -1 --> eat;
+mem[8] = 0 and mem[9] = 0 --> mem[9] := 1;
+mem[8] = 0 --> mem[8] := 1
+		forward;
+{mem[8] = 1 or mem[8] = 2} --> mem[8] := (mem[8]+1)
+				right;
+((mem[8]-3) mod (mem[9] + 1)) < mem[9] --> mem[8] := (mem[8]+1)
+						forward;
+((mem[8]-3) mod (mem[9] + 1)) = mem[9] --> mem[8] := (mem[8]+1)
+						right;
+mem[8] = (5*(mem[9]+1)) + mem[9] + 3 --> mem[8] := 0
+					mem[9] := mem[9] + 1
+					left;
