@@ -305,7 +305,8 @@ public class World{
 
     public void addRandom(Entity e){
         try{
-            e.move(getRandomUnoccupiedLocation());
+        	Coordinate c = getRandomUnoccupiedLocation();
+            e.location.move(c.getCol(),c.getRow());
             add(e);
         }
         catch(IllegalCoordinateException ex){
