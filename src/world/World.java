@@ -173,7 +173,7 @@ public class World{
         return inBounds(c.getCol(), c.getRow());
     }
 
-    public boolean evaluate(Outcome outcome) {
+    public void evaluate(Outcome outcome) {
         Critter critter = outcome.getCritter();
         TokenType action = outcome.getAction();
         int expr = 0;
@@ -190,82 +190,84 @@ public class World{
 	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	if(hexAt(forward) == null && inBounds(forward)){
 	                    critter.move(forward);
-	                    return true;
-	                }
+                    }
 	                else{
 	                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
-	                    return false;
-	                }
+                    }
             	}
             	catch(IllegalCoordinateException e){
             		critter.consumeEnergy(critter.size() * constants.MOVE_COST);
-            		return false;
-            	}
+                }
             case BACKWARD:
             	try{
 	                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
 	                if(hexAt(backward) == null && inBounds(backward)){
 	                    critter.move(backward);
-	                    return true;
+
 	                }
 	                else{
 	                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
-	                    return false;
+
 	                }
             	}
                 catch(IllegalCoordinateException e){
                 	critter.consumeEnergy(critter.size() * constants.MOVE_COST);
-            		return false;
+
             	}
 
             case WAIT:
                 critter.absorb();
-                break;
+
+
             case LEFT:
                 critter.turn(LEFT);
-                break;
+
+
             case RIGHT:
                 critter.turn(RIGHT);
-                break;
+
+
             case EAT:
             	try{
 	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	                Food eaten = critter.eat(hexAt(forward));
 	                if(eaten != null && eaten.isConsumed()){ //the magic of short-circuiting!
 	                    clean(eaten);
-	                    return true;
 	                }
+
             	}
             	catch(IllegalCoordinateException e){
             		critter.consumeEnergy(critter.size());
-            		return false;
+
             	}
                 break;
             case ATTACK:
             	try{
                     Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	Critter attacked = critter.attack(hexAt(forward));
+
                     judge(attacked);
-	            	return true;
+
             	}
             	catch(IllegalCoordinateException e) {
             		critter.consumeEnergy(critter.size()*constants.ATTACK_COST);
-            		return false;
+
             	}
 
             case GROW:
                 critter.grow();
-                return true;
+
                 
             case BUD:
                 try {
                     Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
                     add(critter.bud(backward));
+
                 }
                 catch(IllegalCoordinateException e){
                     critter.consumeEnergy(critter.size() * constants.BUD_COST);
+
                 }
-                break;
             case MATE:
                 try {
                     Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
@@ -273,23 +275,24 @@ public class World{
                     add(baby);
                     try {
                         judge((Critter) hexAt(forward));
+
                     } catch (ClassCastException e) {
                         //pls don't mate with rocks
+
                     }
                 }
                 catch(IllegalCoordinateException e){
 
                 }
-                break;
             case TAG:
             	try{
 	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	critter.tag(hexAt(forward), expr);
-	            	return true;
+
             	}
             	catch(IllegalCoordinateException e) {
             		critter.consumeEnergy(critter.size());
-            		return false;
+
             	}
                 
             case SERVE:
@@ -297,14 +300,13 @@ public class World{
                 if(dinner != null){
                     //add will fail if the space is occupied
                     add(dinner);
-                    return true;
+
                 }
-                break;
+
 
         }
         //kill the critter if it died.
         judge(critter);
-        return false;
     }
 
     /**
