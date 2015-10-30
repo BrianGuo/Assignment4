@@ -20,6 +20,7 @@ public class Critter extends Entity{
 	Rule LastRule;
 	Critter lover;
 	private Critter lovedBy;
+	private WorldConstants constants;
 
 	//keeps track of whether the critter is dead
 
@@ -37,6 +38,7 @@ public class Critter extends Entity{
 		this.species = species;
 		this.location = coordinates;
 		p = program;
+		this.constants = constants;
 
 		//if memsize is greater than 8, we need to add slots for the extra memory locations
 		if(attributes.length < attributes[0]){
@@ -220,6 +222,13 @@ public class Critter extends Entity{
 		int a = 0;
 		if (n != null)
 			a = n.size();
+		if (p == null)
+			System.out.println("p is null");
+		if (constants == null)
+			System.out.println("constants is null");
+		if (attributes == null) {
+			System.out.println("Attributes is null");
+		}
 		return p.getRules().size() * constants.RULE_COST + (attributes[1] + attributes[2]) * constants.ABILITY_COST;
 	}
 
