@@ -182,6 +182,10 @@ public class World{
         }
 
         Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+        Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+        if(action != MATE) { //the world's hard, can't be in love if we're not going to mate
+            critter.fallOutofLove();
+        }
         switch(action){
             //only the world knows whether the location is valid or not
             //...so if the critter can't move, the world has to manually deduct energy.
@@ -195,7 +199,7 @@ public class World{
                 }
                 break;
             case BACKWARD:
-                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+
                 if(hexAt(backward) == null && inBounds(backward)){
                     critter.move(backward);
                 }
@@ -220,14 +224,23 @@ public class World{
                 break;
             case ATTACK:
                 Critter attacked = critter.attack(hexAt(forward));
-                //judge(attacked);
+                judge(attacked);
                 break;
             case GROW:
                 critter.grow();
                 break;
             case BUD:
+                add(critter.bud(backward));
                 break;
             case MATE:
+                Critter baby = critter.woo(hexAt(forward), getRandomNearbyUnoccupiedLocation(critter.getLocation()));
+                add(baby);
+                try{
+                    judge((Critter) hexAt(forward));
+                }
+                catch(ClassCastException e){
+                    //pls don't mate with rocks
+                }
                 break;
             case TAG:
                 critter.tag(hexAt(forward), expr);
@@ -243,7 +256,7 @@ public class World{
 
         }
         //kill the critter if it died.
-        //judge(critter);
+        judge(critter);
         return false;
     }
 
@@ -256,7 +269,7 @@ public class World{
     public void add(Entity e) {
         //System.out.println(e.getClass());
         //System.out.println(e.getLocation().getRow());
-        if (hexAt(e.getLocation()) == null) {
+        if (e != null && hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
                 critters.add((Critter) e);
@@ -375,7 +388,13 @@ public class World{
         map[f.getCol()][f.getRow()] = null;
     }
 
-
+    public void judge(Critter c){
+        if(c != null){
+            if(c.isDead()){
+                kill(c);
+            }
+        }
+    }
 
 
 

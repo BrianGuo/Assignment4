@@ -3,6 +3,7 @@ package world;
 import java.util.Random;
 
 import ast.Program;
+import ast.ProgramImpl;
 import ast.Rule;
 import parse.TokenType;
 
@@ -16,9 +17,12 @@ public class Critter extends Entity{
 	int direction;
 	int[] attributes;
 	Rule LastRule;
+	Critter lover;
+	private Critter lovedBy;
 
 	//keeps track of whether the critter is dead
 	boolean isDead = false;
+
 	//keeps track of whether the critter is mating
 	//boolean isMating = false;
 
@@ -309,6 +313,7 @@ public class Critter extends Entity{
 			}
 
 		}
+		return null;
 	}
 
 	/**
@@ -335,7 +340,123 @@ public class Critter extends Entity{
 		}
 	}
 
-	public void makeBabies(){
+	public Critter bud(Coordinate babyLocation) {
+		int[] newAttributes = new int[attributes[0]];
+		//copy over memsize, zero out general purpose fields
+		newAttributes[0] = attributes[0];
+		newAttributes[1] = 1;
+		newAttributes[2] = 1;
+		newAttributes[3] = 1;
+		newAttributes[4] = constants.INITIAL_ENERGY;
+		newAttributes[5] = 0;
+		newAttributes[6] = 0;
+		newAttributes[7] = 0; //just to be clear that we're resetting this
+
+		consumeEnergy(complexity() * constants.BUD_COST);
+		if (!isDead && babyLocation != null){
+			Critter baby = new Critter(newAttributes, (int)(Math.random() * 6), this.species, babyLocation,
+					this.constants, this.p);
+			baby.mutate();
+			return baby;
+		}
+		return null;
 
 	}
+
+	/**
+	 * Creates a new critter that's the child of this critter and other
+	 * @param babyLocation location of the new baby
+	 * @param other other parent
+	 * @return the created offspring
+	 */
+	public Critter mate(Coordinate babyLocation, Critter other){
+		if(isDead){
+			other.consumeEnergy(size());
+			return null;
+		} //even love can't help you if someone kills you :(
+		if(babyLocation == null) {
+			consumeEnergy(size());
+			other.consumeEnergy(size());
+			return null;
+		}
+		int[] newAttributes = new int[attributes[0]];
+		//copy over memsize, zero out general purpose fields
+		newAttributes[0] = attributes[0];
+		newAttributes[1] = 1;
+		newAttributes[2] = 1;
+		newAttributes[3] = 1;
+		newAttributes[4] = constants.INITIAL_ENERGY;
+		newAttributes[5] = 0;
+		newAttributes[6] = 0;
+		newAttributes[7] = 0; //just to be clear that we're resetting this
+
+		//merge the programs
+		Program newProgram = new ProgramImpl();
+		for(Rule r: other.getProgram().getRules()){
+			newProgram.getRules().add(r);
+		}
+		for(Rule r: p.getRules()){
+			newProgram.getRules().add(r);
+		}
+
+		String thisSpecies="";
+		for(int i = 0; i < species.length(); i++){
+			if(Math.random() < 0.5)
+				thisSpecies += species.charAt(i);
+		}
+
+		String otherSpecies="";
+		for(int i = 0; i < other.species.length(); i++){
+			if(Math.random() < 0.5)
+				otherSpecies += other.species.charAt(i);
+		}
+		String newSpecies = thisSpecies + otherSpecies;
+		Critter baby = new Critter(this.attributes, (int) (Math.random() * 6), newSpecies,
+				babyLocation, constants, newProgram);
+
+		//in an act of pure love, the parents can spend the last of their energy to ensure their child
+		//has a chance at experiencing the world
+		consumeEnergy(complexity() * constants.MATE_COST);
+		other.consumeEnergy(complexity() * constants.MATE_COST);
+		//of course they can't stand each other after the baby's born
+		fallOutofLove();
+		other.fallOutofLove();
+		return baby;
+	}
+
+	/**
+	 * Makes the other critter fall in loveeeeeeeee
+	 * @param other other critter
+	 * @param babyLocation where the baby would be born
+	 */
+	public Critter woo(Entity other, Coordinate babyLocation){
+		Critter otherC;
+		if(other instanceof Critter) {
+			otherC = (Critter) other;
+			if (!isDead) {
+				if(lover().equals(otherC) && otherC.lover().equals(this)){ //they love me and i love them
+					return mate(babyLocation, otherC);
+				}
+				else {
+					lover = otherC;
+				}
+			}
+
+		}
+		return null;
+	}
+
+	public void fallOutofLove(){
+		lover = null;
+
+	}
+
+	public Critter lover(){
+		return lover;
+	}
+
+	public Critter lovedBy(){
+		return lovedBy;
+	}
+
 }

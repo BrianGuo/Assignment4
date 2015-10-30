@@ -151,7 +151,14 @@ public class Sensor extends UnaryNode implements Expr {
 		catch(IllegalCoordinateException e){
 			return null;
 		}
-		return newCoordinates;
+		//I just remembered we passed in a world
+		//I'm so sorry World.java for making you manually check for bounds
+		if(w.inBounds(newCoordinates)) {
+			return newCoordinates;
+		}
+		else{
+			return null;
+		}
 	}
 
 	public int evaluateAhead(Critter c, World w, int distance){
@@ -160,7 +167,7 @@ public class Sensor extends UnaryNode implements Expr {
 			return w.hexAt(newCoordinate).appearance();
 		}
 		else{
-			return w.constants.ROCK_VALUE;
+			return 0;
 		}
 	}
 	
