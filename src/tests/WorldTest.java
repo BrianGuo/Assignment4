@@ -61,12 +61,12 @@ public class WorldTest {
 
     @Test(expected= IllegalArgumentException.class)
     public void testNegativeFood() throws Exception {
-        Food f = new Food(4, 5, -5,w.constants);
+        Food f = new Food(4, 5, -5 * w.constants.FOOD_PER_SIZE ,w.constants);
     }
 
     @Test(expected= IllegalCoordinateException.class)
     public void testNegativeCoords() throws Exception {
-        Food f = new Food(-4, 5, 5,w.constants);
+        Food f = new Food(-4, 5, 5 * w.constants.FOOD_PER_SIZE,w.constants);
     }
 
     //TODO: replace with ExpectedException
@@ -82,7 +82,7 @@ public class WorldTest {
 
     @Test
     public void testOverlap() throws Exception{
-        Food f = new Food(4,5, 10,w.constants);
+        Food f = new Food(4,5, 10 * w.constants.FOOD_PER_SIZE,w.constants);
         w.add(f);
         assertFalse(w.hexAt(4, 5) instanceof Food);
         assertTrue(w.hexAt(4,5) instanceof Rock);
@@ -98,7 +98,7 @@ public class WorldTest {
 
     @Test
     public void testClean() throws Exception{
-        Food f = new Food(4,6,10, w.constants);
+        Food f = new Food(4,6,10 * w.constants.FOOD_PER_SIZE, w.constants);
         //random world generation can place a rock on the spot we're looking for
         while(!(w.hexAt(4,6) == null)) {
             w = Factory.getRandomWorld();

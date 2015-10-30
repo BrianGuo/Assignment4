@@ -92,7 +92,7 @@ public class Factory {
      * Creates a food on a certain position.
      * @param col Col to place the food
      * @param row Row to place the food
-     * @param amt Amount of food to place, before multiplying by FOOD_PER_SIZE
+     * @param amt Raw amount of food to place
      * @param constants constants file
      * @return A new Food object at the given position
      * @throws IllegalCoordinateException

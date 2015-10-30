@@ -40,7 +40,7 @@ public class CritterParser {
                 case "species":
                     species = next[1];
                 case "memsize":
-                    memsize = Math.max(value, 8);
+                    memsize = Math.max(value, constants.MIN_MEMORY);
                     break;
                 case "defense":
                     defense = Math.max(value, 1);

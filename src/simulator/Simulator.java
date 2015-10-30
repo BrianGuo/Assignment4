@@ -90,6 +90,7 @@ public class Simulator {
 	public boolean hasWorld() {
 		return (world != null);
 	}
+
 	//TODO: Handle these exceptions
 	public void putCritterRandomly(String filename, int n) throws MissingElementException, FileNotFoundException, SyntaxError{
 		if (world == null)
@@ -100,6 +101,12 @@ public class Simulator {
 		}
 	}
 	
+	/**
+	 * Helper function that produces one line in ascii hex notation
+	 * @param c		Column of starting index
+	 * @param r		Row of starting index
+	 * @return		A string representation of the line
+	 */
 	public String hexLine(int c, int r) {
 		String result;
 		if (c == 1)
@@ -119,6 +126,11 @@ public class Simulator {
 		return result;
 	}
 	
+	/**
+	 * Prints information about the contents of a hex coordinate.
+	 * @param c		The column of the location to be hexed
+	 * @param r		The row of the location to be hexed
+	 */
 	public void hexLocation(int c, int r) {
 		Entity e = world.hexAt(c, r);
 		if (!world.inBounds(c, r))
@@ -143,6 +155,11 @@ public class Simulator {
 			System.out.println("The last Rule executed was" + cr.getLastRule().toString());
 		}
 	}
+	
+	/**
+	 * Prints the world in ascii hex format.
+	 * Requires: world is not null and valid.
+	 */
 	public void hexWorld() {
 		ArrayList<String> results = new ArrayList<String>();
 		int columns = world.getColumns();

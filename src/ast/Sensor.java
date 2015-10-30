@@ -6,6 +6,7 @@ import java.util.Random;
 import exceptions.IllegalCoordinateException;
 import world.Coordinate;
 import world.Critter;
+import world.Entity;
 import parse.Token;
 import parse.TokenType;
 import world.World;
@@ -147,7 +148,11 @@ public class Sensor extends UnaryNode implements Expr {
 			default:
 				break;
 			}
-			return w.hexAt(newCoordinates).appearance();
+			Entity e = w.hexAt(newCoordinates);
+			if (e == null)
+				return 0;
+			else
+				return e.appearance();
 		}
 		catch(IllegalCoordinateException e){
 			return -1;

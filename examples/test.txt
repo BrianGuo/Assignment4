@@ -1,7 +1,14 @@
-(mem[8] mod 6) >= 3 --> left;
-ahead[1] = 0 --> forward;
-{{ahead[1] != 1 and ahead[1] != 2} and ahead[1] != (0 - 1)} --> attack;
-ahead[1] > 0 --> tag[1];
-{ENERGY > (SIZE * 100) and SIZE < (10 + POSTURE)} --> grow;
-ENERGY > 1000 --> POSTURE := (POSTURE + PASS) bud;
--(mem[(SIZE + 10)] mod 6) <= 3 --> right;
+name Small world
+size 10 15
+rock 2 2
+rock 3 6
+rock 9 10
+
+// Some food
+food 4 4 75
+food 3 1 12
+
+// example_critter.txt should be in the working directory
+critter example_critter.txt 2 5 3
+critter example_critter.txt 4 3 1
+critter example_critter.txt 4 4 2

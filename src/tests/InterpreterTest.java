@@ -14,6 +14,7 @@ import ast.Program;
 import ast.Rule;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
+import interpret.Outcome;
 import parse.Parser;
 import parse.ParserFactory;
 import world.Critter;
@@ -24,6 +25,23 @@ public class InterpreterTest {
 
 	@Test
 	public void testInterpret() {
+		try{
+		FileReader f = new FileReader("world.txt");
+		World w = Factory.getWorld(f);
+		Critter cr = Factory.getCritter("example_critter.txt", w.constants);
+		CritterInterpreter i = new CritterInterpreter();
+		i.setWorld(w);
+		i.setCritter(cr);
+		Outcome o = i.interpret(cr.getProgram());
+		assertNotNull(o);
+		System.out.println(o.getAction().toString());
+		}
+		catch(FileNotFoundException e) {
+			fail();
+		}
+		catch(SyntaxError e){
+			fail();
+		}
 	}
 
 	@Test
@@ -68,12 +86,6 @@ public class InterpreterTest {
 			Expr e = (Expr) prog.nodeAt(3);
 			i.setCritter(cr);
 			i.setWorld(w);
-			System.out.println(e);
-			System.out.println(i.eval(e));
-			System.out.println(Arrays.toString(attributes));
-			i.setCritter(null);
-			i.setWorld(null);
-			assertNull(i.eval(e));
 		}
 		catch(FileNotFoundException e){
 			fail();

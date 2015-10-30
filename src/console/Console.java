@@ -130,7 +130,8 @@ public class Console {
      * @throws MissingElementException 
      */
     private void loadCritters(String filename, int n)  throws MissingElementException, FileNotFoundException, SyntaxError{
-        sim.putCritterRandomly(filename);
+    	
+        sim.putCritterRandomly(filename,n);
     }
 
     /**
