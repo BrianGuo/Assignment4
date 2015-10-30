@@ -37,12 +37,24 @@ class ParserImpl implements Parser {
         //TODO Parse rules until we reach the end
         ProgramImpl program = new ProgramImpl();
         while(t.hasNext()){
-            program.addRule(parseRule(t));
+            try{
+                program.addRule(parseRule(t));
+            }
+            catch(SyntaxError e){
+                if(e.getMessage().equals("EOF")){
+                    break;
+                }
+                else{
+                    throw new SyntaxError();
+                }
+            }
+
         }
         return program;
     }
 
     public static Rule parseRule(Tokenizer t) throws SyntaxError {
+    	System.out.println("This is the problem");
         Condition condition;
         Command command;
         condition = parseCondition(t);
@@ -53,6 +65,7 @@ class ParserImpl implements Parser {
     }
 
     public static Command parseCommand(Tokenizer t) throws SyntaxError {
+    	
         Command command = new Command();
         ActionNode action;
         while (t.peek().getType() == TokenType.MEM || t.peek().isMemSugar()) { //this also handles the case of update-or-action being an update
@@ -290,6 +303,7 @@ class ParserImpl implements Parser {
     public static Expr parseFactor(Tokenizer t) throws SyntaxError {
         Token cur = t.peek();
         Expr factor;
+
         if(cur.getType() == TokenType.MEM || cur.isMemSugar()){
             factor = parseMemory(t);
         }
@@ -329,9 +343,13 @@ class ParserImpl implements Parser {
     }
     /**
      * Consumes a token of the expected type.
+     * Contains a dreadful hack for comments on the last line
      * @throws SyntaxError if the wrong kind of token is encountered.
      */
     public static void consume(Tokenizer t, TokenType tt) throws SyntaxError {
+        if(t.peek().getType() == TokenType.EOF){
+            throw new SyntaxError("EOF");
+        }
         if(t.peek().getType() == tt){
             t.next();
         }

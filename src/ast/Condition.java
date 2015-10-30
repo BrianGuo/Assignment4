@@ -4,7 +4,7 @@ package ast;
  * An interface representing a Boolean condition in a critter program.
  *
  */
-import critter.Critter;
+import world.Critter;
 import world.World;
 
 public interface Condition extends Node {

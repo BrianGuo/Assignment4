@@ -1,27 +1,50 @@
 package console;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
+
+import exceptions.SyntaxError;
+import interpret.CritterInterpreter;
+import simulator.Simulator;
+import world.Factory;
+import world.World;
+import exceptions.MissingElementException;
 
 /** The console user interface for Assignment 5. */
 public class Console {
     private Scanner scan;
     public boolean done;
+    private Simulator sim;
 
     //TODO world representation...
-
+//TODO fix the exception business
     public static void main(String[] args) {
         Console console = new Console();
 
         while (!console.done) {
             System.out.print("Enter a command or \"help\" for a list of commands.\n> ");
-            console.handleCommand();
+            try {
+                console.handleCommand();
+            }
+            catch(MissingElementException e){
+                System.out.println("Why does this happen?");
+            }
+            catch(FileNotFoundException e){
+                System.out.println("File not found.");
+                System.out.println(e.getMessage());
+            }
+            catch(SyntaxError e){
+                System.out.println("Syntax error in file.");
+                System.out.println(e.getMessage());
+            }
         }
     }
 
     /**
-     * Processes a single console command provided by the user.
+     * Processes a single console command provided by the user. 
      */
-    void handleCommand() {
+    void handleCommand() throws MissingElementException, FileNotFoundException, SyntaxError{
         String command = scan.next();
         switch (command) {
         case "new": {
@@ -73,13 +96,19 @@ public class Console {
     public Console() {
         scan = new Scanner(System.in);
         done = false;
+        sim = new Simulator(); //Piazza question mentioned we should start a new simulator on every loadup
     }
 
     /**
      * Starts new random world simulation.
      */
     private void newWorld() {
-        //TODO implement
+    	CritterInterpreter c = new CritterInterpreter();
+        World w = Factory.getRandomWorld();
+
+    	c.setWorld(w);
+        Simulator s = new Simulator(w,c);
+        this.sim = s;
     }
 
     /**
@@ -87,7 +116,10 @@ public class Console {
      * @param filename
      */
     private void loadWorld(String filename) {
-        //TODO implement
+    	CritterInterpreter c = new CritterInterpreter();
+	    Simulator s = new Simulator(c);
+	    s.parseWorld(filename);
+	    this.sim = s;
     }
 
     /**
@@ -95,17 +127,23 @@ public class Console {
      * n critters with that definition into the world.
      * @param filename
      * @param n
+     * @throws MissingElementException 
      */
-    private void loadCritters(String filename, int n) {
-        //TODO implement
+    private void loadCritters(String filename, int n)  throws MissingElementException, FileNotFoundException, SyntaxError{
+    	
+        sim.putCritterRandomly(filename,n);
     }
 
     /**
      * Advances the world by n time steps.
      * @param n
+     * @throws MissingElementException 
      */
     private void advanceTime(int n) {
-        //TODO implement
+        if(sim != null)
+        	sim.advance(n);
+        else
+        	System.out.println("You haven't loaded a simulator");
     }
 
     /**
@@ -113,7 +151,9 @@ public class Console {
      * map of the simulation.
      */
     private void worldInfo() {
-        //TODO implement
+        System.out.println("Timesteps: " +sim.getTimesteps());
+        System.out.println("Number of Critters: " + sim.getNumCritters());
+        sim.hexWorld();
     }
 
     /**
@@ -122,7 +162,7 @@ public class Console {
      * @param r row of hex
      */
     private void hexInfo(int c, int r) {
-        //TODO implement
+        sim.hexLocation(c, r);
     }
 
     /**

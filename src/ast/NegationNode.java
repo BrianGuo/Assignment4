@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-import critter.Critter;
+import world.Critter;
 import world.World;
 
 public class NegationNode extends UnaryNode implements Expr {
@@ -43,7 +43,7 @@ public class NegationNode extends UnaryNode implements Expr {
 
 	@Override
 	public StringBuilder prettyPrint(StringBuilder sb) {
-		sb.append("-" + expression.toString());
+		sb.append("- " + expression.toString());
 		return sb;
 	}
 
