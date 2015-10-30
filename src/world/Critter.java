@@ -1,5 +1,6 @@
 package world;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import ast.Program;
@@ -215,6 +216,10 @@ public class Critter extends Entity{
 	 * @return complexity of the critter
 	 */
 	public int complexity(){
+		ArrayList<Rule> n = p.getRules();
+		int a = 0;
+		if (n != null)
+			a = n.size();
 		return p.getRules().size() * constants.RULE_COST + (attributes[1] + attributes[2]) * constants.ABILITY_COST;
 	}
 
