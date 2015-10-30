@@ -121,10 +121,9 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	public static Coordinate coordAheadAt(Critter c, World w, int distance){
+	public static Coordinate coordAheadAt(Critter c, World w, int distance) throws IllegalCoordinateException{
 		Coordinate newCoordinates = null;
 		Coordinate coordinates = c.getLocation();
-		try{
 			switch (c.getDirection()){
 				case 0:
 					newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
@@ -147,23 +146,23 @@ public class Sensor extends UnaryNode implements Expr {
 				default:
 					break;
 			}
-		}
-		catch(IllegalCoordinateException e){
-			return null;
-		}
 		return newCoordinates;
 	}
 
 	public int evaluateAhead(Critter c, World w, int distance){
-		Coordinate newCoordinate = coordAheadAt(c, w, distance);
-		if (!w.inBounds(newCoordinate)){
+		try{
+			Coordinate newCoordinate = coordAheadAt(c, w, distance);
+			if (!w.inBounds(newCoordinate)){
+				return w.constants.ROCK_VALUE;
+			}
+			if (w.hexAt(newCoordinate) == null)
+				return 0;
+			else {
+				return w.hexAt(newCoordinate).appearance();
+			}
+		}
+		catch(IllegalCoordinateException e) {
 			return w.constants.ROCK_VALUE;
-		}
-		if (newCoordinate != null) {
-			return w.hexAt(newCoordinate).appearance();
-		}
-		else {
-			return 0;
 		}
 	}
 	
