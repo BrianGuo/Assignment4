@@ -37,7 +37,18 @@ class ParserImpl implements Parser {
         //TODO Parse rules until we reach the end
         ProgramImpl program = new ProgramImpl();
         while(t.hasNext()){
-            program.addRule(parseRule(t));
+            try{
+                program.addRule(parseRule(t));
+            }
+            catch(SyntaxError e){
+                if(e.getMessage().equals("EOF")){
+                    break;
+                }
+                else{
+                    throw new SyntaxError();
+                }
+            }
+
         }
         return program;
     }
@@ -330,9 +341,13 @@ class ParserImpl implements Parser {
     }
     /**
      * Consumes a token of the expected type.
+     * Contains a dreadful hack for comments on the last line
      * @throws SyntaxError if the wrong kind of token is encountered.
      */
     public static void consume(Tokenizer t, TokenType tt) throws SyntaxError {
+        if(t.peek().getType() == TokenType.EOF){
+            throw new SyntaxError("EOF");
+        }
         if(t.peek().getType() == tt){
             t.next();
         }

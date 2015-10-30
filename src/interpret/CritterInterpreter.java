@@ -22,11 +22,9 @@ public class CritterInterpreter implements Interpreter {
 	public Outcome interpret(Program p) {
 		assert(cr.getProgram().equals(p));
 		ArrayList<Rule> rules = p.getRules();
-		System.out.println(rules.size());
 		int current = 0;
 		cr.setNodeAt(5, 1);
 		while (current < rules.size()){
-			System.out.println("Reached here and current is " + current);
 			if (cr.getAttributeAtIndex(5) > 999) {
 				return new CritterOutcome(cr,TokenType.WAIT,null);
 			}

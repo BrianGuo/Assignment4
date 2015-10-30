@@ -196,7 +196,7 @@ public class World{
                 critter.turn(RIGHT);
                 break;
             case EAT:
-                critter.eat(/*The food in front of it*/);
+                //critter.eat(/*The food in front of it*/);
                 break;
             case ATTACK:
                 break;
@@ -220,7 +220,7 @@ public class World{
 
         }
         //kill the critter if it died.
-        judge(critter);
+        //judge(critter);
         return false;
     }
 

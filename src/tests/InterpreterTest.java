@@ -17,6 +17,7 @@ import interpret.CritterInterpreter;
 import interpret.Outcome;
 import parse.Parser;
 import parse.ParserFactory;
+import world.Coordinate;
 import world.Critter;
 import world.Factory;
 import world.World;
@@ -28,7 +29,7 @@ public class InterpreterTest {
 		try{
 		FileReader f = new FileReader("world.txt");
 		World w = Factory.getWorld(f);
-		Critter cr = Factory.getCritter("example_critter.txt", w.constants);
+		Critter cr = Factory.getCritter("spiralcritter.txt", w.constants);
 		CritterInterpreter i = new CritterInterpreter();
 		i.setWorld(w);
 		i.setCritter(cr);
@@ -77,10 +78,10 @@ public class InterpreterTest {
 		try{
 			FileReader f = new FileReader("examples/example-rules.txt");
 			Program prog = p.parse(f);
-			int[] attributes = new int[11];
-			attributes[5] = 50;//Result should be 50
 			f = new FileReader("examples/world.txt");
 			World w = Factory.getWorld(f);
+			int[] attributes = new int[11];
+			attributes[5] = 50;//Result should be 50
 			Critter cr = Factory.getCritter("example_critter.txt", w.constants);
 			Rule r = prog.getRules().get(2);
 			Expr e = (Expr) prog.nodeAt(3);

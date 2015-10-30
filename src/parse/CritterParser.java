@@ -8,6 +8,7 @@ import world.Critter;
 import world.WorldConstants;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -16,6 +17,7 @@ public class CritterParser {
 
     public static Critter parseCritter(Reader r, WorldConstants constants) throws SyntaxError {
         Scanner sc = new Scanner(r);
+
         String species = "";
         int memsize= 0;
         int defense = 0;
@@ -62,8 +64,15 @@ public class CritterParser {
                     break;
             }
         }
+        String rest = "";
+        while(sc.hasNext()){
+            rest += sc.nextLine() + "\n";
+        }
+        rest = rest.trim();
+        StringReader sr = new StringReader(rest);
         //The scanner has now advanced past the attributes and the remainder contains the ruleset
-        Program program = ParserFactory.getParser().parse(r);
+        Program program = ParserFactory.getParser().parse(sr);
+        System.out.println(program);
         //{memsize, defense, offense, size, energy, pass, tag,posture}
         int[] memory = {memsize, defense, offense, size, energy, 0, 0, posture};
         return new Critter(memory, (int)(Math.random() * 6), species, new Coordinate(0,0), constants, program);
