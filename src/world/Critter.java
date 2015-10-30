@@ -254,6 +254,8 @@ public class Critter extends Entity{
 		//if you get attacked and die, you're not allowed to absorb either
 		if(!isDead) {
 			attributes[4] += attributes[3] * constants.SOLAR_FLUX;
+			//can't go above maximum energy
+			attributes[4] = Math.max(attributes[4], size() * constants.ENERGY_PER_SIZE);
 		}
 	}
 
