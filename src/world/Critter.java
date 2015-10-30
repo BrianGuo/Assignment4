@@ -17,6 +17,8 @@ public class Critter extends Entity{
 	int[] attributes;
 	Rule LastRule;
 	boolean isDead = false;
+	//keeps track of whether the critter is mating
+	//boolean isMating = false;
 
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
@@ -176,7 +178,7 @@ public class Critter extends Entity{
 	 * sets isConsumed to true.
 	 * @param amt
 	 */
-	private void consumeEnergy(int amt){
+	public void consumeEnergy(int amt){
 		attributes[4] -= amt;
 		if(attributes[4] <= 0){
 			isDead = true;
@@ -215,14 +217,22 @@ public class Critter extends Entity{
 	 * This amount is equal to size * ENERGY_PER_SIZE - energy
 	 * No effect if the critter died. (No zombie critters allowed!)
 	 * @param f Food object to nom on
+	 * @return the food eaten, or null if it's not food
 	 */
-	public void eat(Food f){
+	public Food eat(Entity f){
 		consumeEnergy(size());
-		assert(attributes[4] <= size() * constants.ENERGY_PER_SIZE);
-		if(!isDead) { //can't eat if you're dead, sorry!
-			int hunger = size() * constants.ENERGY_PER_SIZE - attributes[4];
-			attributes[4] += f.consume(hunger);
+		Food food;
+		if (f instanceof Food) { // :(
+			food = (Food) f;
+			assert (attributes[4] <= size() * constants.ENERGY_PER_SIZE);
+			if (!isDead) { //can't eat if you're dead, sorry!
+				int hunger = size() * constants.ENERGY_PER_SIZE - attributes[4];
+				attributes[4] += food.consume(hunger);
+				return food;
+			}
+
 		}
+		return null;
 	}
 
 	/**
@@ -253,6 +263,7 @@ public class Critter extends Entity{
 
 	/**
 	 * Grows the critter's size by 1 by using size * complexity * GROW_COST energy
+	 * If the critter dies trying to grow, it dumps food using the previous size, even if it was successful.
 	 */
 	public void grow(){
 		consumeEnergy(size() * complexity() * constants.GROW_COST);
@@ -263,5 +274,65 @@ public class Critter extends Entity{
 		}
 	}
 
+	public void tag(Entity other, int tag) {
+		consumeEnergy(size());
+		Critter otherC;
+		if (!isDead) {
+			if (other instanceof Critter) {
+				otherC = (Critter) other;
+				if (tag >= 0 && tag <= 99) {
+					otherC.attributes[6] = tag;
+				}
+			}
+		}
 
+	}
+
+	/**
+	 * Attempts to attack the enemy
+	 * @param enemy the enemy critter to attack
+	 * @return the enemy critter attacked, or null if it wasn't a critter
+	 */
+	public Critter attack(Entity enemy){
+		Critter enemyC;
+		consumeEnergy(size() * constants.ATTACK_COST);
+		if(enemy instanceof Critter) {
+			enemyC = (Critter) enemy;
+			//if you're too hungry to successfully attack you can't hit them while dying
+			if (!isDead) {
+				int damageDealt = calculateDamage(size(), enemyC.size(), attributes[2], enemyC.attributes[1]);
+				enemyC.consumeEnergy(damageDealt);
+				return enemyC;
+			}
+
+		}
+	}
+
+	/**
+	 * Calculates damage done given some parameters.
+	 * @param s1 size of attacking critter
+	 * @param s2 size of defending critter
+	 * @param o1 offense stat of attacking critter
+	 * @param d2 defense stat of defending critter
+	 * @return damage done, rounded half up.
+	 */
+	private int calculateDamage(int s1, int s2, int o1, int d2){
+		return (int) Math.round(constants.BASE_DAMAGE * s1 * logistic(constants.DAMAGE_INC * (s1*o1 - s2*d2)));
+	}
+
+	/**
+	 * Moves the critter to a new location.
+	 * @param newLocation The new location to move to.
+	 */
+	public void move(Coordinate newLocation){
+		consumeEnergy(size() * constants.MOVE_COST);
+		//dead critters can't move either
+		if(!isDead){
+			this.location = newLocation;
+		}
+	}
+
+	public void makeBabies(){
+
+	}
 }

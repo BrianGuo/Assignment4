@@ -37,7 +37,6 @@ public class CritterParser {
             catch(NumberFormatException e){
                 //ignore and deal with later
             }
-            //TODO Take maximum of the value and the mininum value. Or keep inside bounds. 
             switch (next[0]) {
                 case "species":
                     species = next[1];
@@ -69,8 +68,11 @@ public class CritterParser {
             rest += sc.nextLine() + "\n";
         }
         rest = rest.trim();
+        //fails on overly large critter files
+        //sorry, my earlier strategy of reusing the same reader failed miserably
         StringReader sr = new StringReader(rest);
         //The scanner has now advanced past the attributes and the remainder contains the ruleset
+        //jk it didn't, had to hack together another reader with the rest of the file...
         Program program = ParserFactory.getParser().parse(sr);
         System.out.println(program);
         //{memsize, defense, offense, size, energy, pass, tag,posture}

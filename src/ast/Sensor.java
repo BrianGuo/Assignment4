@@ -121,41 +121,49 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	public int evaluateAhead(Critter c, World w, int distance){
+	public static Coordinate coordAheadAt(Critter c, World w, int distance){
 		Coordinate newCoordinates = null;
-		int direction = c.getDirection();
 		Coordinate coordinates = c.getLocation();
 		try{
-			switch (direction){
-			case 0:
-				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
-				break;
-			case 1:
-				newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow()+1*distance);
-				break;
-			case 2:
-				newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow());
-				break;
-			case 3:
-				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()-1*distance);
-				break;
-			case 4:
-				newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow()-1*distance);
-				break;
-			case 5:
-				newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow());
-				break;
-			default:
-				break;
+			switch (c.getDirection()){
+				case 0:
+					newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
+					break;
+				case 1:
+					newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow()+1*distance);
+					break;
+				case 2:
+					newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow());
+					break;
+				case 3:
+					newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()-1*distance);
+					break;
+				case 4:
+					newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow()-1*distance);
+					break;
+				case 5:
+					newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow());
+					break;
+				default:
+					break;
 			}
-			Entity e = w.hexAt(newCoordinates);
-			if (e == null)
-				return 0;
-			else
-				return e.appearance();
 		}
 		catch(IllegalCoordinateException e){
-			return -1;
+			return null;
+		}
+		return newCoordinates;
+	}
+
+	public int evaluateAhead(Critter c, World w, int distance){
+		Coordinate newCoordinate = coordAheadAt(c, w, distance);
+		if (!w.inBounds(newCoordinate)){
+			return w.constants.ROCK_VALUE;
+		}
+		if (newCoordinate != null) {
+			return w.hexAt(newCoordinate).appearance();
+		}
+		else {
+			return 0;
 		}
 	}
 	

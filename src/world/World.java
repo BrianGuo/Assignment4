@@ -1,4 +1,5 @@
 package world;
+import ast.Sensor;
 import exceptions.IllegalCoordinateException;
 import exceptions.SyntaxError;
 import interpret.Outcome;
@@ -180,11 +181,27 @@ public class World{
             expr = outcome.getExpr().evaluate(critter, this);
         }
 
+        Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
         switch(action){
+            //only the world knows whether the location is valid or not
+            //...so if the critter can't move, the world has to manually deduct energy.
+            //ack.
             case FORWARD:
-                //cur.move()
+                if(hexAt(forward) == null && inBounds(forward)){
+                    critter.move(forward);
+                }
+                else{
+                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
+                }
                 break;
             case BACKWARD:
+                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+                if(hexAt(backward) == null && inBounds(backward)){
+                    critter.move(backward);
+                }
+                else{
+                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
+                }
                 break;
             case WAIT:
                 critter.absorb();
@@ -196,18 +213,24 @@ public class World{
                 critter.turn(RIGHT);
                 break;
             case EAT:
-                //critter.eat(/*The food in front of it*/);
+                Food eaten = critter.eat(hexAt(forward));
+                if(eaten != null && eaten.isConsumed()){ //the magic of short-circuiting!
+                    clean(eaten);
+                }
                 break;
             case ATTACK:
+                Critter attacked = critter.attack(hexAt(forward));
+                //judge(attacked);
                 break;
             case GROW:
+                critter.grow();
                 break;
             case BUD:
                 break;
             case MATE:
                 break;
             case TAG:
-                //expr
+                critter.tag(hexAt(forward), expr);
                 break;
             case SERVE:
                 Food dinner = critter.serve(expr);
@@ -275,6 +298,63 @@ public class World{
         Collections.shuffle(coords);
         return coords.get(0);
     }
+
+    //I'm so sorry
+    //Partner's code in Sensor is currently not portable (works specifically for critters only because it uses
+    //their own direction and returns an int).  I refactored it slightly for ahead so I could use it, but
+    //refactoring nearby is just not happening.  Too many calls rely on critter right now and I don't feel like
+    //discovering if intelliJ can refactor that automatically.  also, slightly burnt out.  :(
+
+    /**
+     * Gets a random unoccupied location next to the given location, or null if all are filled.
+     * @param c coordinate to look around from
+     * @return random unoccupied location next to c or null if there are none
+     */
+    public Coordinate getRandomNearbyUnoccupiedLocation(Coordinate c){
+        ArrayList<Coordinate> coords = new ArrayList<>();
+        for(int i = 0; i < 6; i++){
+            Coordinate newCoordinates = null;
+            try{
+                switch (i){
+                    case 0:
+                        newCoordinates = new Coordinate(c.getCol(),c.getRow()+1);
+                        break;
+                    case 1:
+                        newCoordinates = new Coordinate(c.getCol()+1,c.getRow()+1);
+                        break;
+                    case 2:
+                        newCoordinates = new Coordinate(c.getCol()+1,c.getRow());
+                        break;
+                    case 3:
+                        newCoordinates = new Coordinate(c.getCol(),c.getRow()-1);
+                        break;
+                    case 4:
+                        newCoordinates = new Coordinate(c.getCol()-1,c.getRow()-1);
+                        break;
+                    case 5:
+                        newCoordinates = new Coordinate(c.getCol()-1,c.getRow());
+                        break;
+                }
+
+            }
+            catch(IllegalCoordinateException e){
+                //do nothing and continue looping
+            }
+            if(inBounds(newCoordinates)){
+                coords.add(newCoordinates);
+            }
+        }
+        Collections.shuffle(coords);
+        if(!coords.isEmpty()){
+            return coords.get(0);
+        }
+        else{
+            return null;
+        }
+
+
+    }
+
 
     /**
      * Kills a critter that has run out of energy and removes it from the map and critter list
