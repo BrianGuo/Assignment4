@@ -120,29 +120,29 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	public int evaluateAhead(Critter c, World w, int coefficient){
+	public int evaluateAhead(Critter c, World w, int distance){
 		Coordinate newCoordinates = null;
 		int direction = c.getDirection();
 		Coordinate coordinates = c.getLocation();
 		try{
 			switch (direction){
 			case 0:
-				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*coefficient);
+				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
 				break;
 			case 1:
-				newCoordinates = new Coordinate(coordinates.getCol()+1*coefficient,coordinates.getRow()+1*coefficient);
+				newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow()+1*distance);
 				break;
 			case 2:
-				newCoordinates = new Coordinate(coordinates.getCol()+1*coefficient,coordinates.getRow());
+				newCoordinates = new Coordinate(coordinates.getCol()+1*distance,coordinates.getRow());
 				break;
 			case 3:
-				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()-1*coefficient);
+				newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()-1*distance);
 				break;
 			case 4:
-				newCoordinates = new Coordinate(coordinates.getCol()-1*coefficient,coordinates.getRow()-1*coefficient);
+				newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow()-1*distance);
 				break;
 			case 5:
-				newCoordinates = new Coordinate(coordinates.getCol()-1*coefficient,coordinates.getRow());
+				newCoordinates = new Coordinate(coordinates.getCol()-1*distance,coordinates.getRow());
 				break;
 			default:
 				break;

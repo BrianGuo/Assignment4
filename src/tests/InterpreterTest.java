@@ -16,6 +16,7 @@ import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import parse.Parser;
 import parse.ParserFactory;
+import world.Coordinate;
 import world.Critter;
 import world.Factory;
 import world.World;
@@ -34,11 +35,14 @@ public class InterpreterTest {
 		Parser p = ParserFactory.getParser();
 		try{
 			FileReader f = new FileReader("examples/example-rules.txt");
-			Program prog = p.parse(f);
-			int[] attributes = new int[8];
-			Critter cr = new Critter(attributes, 0, "this");
 			f = new FileReader("examples/world.txt");
 			World w = Factory.getWorld(f);
+			Program prog = p.parse(f);
+			int[] attributes = new int[8];
+
+			Critter cr = new Critter(attributes, 0, "this",new Coordinate(0,0),  w.constants, prog);
+
+
 			Rule r = prog.getRules().get(0);
 			Condition c = ((Condition)r.getLeft());
 			i.setCritter(cr);
@@ -59,12 +63,14 @@ public class InterpreterTest {
 		Parser p = ParserFactory.getParser();
 		try{
 			FileReader f = new FileReader("examples/example-rules.txt");
+			f = new FileReader("examples/world.txt");
+			World w = Factory.getWorld(f);
 			Program prog = p.parse(f);
 			int[] attributes = new int[11];
 			attributes[5] = 50;//Result should be 50
-			Critter cr = new Critter(attributes, 0, "this");
-			f = new FileReader("examples/world.txt");
-			World w = Factory.getWorld(f);
+			Critter cr = new Critter(attributes, 0, "this",new Coordinate(0,0),  w.constants, prog);
+
+
 			Rule r = prog.getRules().get(2);
 			Expr e = (Expr) prog.nodeAt(3);
 			i.setCritter(cr);
