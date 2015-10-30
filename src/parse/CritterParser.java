@@ -71,11 +71,10 @@ public class CritterParser {
         //fails on overly large critter files
         //sorry, my earlier strategy of reusing the same reader failed miserably
         StringReader sr = new StringReader(rest);
-
         //The scanner has now advanced past the attributes and the remainder contains the ruleset
         //jk it didn't, had to hack together another reader with the rest of the file...
         Program program = ParserFactory.getParser().parse(sr);
-
+        System.out.println(program);
         //{memsize, defense, offense, size, energy, pass, tag,posture}
         int[] memory = {memsize, defense, offense, size, energy, 0, 0, posture};
         return new Critter(memory, (int)(Math.random() * 6), species, new Coordinate(0,0), constants, program);

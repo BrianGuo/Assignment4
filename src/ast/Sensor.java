@@ -6,6 +6,7 @@ import java.util.Random;
 import exceptions.IllegalCoordinateException;
 import world.Coordinate;
 import world.Critter;
+import world.Entity;
 import parse.Token;
 import parse.TokenType;
 import world.World;
@@ -120,10 +121,9 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	public static Coordinate coordAheadAt(Critter c, World w, int distance){
+	public static Coordinate coordAheadAt(Critter c, World w, int distance) throws IllegalCoordinateException{
 		Coordinate newCoordinates = null;
 		Coordinate coordinates = c.getLocation();
-		try{
 			switch (c.getDirection()){
 				case 0:
 					newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
@@ -147,27 +147,24 @@ public class Sensor extends UnaryNode implements Expr {
 					break;
 			}
 
-		}
-		catch(IllegalCoordinateException e){
-			return null;
-		}
-		//I just remembered we passed in a world
-		//I'm so sorry World.java for making you manually check for bounds
-		if(w.inBounds(newCoordinates)) {
-			return newCoordinates;
-		}
-		else{
-			return null;
-		}
+		return newCoordinates;
+
 	}
 
 	public int evaluateAhead(Critter c, World w, int distance){
-		Coordinate newCoordinate = coordAheadAt(c, w, distance);
-		if (newCoordinate != null) {
-			return w.hexAt(newCoordinate).appearance();
+		try {
+			Coordinate newCoordinate = coordAheadAt(c, w, distance);
+			if (!w.inBounds(newCoordinate)) {
+				return w.constants.ROCK_VALUE;
+			}
+			if (w.hexAt(newCoordinate) == null)
+				return 0;
+			else {
+				return w.hexAt(newCoordinate).appearance();
+			}
 		}
-		else{
-			return 0;
+		catch(IllegalCoordinateException e){
+			return w.constants.ROCK_VALUE;
 		}
 	}
 	

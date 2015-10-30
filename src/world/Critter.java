@@ -21,6 +21,7 @@ public class Critter extends Entity{
 	private Critter lovedBy;
 
 	//keeps track of whether the critter is dead
+
 	boolean isDead = false;
 
 	//keeps track of whether the critter is mating
@@ -94,8 +95,7 @@ public class Critter extends Entity{
 	}
 
 	public String toString(){
-		//TODO
-		return "";
+		return "" + direction;
 	}
 
 	@Override

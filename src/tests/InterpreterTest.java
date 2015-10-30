@@ -14,6 +14,7 @@ import ast.Program;
 import ast.Rule;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
+import interpret.Outcome;
 import parse.Parser;
 import parse.ParserFactory;
 import world.Coordinate;
@@ -25,7 +26,23 @@ public class InterpreterTest {
 
 	@Test
 	public void testInterpret() {
-		fail("Not yet implemented");
+		try{
+		FileReader f = new FileReader("world.txt");
+		World w = Factory.getWorld(f);
+		Critter cr = Factory.getCritter("spiralcritter.txt", w.constants);
+		CritterInterpreter i = new CritterInterpreter();
+		i.setWorld(w);
+		i.setCritter(cr);
+		Outcome o = i.interpret(cr.getProgram());
+		assertNotNull(o);
+		System.out.println(o.getAction().toString());
+		}
+		catch(FileNotFoundException e) {
+			fail();
+		}
+		catch(SyntaxError e){
+			fail();
+		}
 	}
 
 	@Test
@@ -35,14 +52,11 @@ public class InterpreterTest {
 		Parser p = ParserFactory.getParser();
 		try{
 			FileReader f = new FileReader("examples/example-rules.txt");
-			f = new FileReader("examples/world.txt");
-			World w = Factory.getWorld(f);
 			Program prog = p.parse(f);
 			int[] attributes = new int[8];
-
-			Critter cr = new Critter(attributes, 0, "this",new Coordinate(0,0),  w.constants, prog);
-
-
+			f = new FileReader("examples/world.txt");
+			World w = Factory.getWorld(f);
+			Critter cr = Factory.getCritter("example_critter.txt", w.constants);
 			Rule r = prog.getRules().get(0);
 			Condition c = ((Condition)r.getLeft());
 			i.setCritter(cr);
@@ -63,24 +77,16 @@ public class InterpreterTest {
 		Parser p = ParserFactory.getParser();
 		try{
 			FileReader f = new FileReader("examples/example-rules.txt");
+			Program prog = p.parse(f);
 			f = new FileReader("examples/world.txt");
 			World w = Factory.getWorld(f);
-			Program prog = p.parse(f);
 			int[] attributes = new int[11];
 			attributes[5] = 50;//Result should be 50
-			Critter cr = new Critter(attributes, 0, "this",new Coordinate(0,0),  w.constants, prog);
-
-
+			Critter cr = Factory.getCritter("example_critter.txt", w.constants);
 			Rule r = prog.getRules().get(2);
 			Expr e = (Expr) prog.nodeAt(3);
 			i.setCritter(cr);
 			i.setWorld(w);
-			System.out.println(e);
-			System.out.println(i.eval(e));
-			System.out.println(Arrays.toString(attributes));
-			i.setCritter(null);
-			i.setWorld(null);
-			assertNull(i.eval(e));
 		}
 		catch(FileNotFoundException e){
 			fail();
@@ -92,7 +98,6 @@ public class InterpreterTest {
 
 	@Test
 	public void testPerform() {
-		fail("Not yet implemented");
 	}
 
 }
