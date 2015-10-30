@@ -20,7 +20,6 @@ public class Critter extends Entity{
 	Rule LastRule;
 	Critter lover;
 	private Critter lovedBy;
-	private WorldConstants constants;
 
 	//keeps track of whether the critter is dead
 
@@ -32,13 +31,13 @@ public class Critter extends Entity{
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program) {
+		super(constants);
 		assert(attributes[0] >= 8);
 		this.attributes = attributes;
 		this.direction = direction;
 		this.species = species;
 		this.location = coordinates;
 		p = program;
-		this.constants = constants;
 
 		//if memsize is greater than 8, we need to add slots for the extra memory locations
 		if(attributes.length < attributes[0]){
