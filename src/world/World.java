@@ -436,12 +436,15 @@ public class World{
         map[f.getCol()][f.getRow()] = null;
     }
 
-    public void judge(Critter c){
+    public boolean judge(Critter c){
         if(c != null){
             if(c.isDead()){
                 kill(c);
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
 

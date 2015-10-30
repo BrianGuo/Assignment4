@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import interpret.Interpreter;
