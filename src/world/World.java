@@ -175,7 +175,6 @@ public class World{
     
     public void move(Critter c, Coordinate cor) {
     	Coordinate old = c.getLocation();
-    	System.out.println(old);
     	map[cor.getCol()][cor.getRow()] = c;
     	map[old.getCol()][old.getRow()] = null;
     }
@@ -193,7 +192,6 @@ public class World{
             //...so if the critter can't move, the world has to manually deduct energy.
             //ack.
             case FORWARD:
-            	System.out.println(critter.location);
             	try{
 	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	if(hexAt(forward) == null && inBounds(forward)){

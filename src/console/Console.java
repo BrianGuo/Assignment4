@@ -28,7 +28,7 @@ public class Console {
                 console.handleCommand();
             }
             catch(MissingElementException e){
-                System.out.println("Why does this happen?");
+                System.out.println("There's something off about your critter file");
             }
             catch(FileNotFoundException e){
                 System.out.println("File not found.");
