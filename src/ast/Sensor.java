@@ -171,7 +171,7 @@ public class Sensor extends UnaryNode implements Expr {
 	public int evaluateRandom(Critter c, World w) {
 		Random r = new Random();
 		int endpoint = this.r.evaluate(c, w);
-		return r.nextInt(endpoint);
+		return r.nextInt(Math.abs(endpoint));
 	}
 	
 	public int evaluateNearby(Critter c, World w){

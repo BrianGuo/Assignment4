@@ -1,5 +1,6 @@
 package world;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import ast.Program;
@@ -30,6 +31,7 @@ public class Critter extends Entity{
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program) {
+		super(constants);
 		assert(attributes[0] >= 8);
 		this.attributes = attributes;
 		this.direction = direction;
@@ -51,7 +53,7 @@ public class Critter extends Entity{
 	}
 
 	public int getAttributeAtIndex(int n){
-		if (n < attributes.length)
+		if (n < attributes.length && n> 0)
 			return attributes[n];
 		else{
 			System.out.println("there's no value at this index");
@@ -215,6 +217,17 @@ public class Critter extends Entity{
 	 * @return complexity of the critter
 	 */
 	public int complexity(){
+		ArrayList<Rule> n = p.getRules();
+		int a = 0;
+		if (n != null)
+			a = n.size();
+		if (p == null)
+			System.out.println("p is null");
+		if (constants == null)
+			System.out.println("constants is null");
+		if (attributes == null) {
+			System.out.println("Attributes is null");
+		}
 		return p.getRules().size() * constants.RULE_COST + (attributes[1] + attributes[2]) * constants.ABILITY_COST;
 	}
 
@@ -249,6 +262,8 @@ public class Critter extends Entity{
 		//if you get attacked and die, you're not allowed to absorb either
 		if(!isDead) {
 			attributes[4] += attributes[3] * constants.SOLAR_FLUX;
+			//can't go above maximum energy
+			attributes[4] = Math.min(attributes[4], size() * constants.ENERGY_PER_SIZE);
 		}
 	}
 
@@ -257,13 +272,13 @@ public class Critter extends Entity{
 	 * whichever is less.
 	 * @return new Food with amount {@energy}, or null if energy <= 0
 	 */
-	public Food serve(int energy){
+	public Food serve(int energy, Coordinate newLocation){
 		consumeEnergy(size());
 		if(energy <= 0){
 			return null;
 		}
 		int available = Math.min(attributes[4], energy);
-		Food f = new Food(/*the next hex*/0, 0, available, constants);
+		Food f = new Food(newLocation.getCol(), newLocation.getRow(), available, constants);
 		consumeEnergy(available);
 		return f;
 	}
@@ -434,11 +449,9 @@ public class Critter extends Entity{
 		if(other instanceof Critter) {
 			otherC = (Critter) other;
 			if (!isDead) {
-				if(lover().equals(otherC) && otherC.lover().equals(this)){ //they love me and i love them
+				lover = otherC;
+				if(otherC.lover != null && otherC.lover().equals(this)){ //they love me and i love them
 					return mate(babyLocation, otherC);
-				}
-				else {
-					lover = otherC;
 				}
 			}
 
@@ -452,6 +465,7 @@ public class Critter extends Entity{
 	}
 
 	public Critter lover(){
+
 		return lover;
 	}
 

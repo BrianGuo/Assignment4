@@ -41,12 +41,16 @@ public class Simulator {
 
 	public void advance(int n){
 		if (world != null){
-			LinkedList<Critter> critters = world.getCritters();
 			for (int i =0; i< n; i++ ){
-				for (Critter c : critters){
+				LinkedList<Critter> copy = new LinkedList<Critter>();
+				copy.addAll(world.getCritters());
+				for (Critter c: copy){
+					if (!(world.getCritters().contains(c)))
+						continue;
 					((CritterInterpreter) interpreter).setCritter(c);
 					Outcome o = interpreter.interpret(c.getProgram());
 					world.evaluate(o);
+					world.judge(c);
 				}
 				timesteps ++;
 			}

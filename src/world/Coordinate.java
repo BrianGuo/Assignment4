@@ -49,5 +49,9 @@ public class Coordinate {
     public int getRow() {
         return row;
     }
+    
+    public String toString() {
+    	return "[" + col +","+ row + "]";
+    }
 
 }

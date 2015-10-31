@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import ast.Command;
 import ast.Condition;
 import ast.Expr;
+import ast.MemoryNode;
 import ast.Program;
 import ast.Rule;
 import ast.UpdateNode;
@@ -53,7 +54,7 @@ public class CritterInterpreter implements Interpreter {
 	}
 	@Override
 	public void perform(UpdateNode u){
-		int left = u.getLeft().evaluate(cr, w);
+		int left = ((MemoryNode)u.getLeft()).getExpression().evaluate(cr, w);
 		int right = u.getRight().evaluate(cr, w);
 		cr.UpdateNodeAt(left,right);
 	}

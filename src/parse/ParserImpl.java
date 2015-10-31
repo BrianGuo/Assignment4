@@ -54,7 +54,6 @@ class ParserImpl implements Parser {
     }
 
     public static Rule parseRule(Tokenizer t) throws SyntaxError {
-    	System.out.println("This is the problem");
         Condition condition;
         Command command;
         condition = parseCondition(t);

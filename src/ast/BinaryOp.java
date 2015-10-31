@@ -88,7 +88,12 @@ public class BinaryOp extends BinaryChildren implements Expr, Tokenable {
 		case MUL:
 			return a * b;
 		case DIV:
-			return a/b;
+			try{
+				return a/b;
+			}
+			catch(ArithmeticException e) {
+				return 0;
+			}
 		case MOD:
 			return a%b;
 		default:

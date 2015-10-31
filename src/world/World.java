@@ -172,6 +172,13 @@ public class World{
     public boolean inBounds(Coordinate c){
         return inBounds(c.getCol(), c.getRow());
     }
+    
+    public void move(Critter c, Coordinate cor) {
+    	Coordinate old = c.getLocation();
+    	System.out.println(old);
+    	map[cor.getCol()][cor.getRow()] = c;
+    	map[old.getCol()][old.getRow()] = null;
+    }
 
     public void evaluate(Outcome outcome) {
         Critter critter = outcome.getCritter();
@@ -186,10 +193,13 @@ public class World{
             //...so if the critter can't move, the world has to manually deduct energy.
             //ack.
             case FORWARD:
+            	System.out.println(critter.location);
             	try{
 	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	if(hexAt(forward) == null && inBounds(forward)){
+	            		move(critter,forward);
 	                    critter.move(forward);
+	                    System.out.println(critter.location);
                     }
 	                else{
 	                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
@@ -198,6 +208,7 @@ public class World{
             	catch(IllegalCoordinateException e){
             		critter.consumeEnergy(critter.size() * constants.MOVE_COST);
                 }
+            	break;
             case BACKWARD:
             	try{
 	                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
@@ -214,18 +225,18 @@ public class World{
                 	critter.consumeEnergy(critter.size() * constants.MOVE_COST);
 
             	}
-
+            	break;
             case WAIT:
                 critter.absorb();
-
+                break;
 
             case LEFT:
                 critter.turn(LEFT);
-
+                break;
 
             case RIGHT:
                 critter.turn(RIGHT);
-
+                break;
 
             case EAT:
             	try{
@@ -253,21 +264,25 @@ public class World{
             		critter.consumeEnergy(critter.size()*constants.ATTACK_COST);
 
             	}
-
+            	break;
             case GROW:
                 critter.grow();
 
-                
+                break;
             case BUD:
                 try {
                     Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
-                    add(critter.bud(backward));
+                    if (inBounds(backward))
+                    	add(critter.bud(backward));
+                    else
+                    	critter.consumeEnergy(critter.size()*constants.BUD_COST);
 
                 }
                 catch(IllegalCoordinateException e){
                     critter.consumeEnergy(critter.size() * constants.BUD_COST);
 
                 }
+                break;
             case MATE:
                 try {
                     Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
@@ -284,9 +299,10 @@ public class World{
                 catch(IllegalCoordinateException e){
 
                 }
+                break;
             case TAG:
             	try{
-	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	critter.tag(hexAt(forward), expr);
 
             	}
@@ -294,15 +310,21 @@ public class World{
             		critter.consumeEnergy(critter.size());
 
             	}
-                
+                break;
             case SERVE:
-                Food dinner = critter.serve(expr);
-                if(dinner != null){
-                    //add will fail if the space is occupied
-                    add(dinner);
+                try {
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Food dinner = critter.serve(expr, forward);
+                    if (dinner != null) {
+                        //add will fail if the space is occupied
+                        add(dinner);
 
+                    }
                 }
-
+                catch(IllegalCoordinateException e){
+                    critter.consumeEnergy(critter.size());
+                }
+                break;
 
         }
         //kill the critter if it died.
@@ -328,7 +350,8 @@ public class World{
 
     public void addRandom(Entity e){
         try{
-            e.move(getRandomUnoccupiedLocation());
+        	Coordinate c = getRandomUnoccupiedLocation();
+            e.location.move(c.getCol(),c.getRow());
             add(e);
         }
         catch(IllegalCoordinateException ex){
@@ -402,7 +425,7 @@ public class World{
             catch(IllegalCoordinateException e){
                 //do nothing and continue looping
             }
-            if(inBounds(newCoordinates)){
+            if(inBounds(newCoordinates) && hexAt(newCoordinates) == null){
                 coords.add(newCoordinates);
             }
         }
@@ -437,12 +460,15 @@ public class World{
         map[f.getCol()][f.getRow()] = null;
     }
 
-    public void judge(Critter c){
+    public boolean judge(Critter c){
         if(c != null){
             if(c.isDead()){
                 kill(c);
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
 

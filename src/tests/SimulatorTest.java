@@ -2,15 +2,18 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 
 import org.junit.Test;
 
+import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import interpret.Interpreter;
 import simulator.Simulator;
+import world.Critter;
 import world.Factory;
 import world.World;
 
@@ -92,6 +95,24 @@ public class SimulatorTest {
 
 	@Test
 	public void testPutCritterRandomly() {
+		Simulator s = new Simulator();
+		assertFalse(s.hasWorld());
+		FileReader f = null;
+		try{
+			f = new FileReader("world.txt");
+			World w = Factory.getWorld(f);
+			s.setWorld(w);
+			s.putCritterRandomly("spiralcritter.txt", 5);
+		}
+		catch(FileNotFoundException e){
+			fail();
+		}
+		catch(SyntaxError e) {
+			System.out.println("SyntaxError");
+		}
+		catch(MissingElementException e) {
+			System.out.println("MissingElement");
+		}
 	}
 	
 	@Test
