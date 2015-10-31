@@ -302,7 +302,7 @@ public class World{
                 break;
             case TAG:
             	try{
-	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
 	            	critter.tag(hexAt(forward), expr);
 
             	}
@@ -312,11 +312,17 @@ public class World{
             	}
                 break;
             case SERVE:
-                Food dinner = critter.serve(expr);
-                if(dinner != null){
-                    //add will fail if the space is occupied
-                    add(dinner);
+                try {
+                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Food dinner = critter.serve(expr, forward);
+                    if (dinner != null) {
+                        //add will fail if the space is occupied
+                        add(dinner);
 
+                    }
+                }
+                catch(IllegalCoordinateException e){
+                    critter.consumeEnergy(critter.size());
                 }
                 break;
 
@@ -419,7 +425,7 @@ public class World{
             catch(IllegalCoordinateException e){
                 //do nothing and continue looping
             }
-            if(inBounds(newCoordinates)){
+            if(inBounds(newCoordinates) && hexAt(newCoordinates) == null){
                 coords.add(newCoordinates);
             }
         }

@@ -263,7 +263,7 @@ public class Critter extends Entity{
 		if(!isDead) {
 			attributes[4] += attributes[3] * constants.SOLAR_FLUX;
 			//can't go above maximum energy
-			attributes[4] = Math.max(attributes[4], size() * constants.ENERGY_PER_SIZE);
+			attributes[4] = Math.min(attributes[4], size() * constants.ENERGY_PER_SIZE);
 		}
 	}
 
@@ -272,13 +272,13 @@ public class Critter extends Entity{
 	 * whichever is less.
 	 * @return new Food with amount {@energy}, or null if energy <= 0
 	 */
-	public Food serve(int energy){
+	public Food serve(int energy, Coordinate newLocation){
 		consumeEnergy(size());
 		if(energy <= 0){
 			return null;
 		}
 		int available = Math.min(attributes[4], energy);
-		Food f = new Food(/*the next hex*/0, 0, available, constants);
+		Food f = new Food(newLocation.getCol(), newLocation.getRow(), available, constants);
 		consumeEnergy(available);
 		return f;
 	}
@@ -449,11 +449,9 @@ public class Critter extends Entity{
 		if(other instanceof Critter) {
 			otherC = (Critter) other;
 			if (!isDead) {
-				if(lover().equals(otherC) && otherC.lover().equals(this)){ //they love me and i love them
+				lover = otherC;
+				if(otherC.lover != null && otherC.lover().equals(this)){ //they love me and i love them
 					return mate(babyLocation, otherC);
-				}
-				else {
-					lover = otherC;
 				}
 			}
 
@@ -467,6 +465,7 @@ public class Critter extends Entity{
 	}
 
 	public Critter lover(){
+
 		return lover;
 	}
 

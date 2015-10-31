@@ -63,7 +63,7 @@ public class CritterParser {
                     break;
             }
         }
-        energy = Math.max(energy, size*constants.ENERGY_PER_SIZE);
+        energy = Math.min(energy, size*constants.ENERGY_PER_SIZE);
         String rest = "";
         while(sc.hasNext()){
             rest += sc.nextLine() + "\n";
