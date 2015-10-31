@@ -19,14 +19,9 @@ public class Critter extends Entity{
 	int[] attributes;
 	Rule LastRule;
 	Critter lover;
-	private Critter lovedBy;
 
 	//keeps track of whether the critter is dead
-
 	boolean isDead = false;
-
-	//keeps track of whether the critter is mating
-	//boolean isMating = false;
 
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
@@ -53,7 +48,7 @@ public class Critter extends Entity{
 	}
 
 	public int getAttributeAtIndex(int n){
-		if (n < attributes.length && n> 0)
+		if (n < attributes.length && n>= 0)
 			return attributes[n];
 		else{
 			System.out.println("there's no value at this index");
@@ -79,10 +74,6 @@ public class Critter extends Entity{
 	public int getDirection() {
 		return direction;
 	}
-	/*
-	public Coordinate getLocation() {
-		return location;
-	}*/
 	public void UpdateNodeAt(int index, int value){
 		if (index < 7 || index > attributes[0])
 			return;
@@ -228,7 +219,8 @@ public class Critter extends Entity{
 		if (attributes == null) {
 			System.out.println("Attributes is null");
 		}
-		return p.getRules().size() * constants.RULE_COST + (attributes[1] + attributes[2]) * constants.ABILITY_COST;
+		return p.getRules().size() * constants.RULE_COST +
+				(attributes[1] + attributes[2]) * constants.ABILITY_COST;
 	}
 
 	/**
@@ -256,14 +248,15 @@ public class Critter extends Entity{
 	}
 
 	/**
-	 * Absorbs light from the sun, gaining SOLAR_FLUX energy.
+	 * Absorbs light from the sun, gaining size * SOLAR_FLUX energy.
 	 */
 	public void absorb(){
 		//if you get attacked and die, you're not allowed to absorb either
 		if(!isDead) {
 			attributes[4] += attributes[3] * constants.SOLAR_FLUX;
 			//can't go above maximum energy
-			attributes[4] = Math.min(attributes[4], size() * constants.ENERGY_PER_SIZE);
+			attributes[4] = Math.min(attributes[4],
+					size() * constants.ENERGY_PER_SIZE);
 		}
 	}
 
@@ -278,7 +271,8 @@ public class Critter extends Entity{
 			return null;
 		}
 		int available = Math.min(attributes[4], energy);
-		Food f = new Food(newLocation.getCol(), newLocation.getRow(), available, constants);
+		Food f = new Food(newLocation.getCol(),
+				newLocation.getRow(), available, constants);
 		consumeEnergy(available);
 		return f;
 	}
@@ -322,7 +316,8 @@ public class Critter extends Entity{
 			enemyC = (Critter) enemy;
 			//if you're too hungry to successfully attack you can't hit them while dying
 			if (!isDead) {
-				int damageDealt = calculateDamage(size(), enemyC.size(), attributes[2], enemyC.attributes[1]);
+				int damageDealt = calculateDamage(size(),
+						enemyC.size(), attributes[2], enemyC.attributes[1]);
 				enemyC.consumeEnergy(damageDealt);
 				return enemyC;
 			}
@@ -340,7 +335,8 @@ public class Critter extends Entity{
 	 * @return damage done, rounded half up.
 	 */
 	private int calculateDamage(int s1, int s2, int o1, int d2){
-		return (int) Math.round(constants.BASE_DAMAGE * s1 * logistic(constants.DAMAGE_INC * (s1*o1 - s2*d2)));
+		return (int) Math.round(constants.BASE_DAMAGE * s1 *
+				logistic(constants.DAMAGE_INC * (s1*o1 - s2*d2)));
 	}
 
 	/**
@@ -369,7 +365,8 @@ public class Critter extends Entity{
 
 		consumeEnergy(complexity() * constants.BUD_COST);
 		if (!isDead && babyLocation != null){
-			Critter baby = new Critter(newAttributes, (int)(Math.random() * 6), this.species, babyLocation,
+			Critter baby = new Critter(newAttributes,
+					(int)(Math.random() * 6), this.species, babyLocation,
 					this.constants, this.p);
 			baby.mutate();
 			return baby;
@@ -426,7 +423,8 @@ public class Critter extends Entity{
 				otherSpecies += other.species.charAt(i);
 		}
 		String newSpecies = thisSpecies + otherSpecies;
-		Critter baby = new Critter(this.attributes, (int) (Math.random() * 6), newSpecies,
+		Critter baby = new Critter(this.attributes,
+				(int) (Math.random() * 6), newSpecies,
 				babyLocation, constants, newProgram);
 
 		//in an act of pure love, the parents can spend the last of their energy to ensure their child
@@ -469,8 +467,5 @@ public class Critter extends Entity{
 		return lover;
 	}
 
-	public Critter lovedBy(){
-		return lovedBy;
-	}
 
 }

@@ -17,8 +17,7 @@ public class Console {
     public boolean done;
     private Simulator sim;
 
-    //TODO world representation...
-//TODO fix the exception business
+
     public static void main(String[] args) {
         Console console = new Console();
 
