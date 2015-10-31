@@ -23,7 +23,10 @@ public class Factory {
         return new World(Integer.parseInt(cols), Integer.parseInt(rows), name);
     }
 
-
+    /**
+     * Creates a random world.
+     * @return A new random world with values initialized from constants.
+     */
     public static World getRandomWorld() {
         try {
             return new World();
