@@ -102,22 +102,38 @@ public class CritterTest {
         assertTrue(newFood.getCol() ==5);
         assertEquals(50 - c2.size(), newFood.getAmt());
         w.add(newFood);
-        assertTrue(w.hexAt(5,4) instanceof Food);
+        assertTrue(w.hexAt(5, 4) instanceof Food);
     }
 
     @Test
     public void testGrow() throws Exception {
-
+        c1.grow();
+        assertEquals(2, c1.size());
+        c1.grow();
+        assertEquals(3, c1.size());
+        c1.grow();
+        assertEquals(3, c1.size());
+        assertTrue(c1.isDead());
     }
 
     @Test
     public void testTag() throws Exception {
-
+        c1.tag(c2, 5);
+        assertEquals(5, c2.getAttributeAtIndex(6));
+        c1.tag(c2, 999);
+        assertEquals(5, c2.getAttributeAtIndex(6));
     }
 
     @Test
     public void testAttack() throws Exception {
-
+        System.out.println("c2's energy before:" + c2.getAttributeAtIndex(4));
+        c1.attack(c2);
+        System.out.println("c2's energy after:" + c2.getAttributeAtIndex(4));
+        for(int i = 0; i < 10; i++){
+            c1.attack(c2);
+        }
+        System.out.println("c2's energy:" + c2.getAttributeAtIndex(4));
+        assertTrue(c2.isDead());
     }
 
     @Test
@@ -127,11 +143,33 @@ public class CritterTest {
 
     @Test
     public void testBud() throws Exception {
+        c1.grow();
+        c1.grow();
+        for(int i = 0; i < 500; i++){
+            c1.absorb();
+        }
 
+        System.out.println(c1.complexity() * w.constants.BUD_COST);
+        System.out.println(w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
+        Critter baby = c1.bud(w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
+        assertNotNull(baby);
+        c2.bud(w.getRandomNearbyUnoccupiedLocation(c2.getLocation()));
+        //budding is expensive, guys.
+        assertTrue(c2.isDead());
     }
 
     @Test
     public void testMate() throws Exception {
+        c1.grow();
+        c2.grow();
 
+        for(int i = 0; i < 500; i++){
+            c1.absorb();
+            c2.absorb();
+        }
+        Critter baby1 = c1.woo(c2, w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
+        Critter baby2 = c2.woo(c1, w.getRandomNearbyUnoccupiedLocation(c2.getLocation()));
+        assertNull(baby1);
+        assertNotNull(baby2);
     }
 }

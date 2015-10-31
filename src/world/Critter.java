@@ -449,11 +449,9 @@ public class Critter extends Entity{
 		if(other instanceof Critter) {
 			otherC = (Critter) other;
 			if (!isDead) {
-				if(lover().equals(otherC) && otherC.lover().equals(this)){ //they love me and i love them
+				lover = otherC;
+				if(otherC.lover != null && otherC.lover().equals(this)){ //they love me and i love them
 					return mate(babyLocation, otherC);
-				}
-				else {
-					lover = otherC;
 				}
 			}
 
@@ -467,6 +465,7 @@ public class Critter extends Entity{
 	}
 
 	public Critter lover(){
+
 		return lover;
 	}
 

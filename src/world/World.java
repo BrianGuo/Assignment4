@@ -422,7 +422,7 @@ public class World{
             catch(IllegalCoordinateException e){
                 //do nothing and continue looping
             }
-            if(inBounds(newCoordinates)){
+            if(inBounds(newCoordinates) && hexAt(newCoordinates) == null){
                 coords.add(newCoordinates);
             }
         }
