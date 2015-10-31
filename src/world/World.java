@@ -199,7 +199,6 @@ public class World{
 	            	if(hexAt(forward) == null && inBounds(forward)){
 	            		move(critter,forward);
 	                    critter.move(forward);
-	                    System.out.println(critter.location);
                     }
 	                else{
 	                    critter.consumeEnergy(critter.size() * constants.MOVE_COST);
