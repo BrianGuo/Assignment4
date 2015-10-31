@@ -53,7 +53,7 @@ public class Critter extends Entity{
 	}
 
 	public int getAttributeAtIndex(int n){
-		if (n < attributes.length)
+		if (n < attributes.length && n> 0)
 			return attributes[n];
 		else{
 			System.out.println("there's no value at this index");

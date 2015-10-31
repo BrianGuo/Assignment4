@@ -6,6 +6,10 @@ size: 1
 energy: 500
 posture: 10
 ahead[1] < -1 --> eat;
+//mem[8] represents the number of actions taken
+//mem[9] represents the number of forward steps required in this spiral
+//mem[10] represents the number of forward steps taken in general
+//mem[11] handles exceptional cases.
 mem[8] = 0 and mem[9] = 0 --> mem[9] := 1;
 mem[8] = 0 --> mem[8] := 1
 			mem[10]:= 1

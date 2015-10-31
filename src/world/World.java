@@ -272,7 +272,10 @@ public class World{
             case BUD:
                 try {
                     Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
-                    add(critter.bud(backward));
+                    if (inBounds(backward))
+                    	add(critter.bud(backward));
+                    else
+                    	critter.consumeEnergy(critter.size()*constants.BUD_COST);
 
                 }
                 catch(IllegalCoordinateException e){
