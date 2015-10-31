@@ -212,6 +212,7 @@ public class World{
             	try{
 	                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
 	                if(hexAt(backward) == null && inBounds(backward)){
+                        move(critter, backward);
 	                    critter.move(backward);
 
 	                }
