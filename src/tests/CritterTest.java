@@ -126,13 +126,12 @@ public class CritterTest {
 
     @Test
     public void testAttack() throws Exception {
-        System.out.println("c2's energy before:" + c2.getAttributeAtIndex(4));
         c1.attack(c2);
-        System.out.println("c2's energy after:" + c2.getAttributeAtIndex(4));
+
         for(int i = 0; i < 10; i++){
             c1.attack(c2);
         }
-        System.out.println("c2's energy:" + c2.getAttributeAtIndex(4));
+
         assertTrue(c2.isDead());
     }
 
@@ -149,8 +148,6 @@ public class CritterTest {
             c1.absorb();
         }
 
-        System.out.println(c1.complexity() * w.constants.BUD_COST);
-        System.out.println(w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
         Critter baby = c1.bud(w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
         assertNotNull(baby);
         c2.bud(w.getRandomNearbyUnoccupiedLocation(c2.getLocation()));
@@ -171,5 +168,21 @@ public class CritterTest {
         Critter baby2 = c2.woo(c1, w.getRandomNearbyUnoccupiedLocation(c2.getLocation()));
         assertNull(baby1);
         assertNotNull(baby2);
+    }
+
+    @Test
+    public void testNotMate() throws Exception {
+        c1.grow();
+        c2.grow();
+
+        for(int i = 0; i < 500; i++){
+            c1.absorb();
+            c2.absorb();
+        }
+        Critter baby1 = c1.woo(c2, w.getRandomNearbyUnoccupiedLocation(c1.getLocation()));
+        c1.fallOutofLove();
+        Critter baby2 = c2.woo(c1, w.getRandomNearbyUnoccupiedLocation(c2.getLocation()));
+        assertNull(baby1);
+        assertNull(baby2);
     }
 }
