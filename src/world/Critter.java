@@ -346,9 +346,10 @@ public class Critter extends Entity{
 	public void move(Coordinate newLocation){
 		consumeEnergy(size() * constants.MOVE_COST);
 		//dead critters can't move either
-		if(!isDead){
+		//bug in moving when dying; dead critters can move with their last gasp now
+		//if(!isDead){
 			this.location = newLocation;
-		}
+		//}
 	}
 
 	public Critter bud(Coordinate babyLocation) {
