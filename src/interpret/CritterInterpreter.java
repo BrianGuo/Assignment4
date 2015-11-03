@@ -19,6 +19,13 @@ public class CritterInterpreter implements Interpreter {
 	World w;
 	Critter cr;
 	
+	/**
+	 * Interprets the program p and returns an outcome according to specs
+	 * Requires: program given is the program of the critter field
+	 * Requires: world field is not null
+	 * @param Program to be interpreted
+	 * @return Outcome instance corresponding to action to be performed
+	 */
 	@Override
 	public Outcome interpret(Program p) {
 		assert(cr.getProgram().equals(p));
@@ -52,12 +59,19 @@ public class CritterInterpreter implements Interpreter {
 		}
 		return new CritterOutcome(cr, TokenType.WAIT, null);
 	}
+	
+	/**
+	 * Performs the update of the updateNode
+	 * Requires: critter field not null
+	 * @param u    The UpdateNode to apply
+	 */
 	@Override
 	public void perform(UpdateNode u){
 		int left = ((MemoryNode)u.getLeft()).getExpression().evaluate(cr, w);
 		int right = u.getRight().evaluate(cr, w);
 		cr.UpdateNodeAt(left,right);
 	}
+	
 	
 	@Override
 	/**
@@ -81,10 +95,18 @@ public class CritterInterpreter implements Interpreter {
 		return e.evaluate(cr, w);
 	}
 	
+	/**
+	 * Sets the world field to the given world
+	 * @param w   the world to set
+	 */
 	public void setWorld(World w) {
 		this.w = w;
 	}
 	
+	/**
+	 * Sets the critter field to the given critter
+	 * @param c    the critter to set
+	 */
 	public void setCritter(Critter c) {
 		this.cr = c;
 	}

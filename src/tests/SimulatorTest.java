@@ -26,6 +26,7 @@ public class SimulatorTest {
 			f = new FileReader("examples/world.txt");
 		}
 		catch(Exception e){
+			fail();
 		}
 		World w = Factory.getWorld(f);
 		Interpreter i = new CritterInterpreter();
@@ -45,6 +46,21 @@ public class SimulatorTest {
 
 	@Test
 	public void testAdvance() {
+		FileReader f = null;
+		try{
+			f = new FileReader("examples/world.txt");
+			World w = Factory.getWorld(f);
+			Interpreter i = new CritterInterpreter();
+			Simulator s = new Simulator(w,i);
+			s.setInterpreter(i);
+			s.setWorld(w);
+			s.putCritterRandomly("example_critter.txt", 3);
+			s.advance(5);
+		}
+		catch(Exception e){
+			System.out.println(e.getClass());
+			fail();
+		}
 	}
 
 	@Test
@@ -54,6 +70,7 @@ public class SimulatorTest {
 			f = new FileReader("examples/world.txt");
 		}
 		catch(Exception e){
+			fail();
 		}
 		World w = Factory.getWorld(f);
 		Simulator s = new Simulator();
@@ -86,6 +103,7 @@ public class SimulatorTest {
 			f = new FileReader("examples/world.txt");
 		}
 		catch(Exception e){
+			fail();
 		}
 		World w = Factory.getWorld(f);
 		s.setWorld(w);
@@ -123,6 +141,7 @@ public class SimulatorTest {
 			f = new FileReader("examples/world.txt");
 		}
 		catch(Exception e){
+			fail();
 		}
 		World w = Factory.getWorld(f);
 		s.setWorld(w);

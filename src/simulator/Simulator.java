@@ -1,18 +1,13 @@
 package simulator;
 
-import ast.Program;
-import parse.ParserFactory;
-import world.*;
 
-import java.io.File;
+
+import world.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
-
-import exceptions.IllegalCoordinateException;
+import java.util.NoSuchElementException;
 import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.*;
@@ -26,7 +21,18 @@ public class Simulator {
 	World world;
 	int timesteps;
 	
+	/**
+	 * Regular Constructor Used entirely for testing purposes
+	 * This shouldn't be used
+	 */
 	public Simulator() {}
+	
+	/**
+	 * Standard simulator constructor, stores a world and
+	 * an interpreter
+	 * @param w  the world to be stored
+	 * @param i  the interpreter to be stored
+	 */
 	public Simulator (World w, Interpreter i) {
 		interpreter = i;
 		world = w;
@@ -34,13 +40,22 @@ public class Simulator {
 			((CritterInterpreter)interpreter).setWorld(world);
 		timesteps = 0;
 	}
+	
+	/**
+	 * Stores an interpreter, used when no world yet provided
+	 * @param i    the interpreter to store 
+	 */
 	public Simulator (Interpreter i) {
 		interpreter = i;
 		timesteps = 0;
 	}
 
+	/**
+	 * advances the world a number of timesteps
+	 * @param n   the number of timesteps to advance the world
+	 */
 	public void advance(int n){
-		if (world != null){
+		if (hasWorld()){
 			for (int i =0; i< n; i++ ){
 				LinkedList<Critter> copy = new LinkedList<Critter>();
 				copy.addAll(world.getCritters());
@@ -59,17 +74,32 @@ public class Simulator {
 			System.out.println("You haven't loaded a world");
 		}
 	}
+	
+	/**
+	 * Sets the world field to the parameter
+	 * @param w    the world to be set to
+	 */
 	public void setWorld(World w){
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(w);
 	}
 	
+	/**
+	 * Sets the interpreter field to the given interpreter
+	 * @param i  the interpreter to set the field to
+	 */
 	public void setInterpreter(Interpreter i) {
 		interpreter = i;
 		if (world != null)
 			((CritterInterpreter)interpreter).setWorld(world);
 	}
+	
+	/**
+	 * Parses a world and sets the world parameter to the 
+	 * returned world
+	 * @param filename   the filename of the world to be parsed
+	 */
 	public void parseWorld(String filename){
 		try {
 			FileReader f = new FileReader(filename);
@@ -83,21 +113,48 @@ public class Simulator {
 		catch (FileNotFoundException e) {
 			System.out.println("Your File Was Not Found");
 		}
+		catch(NoSuchElementException e) {
+			System.out.println("There's something REALLY off about your file");
+		}
 		
 	}
+	
+	/**
+	 * Returns the timesteps field
+	 * @return   the number of timesteps taken
+	 */
 	public int getTimesteps() {
 		return timesteps;
 	}
+	
+	/**
+	 * Returns the number of critters in the world
+	 * @return    the number of critters in the world
+	 */
 	public int getNumCritters() {
 		return world.getCritters().size();
 	}
+	
+	/**
+	 * Returns true if there is an assigned world
+	 * false if null
+	 * @return    whether the world field is null
+	 */
 	public boolean hasWorld() {
 		return (world != null);
 	}
 
-	//TODO: Handle these exceptions
+
+	/**
+	 * Puts n instances of the critter in the world at random locations
+	 * @param filename    the critter to be put
+	 * @param n           the number of times to put the critter in the world
+	 * @throws MissingElementException     If there is no world loaded
+	 * @throws FileNotFoundException	   If the file is not found
+	 * @throws SyntaxError				   If the file has a SyntaxError
+	 */
 	public void putCritterRandomly(String filename, int n) throws MissingElementException, FileNotFoundException, SyntaxError{
-		if (world == null)
+		if (!hasWorld())
 			throw new MissingElementException();
 		for (int i = 0 ; i < n; i++ ){
 			Critter c = Factory.getCritter(filename,world.constants);

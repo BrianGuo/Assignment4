@@ -49,6 +49,8 @@ public class TransformMutation implements ParentSpecificMutation {
 		else if (n instanceof NumberNode){
 			Random r = new Random();
 			int den = r.nextInt();
+			while (den == 0)
+				den = r.nextInt();
 			int num = Integer.MAX_VALUE;
 			NumberNode newN;
 			if (den%2 == 1)
