@@ -5,8 +5,8 @@ What we need to do:
   
   Also # of critters and timesteps advanced
     -Current equivalent is the info function which means all this information is stored in simulator.
-    - Just need graphical representation, do not use "-" but hexagons.
-  -Step 1 time per click, or step infinitely many times until all critters die:
+    -Just need graphical representation, do not use "-" but hexagons.
+  Step 1 time per click, or step infinitely many times until all critters die:
     -Simulator equivalent is the step function.
     -Allow user to select the number of frames/second
     
