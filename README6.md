@@ -32,6 +32,9 @@ Critters
 
 Click a hex and view info in info panel. 
   
+  Dividing up the work:
+    * Work will mostly be split up according to panel. We intend to have Brian working on the world and world info panel (which displays the timesteps and the number of critters alive) and Max handling the info panel as well as the buttons involving certain world actions on the right. Working on a panel means that one will be responsible for all functionalities of that panel. Of course, some functionalities intersect, such as clicking a hex and displaying the hex info on an information panel. Of course, that is why we have controllers that handle events and pass information between these panels.
+    
 Schedule
   
   * 1/3 waypoint: WorldDisplay, StatusPanel, InfoPanel,
