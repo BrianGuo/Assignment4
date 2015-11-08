@@ -10,10 +10,18 @@
   <children>
     <SplitPane dividerPositions="0.795180917807195" focusTraversable="true" prefHeight="300.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
-        <SplitPane dividerPositions="0.5397727272727273" focusTraversable="true" orientation="VERTICAL" prefHeight="298.0" prefWidth="123.0">
+        <SplitPane dividerPositions="0.5198863636363636" focusTraversable="true" orientation="VERTICAL" prefHeight="298.0" prefWidth="123.0">
           <items>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+            <TabPane prefHeight="159.0" prefWidth="391.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Untitled Tab 1">
+                  <content>
+                    <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
           </items>
         </SplitPane>
         <SplitPane dividerPositions="0.3352272727272727" focusTraversable="true" orientation="VERTICAL" prefHeight="298.0" prefWidth="378.0">
