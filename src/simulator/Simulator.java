@@ -144,6 +144,36 @@ public class Simulator {
 		return (world != null);
 	}
 
+	/**
+	 * Gets the entity at the specified location in the world.
+	 * @param col Column to look at
+	 * @param row Row to look at
+	 * @return The entity at [col, row], or null if empty/OOB
+	 */
+	public Entity getEntityAt(int col, int row){
+		return world.hexAt(col, row);
+	}
+
+	/**
+	 * Returns the number of columns in the underlying world, or 0 if a world has not been loaded yet.
+	 * @return # of cols in the world, or 0 if world == null
+	 */
+	public int getWorldColumns(){
+		if(hasWorld())
+			return world.getColumns();
+		return 0;
+	}
+
+	/**
+	 * Returns the number of rows in the underlying world, or 0 if a world has not been loaded yet.
+	 * @return # of rows in the world, or 0 if world == null
+	 */
+	public int getWorldRows(){
+		if(hasWorld())
+			return world.getRows();
+		return 0;
+	}
+
 
 	/**
 	 * Puts n instances of the critter in the world at random locations
