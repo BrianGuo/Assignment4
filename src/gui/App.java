@@ -54,8 +54,10 @@ public class App extends Application {
 			grid.heightProperty().bind(worldPane.heightProperty());
 			worldPane.getChildren().add(grid);
 			System.out.println(worldPane.widthProperty().doubleValue());*/
+			worldPane.widthProperty().addListener(evt -> HexPane(worldPane,10,3));
+			worldPane.heightProperty().addListener(evt -> HexPane(worldPane,10,3));
 			HexPane(worldPane,10,3);
-			System.out.println(worldPane.getChildren());
+			
 			AnchorPane pane3 = (AnchorPane) left.getItems().get(1);
 			GenInfo g = new GenInfo();
 			g.write("Hello");
@@ -77,6 +79,7 @@ public class App extends Application {
 	
 	public void HexPane(AnchorPane P, int cols, int rows){
 		System.out.println(P.getWidth());
+		P.getChildren().clear();
 		double HexWidth = P.getWidth()/cols;
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {

@@ -1,16 +1,16 @@
 package gui;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.StackPane;
+
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-public class GenInfo extends StackPane {
+public class GenInfo extends AnchorPane {
 	
 	private Text text;
 	
 	public GenInfo() {
 		text = new Text();
-		this.setAlignment(Pos.TOP_LEFT);
+		this.getChildren().add(text);
 	}
 	
 	public void write(String s) {
