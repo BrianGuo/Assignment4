@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.event.MouseEvent;
+import java.beans.EventHandler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -29,12 +31,14 @@ public class App extends Application {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
 		try{
+			//TODO mvc pls.
+			Controller controller;//
 			AnchorPane pane = (AnchorPane) loader.load();
 			primaryStage.setScene(new Scene(pane,700,700));
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
-			AnchorPane pane2 = (AnchorPane) left.getItems().get(0);
+			AnchorPane worldPane = (AnchorPane) left.getItems().get(0);
 			/*double[] cornersX = new double[]{0,50/4,50*3/4,50,50*3/4,50/4};
 			double[] cornersY = new double[]{100 - (double)Math.sqrt(3) * 50/4, 100 - (double)Math.sqrt(3) * 50 / 2, 100- (double)Math.sqrt(3) * 50/2,  100 - (double)Math.sqrt(3) * 50/4, 100, 100};
 			double[] total = new double[12];
@@ -43,15 +47,15 @@ public class App extends Application {
 				total[2*n+1] = cornersY[n];
 			}
 			Polygon hex = new Polygon(total);
-			pane2.getChildren().add(hex);*/
+			worldPane.getChildren().add(hex);*/
 			/*Hexgrid grid = new Hexgrid(4,3,1500);
 			grid.repaint();
-			grid.widthProperty().bind(pane2.widthProperty());
-			grid.heightProperty().bind(pane2.heightProperty());
-			pane2.getChildren().add(grid);
-			System.out.println(pane2.widthProperty().doubleValue());*/
-			HexPane(pane2,10,3);
-			System.out.println(pane2.getChildren());
+			grid.widthProperty().bind(worldPane.widthProperty());
+			grid.heightProperty().bind(worldPane.heightProperty());
+			worldPane.getChildren().add(grid);
+			System.out.println(worldPane.widthProperty().doubleValue());*/
+			HexPane(worldPane,10,3);
+			System.out.println(worldPane.getChildren());
 			AnchorPane pane3 = (AnchorPane) left.getItems().get(1);
 			GenInfo g = new GenInfo();
 			g.write("Hello");
@@ -77,7 +81,11 @@ public class App extends Application {
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
 				double[] cornersX = new double[]{0,HexWidth/4,HexWidth*3/4,HexWidth,HexWidth*3/4,HexWidth/4};
-				double[] cornersY = new double[]{P.getHeight() - (double)Math.sqrt(3) * HexWidth/4, P.getHeight() - (double)Math.sqrt(3) * HexWidth / 2, P.getHeight()- (double)Math.sqrt(3) * HexWidth/2,  P.getHeight() - (double)Math.sqrt(3) * HexWidth/4, P.getHeight(), P.getHeight()};
+				double[] cornersY = new double[]{P.getHeight() - (double)Math.sqrt(3) * HexWidth/4,
+						P.getHeight() - (double)Math.sqrt(3) * HexWidth / 2,
+						P.getHeight()- (double)Math.sqrt(3) * HexWidth/2,
+						P.getHeight() - (double)Math.sqrt(3) * HexWidth/4,
+						P.getHeight(), P.getHeight()};
 				if (i % 2 == 1){
 					for (int Yoffset = 0; Yoffset < cornersY.length; Yoffset++ ){
 						cornersY[Yoffset] = cornersY[Yoffset] - HexWidth*Math.sqrt(3)/4;
@@ -98,12 +106,18 @@ public class App extends Application {
 					total[2*n] = cornersX[n];
 					total[2*n+1] = cornersY[n];
 				}
-				Polygon P2 = new Polygon(total);
+				WorldHex P2 = new WorldHex(total);
 				P2.setFill(Paint.valueOf("White"));
-				P2.setStrokeWidth(HexWidth/20);
+				P2.setStrokeWidth(HexWidth / 20);
 				System.out.println(P.maxHeight(300));
 				//P2.relocate(xOffset, yOffset);
 				P2.setStroke(Paint.valueOf("Green"));
+				P2.setCoordinate(i, j);
+				P2.setOnMouseClicked(event -> {
+
+                });
+
+
 				P.getChildren().add(P2);
 			}
 		}
