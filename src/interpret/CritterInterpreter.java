@@ -23,7 +23,7 @@ public class CritterInterpreter implements Interpreter {
 	 * Interprets the program p and returns an outcome according to specs
 	 * Requires: program given is the program of the critter field
 	 * Requires: world field is not null
-	 * @param Program to be interpreted
+	 * @param p Program to be interpreted
 	 * @return Outcome instance corresponding to action to be performed
 	 */
 	@Override
