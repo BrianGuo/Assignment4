@@ -23,6 +23,9 @@ public class World{
      * Entities are accessed via map[column][row]
      */
     private Entity[][] map;
+    public Entity[][] getMap(){
+        return map;
+    }
 
     public int getRows() {
         return ROWS;
