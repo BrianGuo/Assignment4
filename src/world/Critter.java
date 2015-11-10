@@ -410,9 +410,9 @@ public class Critter extends Entity{
 		}
 		int[] newAttributes = new int[attributes[0]];
 		//copy over memsize, zero out general purpose fields
-		newAttributes[0] = attributes[0];
-		newAttributes[1] = 1;
-		newAttributes[2] = 1;
+		newAttributes[0] = (Math.random() < 0.5) ? attributes[0] : other.attributes[0];
+		newAttributes[1] = (Math.random() < 0.5) ? attributes[1] : other.attributes[1];
+		newAttributes[2] = (Math.random() < 0.5) ? attributes[2] : other.attributes[2];
 		newAttributes[3] = 1;
 		newAttributes[4] = constants.INITIAL_ENERGY;
 		newAttributes[5] = 0;
