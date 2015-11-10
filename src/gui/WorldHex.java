@@ -15,5 +15,8 @@ public class WorldHex extends Polygon {
     public void setCoordinate(int col, int row){
         coordinate = new Coordinate(col, row);
     }
+    public Coordinate getCoordinate(){
+        return coordinate;
+    }
 
 }
