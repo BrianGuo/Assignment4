@@ -9,7 +9,9 @@ import exceptions.IllegalCoordinateException;
 public class Food extends Entity{
     private int amt; //amount of food remaining
 
-
+    public int hashCode(){
+        return 2112 + amt * 1597; //hopefully won't conflict with any critter hashcodes
+    }
 
     private boolean isConsumed = false;
     @Override
