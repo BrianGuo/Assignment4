@@ -289,8 +289,9 @@ public class Simulator {
 		ArrayList<Coordinate> differences = new ArrayList<>();
 		for(int i = 0; i < world.getColumns(); i ++){
 			for(int j = 0; j < world.getRows(); j++){
-				if(getEntityAt(i, j) != old[i][j]){
-					//it's okay to use == here since we're actually testing if they're the same object
+				if(getEntityAt(i,j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))){
+					//this should work unless we get a collision...
+					//also check for nulls
 					differences.add(new Coordinate(i,j));
 				};
 			}

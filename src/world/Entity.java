@@ -52,6 +52,9 @@ abstract public class Entity {
     }
 
     public boolean equals(Entity other){
+        if(other == null){
+            return false;
+        }
         return this.hashCode() == other.hashCode();
     }
 }
