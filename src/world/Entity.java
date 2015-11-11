@@ -2,6 +2,8 @@ package world;
 
 import exceptions.IllegalCoordinateException;
 
+import java.util.ArrayList;
+
 /**
  * Represents something in the world.
  */
@@ -57,4 +59,6 @@ abstract public class Entity {
         }
         return this.hashCode() == other.hashCode();
     }
+
+    public abstract ArrayList<String> properties();
 }

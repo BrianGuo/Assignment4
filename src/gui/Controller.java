@@ -3,8 +3,12 @@ package gui;
 
 import exceptions.IllegalOperationException;
 import exceptions.SyntaxError;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import simulator.Simulator;
 import world.Coordinate;
@@ -22,22 +26,41 @@ import java.io.FileReader;
 public class Controller {
 	App App;
     Simulator sim;
-    Entity focused;
+    //Entity focused;
     Entity loaded;
+    ObjectProperty<Entity> focused;
 
     public Controller(){
         sim = new Simulator();
+        focused = new SimpleObjectProperty<>();
+        /*focused.addListener(new ChangeListener<Entity>() {
+            @Override
+            public void changed(ObservableValue<? extends Entity> observable, Entity oldValue, Entity newValue) {
+
+            }
+        });
+        */
         //sim.parseWorld("world.txt");
     }
+
 
     /**
      * Gets the coordinates of the hex clicked on the map.
      * @param event Mouseevent originating from the clicked hex
      * @return The Coordinate of the clicked hex
      */
-    public Coordinate hexClick(MouseEvent event){
+    public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         return clicked.getCoordinate();
+    }
+
+    public void handleFocusClick(MouseEvent event){
+        Coordinate c = handleHexClick(event);
+        focused.setValue(getEntityAt(c));
+    }
+
+    public Entity getEntityAt(Coordinate c){
+        return sim.getEntityAt(c);
     }
 
     /**
@@ -45,7 +68,7 @@ public class Controller {
      * @param event The MouseEvent originating from the clicked hex
      */
     public void addEntityClick(MouseEvent event){
-        Coordinate c = hexClick(event);
+        Coordinate c = handleHexClick(event);
         addEntity(c);
     }
 
@@ -86,7 +109,7 @@ public class Controller {
      */
     public void addEntity(Coordinate coordinate){
         loaded.move(coordinate);
-        if(sim.hexAt(coordinate) == null) return;
+        if(sim.getEntityAt(coordinate) == null) return;
         sim.addEntity(loaded);
     }
 
@@ -100,4 +123,7 @@ public class Controller {
     }
 
 
+    public String getWorldName(){
+        return sim.world.name;
+    }
 }

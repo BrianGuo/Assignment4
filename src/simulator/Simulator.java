@@ -275,7 +275,7 @@ public class Simulator {
 	/**
 	 * Returns entity at coordinate in the world.  Wrapper for world method.
 	 */
-	public Entity hexAt(Coordinate coordinate){
+	public Entity getEntityAt(Coordinate coordinate){
 		return world.hexAt(coordinate);
 	}
 
@@ -321,6 +321,8 @@ public class Simulator {
 	 * @return An ArrayList containing coordinates of every difference
 	 */
 	public ArrayList<Coordinate> diffWorld(){
+		//TODO deal with changing attributes--use hashCode()?
+		
 		ArrayList<Coordinate> differences = new ArrayList<>();
 		for(int i = 0; i < world.getColumns(); i ++){
 			for(int j = 0; j < world.getRows(); j++){
@@ -334,4 +336,5 @@ public class Simulator {
 		old = world.getMap();
 		return differences;
 	}
+
 }

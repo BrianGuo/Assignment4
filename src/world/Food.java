@@ -3,6 +3,8 @@ package world;
 
 import exceptions.IllegalCoordinateException;
 
+import java.util.ArrayList;
+
 /**
  * amt is always > 0
  */
@@ -63,5 +65,12 @@ public class Food extends Entity{
             isConsumed = true;
         }
         return amount;
+    }
+
+    public ArrayList<String> properties(){
+        ArrayList<String> ary = new ArrayList<>();
+        ary.add("Type: Food");
+        ary.add("Food left: " + amt);
+        return ary;
     }
 }

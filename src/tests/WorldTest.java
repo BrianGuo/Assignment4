@@ -104,7 +104,7 @@ public class WorldTest {
             w = Factory.getRandomWorld();
         }
         w.add(f);
-        //System.out.println(w.hexAt(4, 6));
+        //System.out.println(w.getEntityAt(4, 6));
         assertTrue(w.hexAt(4, 6) instanceof Food);
         w.clean(f);
         assertNull(w.hexAt(4, 6));

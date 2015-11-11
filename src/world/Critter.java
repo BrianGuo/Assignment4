@@ -484,5 +484,16 @@ public class Critter extends Entity{
 		return lover;
 	}
 
+	public ArrayList<String> properties(){
+		ArrayList<String> ary = new ArrayList<>();
+		ary.add("Type: Critter");
+		ary.add("Species: " + species);
+		ary.add("Direction: " + direction);
+		for(int i = 0; i < attributes.length; i++){
+			ary.add("mem[" + i + "]: " + attributes[i]);
+		}
+		ary.add("Complexity: " + complexity());
+		return ary;
+	}
 
 }

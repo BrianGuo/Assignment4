@@ -67,7 +67,7 @@ public class HexWorld extends AnchorPane {
 				P2.setStrokeWidth(HexWidth / 20);
 				P2.setStroke(Paint.valueOf("Green"));
 				P2.setCoordinate(i, j);
-				P2.setOnMouseClicked(controller::hexClick);
+				P2.setOnMouseClicked(controller::handleHexClick);
 
 
 				getChildren().add(P2);
