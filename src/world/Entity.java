@@ -50,4 +50,11 @@ abstract public class Entity {
     public void move (Coordinate c) throws IllegalCoordinateException{
         location.move(c.getCol(), c.getRow());
     }
+
+    public boolean equals(Entity other){
+        if(other == null){
+            return false;
+        }
+        return this.hashCode() == other.hashCode();
+    }
 }
