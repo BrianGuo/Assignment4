@@ -16,7 +16,7 @@ public class Controller {
         sim.parseWorld("world.txt");
     }
 
-    public void hexClick(MouseEvent event){
+    public void handleHexClick(MouseEvent event){
         System.out.println("hi");
         WorldHex clicked = (WorldHex) event.getSource();
         System.out.println(clicked.getCoordinate());

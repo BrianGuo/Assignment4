@@ -40,7 +40,7 @@ public class App extends Application {
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
-			HexWorld worldPane = new HexWorld(4,3, controller);
+			HexWorld worldPane = new HexWorld(40,30, controller);
 			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);

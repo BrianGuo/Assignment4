@@ -286,6 +286,8 @@ public class Simulator {
 	 * @return An ArrayList containing coordinates of every difference
 	 */
 	public ArrayList<Coordinate> diffWorld(){
+		//TODO deal with changing attributes--use hashCode()?
+		
 		ArrayList<Coordinate> differences = new ArrayList<>();
 		for(int i = 0; i < world.getColumns(); i ++){
 			for(int j = 0; j < world.getRows(); j++){
