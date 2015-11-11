@@ -49,14 +49,17 @@ public class App extends Application {
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
+
 			HexWorld worldPane = new HexWorld(4,3, controller);
 			this.WorldPane = worldPane;
 			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
+
 			TabPane pane3 = (TabPane) left.getItems().get(1);
 			GenInfo g = new GenInfo(controller);
+
 			this.GenInfoPane = g;
 			g.addWorldTab(new World());
 			left.getItems().set(1,g);
