@@ -20,6 +20,8 @@ public class Simulator {
 	Interpreter interpreter;
 	World world;
 	int timesteps;
+	Entity[][] old;
+
 	
 	/**
 	 * Regular Constructor Used entirely for testing purposes
@@ -39,6 +41,7 @@ public class Simulator {
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
 		timesteps = 0;
+		old = new Entity[getWorldColumns()][getWorldRows()];
 	}
 	
 	/**
@@ -83,6 +86,7 @@ public class Simulator {
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(w);
+		old = new Entity[getWorldColumns()][getWorldRows()];
 	}
 	
 	/**
@@ -106,6 +110,7 @@ public class Simulator {
 			this.world = Factory.getWorld(f);
 			if (interpreter != null)
 				((CritterInterpreter) interpreter).setWorld(world);
+			old = new Entity[getWorldColumns()][getWorldRows()];
 		}
 		catch (SyntaxError e) {
 			System.out.println("Your world file has syntax errors");
@@ -274,5 +279,24 @@ public class Simulator {
 		}
 		for (int i = results.size()-1; i >= 0; i--)
 			System.out.println(results.get(i));
+	}
+
+	/**
+	 * Finds all the differences that have happened between time steps and displays them.
+	 * @return An ArrayList containing coordinates of every difference
+	 */
+	public ArrayList<Coordinate> diffWorld(){
+		ArrayList<Coordinate> differences = new ArrayList<>();
+		for(int i = 0; i < world.getColumns(); i ++){
+			for(int j = 0; j < world.getRows(); j++){
+				if(getEntityAt(i,j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))){
+					//this should work unless we get a collision...
+					//also check for nulls
+					differences.add(new Coordinate(i,j));
+				};
+			}
+		}
+		old = world.getMap();
+		return differences;
 	}
 }

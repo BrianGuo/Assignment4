@@ -5,6 +5,10 @@ package world;
 import exceptions.IllegalCoordinateException;
 
 public class Rock extends Entity{
+    public int hashCode(){
+        return -1; //woohoo this actually won't conflict!
+    }
+
     @Override
     public String toString() {
         return "#";

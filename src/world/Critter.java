@@ -1,6 +1,7 @@
 package world;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import ast.Program;
@@ -23,7 +24,22 @@ public class Critter extends Entity{
 	//keeps track of whether the critter is dead
 	boolean isDead = false;
 
-
+	@Override
+	/**
+	 * Really bad hashCode override for diff testing.  May have collisions, but hopefully not.  Depends on
+	 * every single property of the critter, however.
+	 */
+	public int hashCode(){
+		//maybe i should fix this using bit shifts instead
+		long cur = 0;
+		cur += appearance();
+		cur += Arrays.hashCode(attributes);
+		cur += p.hashCode();
+		cur += LastRule.hashCode();
+		cur += species.hashCode();
+		cur += location.getCol() * 100000 + location.getRow() * 100;
+		return (int) cur;
+	}
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program) {
 		super(constants);
@@ -394,9 +410,9 @@ public class Critter extends Entity{
 		}
 		int[] newAttributes = new int[attributes[0]];
 		//copy over memsize, zero out general purpose fields
-		newAttributes[0] = attributes[0];
-		newAttributes[1] = 1;
-		newAttributes[2] = 1;
+		newAttributes[0] = (Math.random() < 0.5) ? attributes[0] : other.attributes[0];
+		newAttributes[1] = (Math.random() < 0.5) ? attributes[1] : other.attributes[1];
+		newAttributes[2] = (Math.random() < 0.5) ? attributes[2] : other.attributes[2];
 		newAttributes[3] = 1;
 		newAttributes[4] = constants.INITIAL_ENERGY;
 		newAttributes[5] = 0;

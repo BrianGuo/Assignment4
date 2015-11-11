@@ -8,11 +8,14 @@ public class HexWorld extends AnchorPane {
 	
 	int rows;
 	int cols;
-	
-	public HexWorld(int c, int r){
+	Controller controller;
+
+	public HexWorld(int c, int r, Controller controller){
 		rows = r;
 		cols = c;
+		this.controller = controller;
 		HexPane(c,r);
+
 	}
 	@Override
 	public boolean isResizable() {
@@ -64,9 +67,7 @@ public class HexWorld extends AnchorPane {
 				P2.setStrokeWidth(HexWidth / 20);
 				P2.setStroke(Paint.valueOf("Green"));
 				P2.setCoordinate(i, j);
-				P2.setOnMouseClicked(event -> {
-
-                });
+				P2.setOnMouseClicked(controller::hexClick);
 
 
 				getChildren().add(P2);

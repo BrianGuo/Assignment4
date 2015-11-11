@@ -35,15 +35,15 @@ public class App extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
 		try{
 			//TODO mvc pls.
-			Controller controller;//
+			Controller controller = new Controller();//
 			AnchorPane pane = (AnchorPane) loader.load();
 			primaryStage.setScene(new Scene(pane,700,700));
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
-			HexWorld worldPane = new HexWorld(4,3);
-			worldPane.widthProperty().addListener(evt -> worldPane.HexPane2(worldPane.cols,worldPane.rows,left));
-			worldPane.heightProperty().addListener(evt -> worldPane.HexPane2(worldPane.cols,worldPane.rows,left));
+			HexWorld worldPane = new HexWorld(4,3, controller);
+			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
 			TabPane pane3 = (TabPane) left.getItems().get(1);
