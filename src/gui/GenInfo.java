@@ -37,6 +37,8 @@ public class GenInfo extends TabPane {
 		}
 	};
 
+
+
 	//...why does a TabPane also handle a single tab?...
 	
 	public GenInfo(Controller c) {

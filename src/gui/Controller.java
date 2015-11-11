@@ -1,5 +1,6 @@
 package gui;
 
+
 import exceptions.IllegalOperationException;
 import exceptions.SyntaxError;
 import javafx.beans.InvalidationListener;
@@ -23,6 +24,7 @@ import java.io.FileReader;
  * Created by Max on 11/8/2015.
  */
 public class Controller {
+	App App;
     Simulator sim;
     //Entity focused;
     Entity loaded;
