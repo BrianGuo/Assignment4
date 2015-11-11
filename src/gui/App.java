@@ -56,6 +56,8 @@ public class App extends Application {
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
+
+			TabPane pane3 = (TabPane) left.getItems().get(1);
 			GenInfo g = new GenInfo(controller);
 
 			this.GenInfoPane = g;
