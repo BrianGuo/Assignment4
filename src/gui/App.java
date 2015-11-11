@@ -62,7 +62,7 @@ public class App extends Application {
 			left.getItems().set(1,g);
 			SplitPane right = (SplitPane)split.getItems().get(1);
 			right.getItems().set(1, new Functions(primaryStage, controller));
-			
+			SpecificInfo spec = new SpecificInfo(controller);
 			
 		}
 		catch(Exception e) {
