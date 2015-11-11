@@ -25,7 +25,7 @@ public class SpecificInfo extends AnchorPane {
 			String cur = "";
 			ArrayList<String> properties = controller.focused.getValue().properties();
 			for (String property : properties) {
-				cur += property;
+				cur += property + "\n";
 			}
 			return cur;
 		}
@@ -39,6 +39,6 @@ public class SpecificInfo extends AnchorPane {
 		info.textProperty().bind(critterStatus);
 	}
 	
-	
+
 	
 }
