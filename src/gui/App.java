@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -41,17 +42,16 @@ public class App extends Application {
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
 			HexWorld worldPane = new HexWorld(4,3);
-			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
-			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+			worldPane.widthProperty().addListener(evt -> worldPane.HexPane2(worldPane.cols,worldPane.rows,left));
+			worldPane.heightProperty().addListener(evt -> worldPane.HexPane2(worldPane.cols,worldPane.rows,left));
 			left.getItems().set(0, worldPane);
-			
+			left.setDividerPosition(0, 0.7);
 			TabPane pane3 = (TabPane) left.getItems().get(1);
 			GenInfo g = new GenInfo();
-			g.setLiveCritters("5");
-			g.setTimesteps("15");
-			g.addInfo("the critter's memsize is: 9");
 			g.addWorldTab(new World());
 			left.getItems().set(1,g);
+			SplitPane right = (SplitPane)split.getItems().get(1);
+			right.getItems().set(1, new Functions(primaryStage));
 			
 			
 		}
