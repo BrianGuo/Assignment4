@@ -15,30 +15,40 @@ public class SpecificInfo extends AnchorPane {
 	Controller controller;
 	Text info;
 
-	StringBinding critterStatus = new StringBinding(){
-		{
-			super.bind(controller.focused);
-		}
 
-		@Override
-		protected String computeValue() {
-			String cur = "";
-			ArrayList<String> properties = controller.focused.getValue().properties();
-			for (String property : properties) {
-				cur += property + "\n";
-			}
-			return cur;
-		}
-	};
+	CritterBinding critterStatus;
 
 
 	public SpecificInfo(Controller c) {
+		critterStatus = new CritterBinding();
 		this.controller = c;
 		info = new Text();
 		info.setY(20);
 		info.textProperty().bind(critterStatus);
 	}
-	
 
-	
+
+	private class CritterBinding extends StringBinding{
+		public CritterBinding(){
+			super();
+		}
+		@Override
+		protected String computeValue() {
+			String cur = "";
+			if(controller.focused.getValue() != null) {
+				ArrayList<String> properties = controller.focused.getValue().properties();
+				for (String property : properties) {
+					cur += property + "\n";
+				}
+			}
+			return cur;
+		}
+		public void bind(ObjectProperty<Entity> e){
+			super.bind(e);
+		}
+	}
+
+	public void bind(ObjectProperty<Entity> e){
+		critterStatus.bind(e);
+	}
 }
