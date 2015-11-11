@@ -275,7 +275,7 @@ public class Simulator {
 	/**
 	 * Returns entity at coordinate in the world.  Wrapper for world method.
 	 */
-	public Entity hexAt(Coordinate coordinate){
+	public Entity getEntityAt(Coordinate coordinate){
 		return world.hexAt(coordinate);
 	}
 
@@ -336,4 +336,5 @@ public class Simulator {
 		old = world.getMap();
 		return differences;
 	}
+
 }

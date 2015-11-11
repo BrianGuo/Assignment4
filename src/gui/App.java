@@ -52,7 +52,7 @@ public class App extends Application {
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
 			TabPane pane3 = (TabPane) left.getItems().get(1);
-			GenInfo g = new GenInfo();
+			GenInfo g = new GenInfo(controller);
 			g.addWorldTab(new World());
 			left.getItems().set(1,g);
 			SplitPane right = (SplitPane)split.getItems().get(1);

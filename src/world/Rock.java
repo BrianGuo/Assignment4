@@ -4,6 +4,8 @@ package world;
 
 import exceptions.IllegalCoordinateException;
 
+import java.util.ArrayList;
+
 public class Rock extends Entity{
     public int hashCode(){
         return -1; //woohoo this actually won't conflict!
@@ -22,4 +24,13 @@ public class Rock extends Entity{
     public Rock(int c, int r, WorldConstants constants) throws IllegalCoordinateException{
         super(c,r, constants);
     }
+
+    @Override
+    public ArrayList<String> properties() {
+        ArrayList<String> ary = new ArrayList<>();
+        ary.add("Type: Rock");
+        return ary;
+    }
+
+
 }
