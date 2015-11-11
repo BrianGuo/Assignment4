@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.TabPane;
@@ -36,6 +37,10 @@ public class App extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
+		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+			System.out.println("Handler caught exception: " + throwable.getMessage());
+			defaultHandler(throwable);
+		});
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
@@ -56,12 +61,19 @@ public class App extends Application {
 			g.addWorldTab(new World());
 			left.getItems().set(1,g);
 			SplitPane right = (SplitPane)split.getItems().get(1);
-			right.getItems().set(1, new Functions(primaryStage));
+			right.getItems().set(1, new Functions(primaryStage, controller));
 			
 			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void defaultHandler(Throwable throwable) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Illegal operation");
+		alert.setContentText(throwable.getMessage());
+		alert.showAndWait();
 	}
 }

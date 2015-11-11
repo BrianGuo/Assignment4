@@ -7,10 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -21,10 +18,14 @@ public class Functions extends Accordion {
 	
 	AnchorPane critterPane;
 	AnchorPane WorldPane;
+	Controller controller;
 	
-	public Functions(Stage s) {
+	public Functions(Stage s, Controller c) {
+		this.controller = c;
 		TitledPane CritterPane = new TitledPane("Critter Functions",CritterPane(s));
 		this.getPanes().add(CritterPane);
+
+
 	}
 	
 	public AnchorPane CritterPane(Stage s) {
@@ -43,24 +44,32 @@ public class Functions extends Accordion {
 		TextField file = new TextField();
 		file.setEditable(false);
 		AnchorPane.setTopAnchor(file, 80.0);
-		b.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				File critter = fileChooser.showOpenDialog(s);
-				if (critter != null) {
+		b.setOnAction((event) -> {
+			File critter = fileChooser.showOpenDialog(s);
+			if (critter != null) {
+				try {
 					String critterPath = critter.getAbsolutePath();
 					file.setText(critterPath);
+					controller.loadCritter(critterPath);
+				} catch (NullPointerException e) {
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setTitle("Illegal operation");
+					alert.setContentText("You must load a world first");
+					alert.showAndWait();
 				}
 			}
+
 		});
+		Button b2 = new Button("Add critter randomly");
+		b2.setOnAction(controller::addRandomEntity);
+
 		p.getChildren().add(b);
-		p.getChildren().add(file);
-		p.widthProperty().addListener(new ChangeListener<Number>(){
-			public void changed(ObservableValue<? extends Number> observable, Number old, Number newNum) {
-				t.setX(p.getWidth()/2 - 55);
-				b.setLayoutX(p.getWidth()/2 - 30);
-			}
-		});
+				p.getChildren().add(file);
+		p.getChildren().add(b2);
+		p.widthProperty().addListener((observable, old, newNum) -> {
+            t.setX(p.getWidth() / 2 - 55);
+            b.setLayoutX(p.getWidth() / 2 - 30);
+        });
 		System.out.println(p.getChildren());
 		return p;
 	}

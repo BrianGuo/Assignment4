@@ -18,7 +18,7 @@ import interpret.CritterInterpreter;
 public class Simulator {
 	
 	Interpreter interpreter;
-	World world;
+	public World world;
 	int timesteps;
 	Entity[][] old;
 
@@ -107,6 +107,18 @@ public class Simulator {
 	public void parseWorld(String filename){
 		try {
 			FileReader f = new FileReader(filename);
+			parseWorld(f);
+		}
+
+		catch (FileNotFoundException e) {
+			System.out.println("Your File Was Not Found");
+		}
+
+		
+	}
+
+	public void parseWorld(FileReader f){
+		try {
 			this.world = Factory.getWorld(f);
 			if (interpreter != null)
 				((CritterInterpreter) interpreter).setWorld(world);
@@ -115,13 +127,12 @@ public class Simulator {
 		catch (SyntaxError e) {
 			System.out.println("Your world file has syntax errors");
 		}
-		catch (FileNotFoundException e) {
-			System.out.println("Your File Was Not Found");
-		}
 		catch(NoSuchElementException e) {
 			System.out.println("There's something REALLY off about your file");
 		}
-		
+		catch (FileNotFoundException e) {
+			System.out.println("Your File Was Not Found");
+		}
 	}
 	
 	/**
@@ -196,6 +207,15 @@ public class Simulator {
 			world.addRandom(c);
 		}
 	}
+
+	/**
+	 * Adds an entity to the world at a random location
+	 * Had to create a new function since putCritterRandomly...only works on critters...and with strings.
+	 * @param entity Entity to be added
+	 */
+	public void addRandomEntity(Entity entity){
+		world.addRandom(entity);
+	}
 	
 	/**
 	 * Helper function that produces one line in ascii hex notation
@@ -251,7 +271,22 @@ public class Simulator {
 			System.out.println("The last Rule executed was" + cr.getLastRule().toString());
 		}
 	}
-	
+
+	/**
+	 * Returns entity at coordinate in the world.  Wrapper for world method.
+	 */
+	public Entity hexAt(Coordinate coordinate){
+		return world.hexAt(coordinate);
+	}
+
+	/**
+	 * Adds an entity to the world
+	 * @param entity Entity to be added, with the correct coordinate
+	 */
+	public void addEntity(Entity entity){
+		world.add(entity);
+	}
+
 	/**
 	 * Prints the world in ascii hex format.
 	 * Requires: world is not null and valid.
