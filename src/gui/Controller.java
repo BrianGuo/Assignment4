@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -10,6 +11,7 @@ import world.Entity;
  * Created by Max on 11/8/2015.
  */
 public class Controller {
+	App App;
     Simulator sim;
     Entity focused;
 
@@ -22,6 +24,7 @@ public class Controller {
         System.out.println("hi");
         WorldHex clicked = (WorldHex) event.getSource();
         System.out.println(clicked.getCoordinate());
+    
         //TODO: determine return type
     }
 }
