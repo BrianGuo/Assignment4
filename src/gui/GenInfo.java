@@ -44,7 +44,8 @@ public class GenInfo extends TabPane {
 	public GenInfo(Controller c) {
 
 		controller = c;
-
+		timesteps.set(0);
+		numCritters.set(0);
 
 		generalInfo = new Text();
 		generalInfo.textProperty().bind(status);
