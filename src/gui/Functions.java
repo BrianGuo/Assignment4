@@ -62,13 +62,15 @@ public class Functions extends Accordion {
 		});
 		Button b2 = new Button("Add critter randomly");
 		b2.setOnAction(controller::addRandomEntity);
-
+		AnchorPane.setTopAnchor(b2, 120.0);
 		p.getChildren().add(b);
 				p.getChildren().add(file);
 		p.getChildren().add(b2);
 		p.widthProperty().addListener((observable, old, newNum) -> {
             t.setX(p.getWidth() / 2 - 55);
             b.setLayoutX(p.getWidth() / 2 - 30);
+            b2.setLayoutX(p.getWidth()/2 - 70);
+            file.setLayoutX(p.getWidth()/2 - 80);
         });
 		System.out.println(p.getChildren());
 		return p;
