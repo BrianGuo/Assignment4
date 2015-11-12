@@ -35,8 +35,8 @@ public class HexWorld extends ScrollPane {
 
             event.consume();
         });
-		this.
-		HexPane(cols, rows);
+		Scene dummyScene = new Scene(this, 400,400);
+		HexPane(c,r);
 
 	}
 	/*@Override
@@ -55,7 +55,7 @@ public class HexWorld extends ScrollPane {
 		getChildren().clear();
 		double HexWidth = 100;
 		AnchorPane p = new AnchorPane();
-		Scene dummyscene = new Scene(p, HexWidth*cols,HexWidth*rows);
+		Scene dummyscene = new Scene(p, getWidth(),getHeight());
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
@@ -76,6 +76,7 @@ public class HexWorld extends ScrollPane {
 					cornersX[i2] += 0.75 * HexWidth*i ;
 				}
 				double yTotal = HexWidth*Math.sqrt(3)*rows/2 + HexWidth*Math.sqrt(3)/4;
+				System.out.println(p.getHeight());
 				double yOffset = (p.getHeight() - yTotal)/2;
 				System.out.println(yOffset);
 				for(int i3 = 0; i3< cornersY.length; i3++) {
