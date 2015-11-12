@@ -23,12 +23,12 @@ public class App extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
-		/*Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.out.println("Handler caught exception: " + throwable.getMessage());
 			System.out.println(throwable.getCause());
 			System.out.println(throwable.toString());
 			defaultHandler(throwable);
-		});*/
+		});
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
@@ -42,7 +42,7 @@ public class App extends Application {
 
 
 			World w = Factory.getRandomWorld();
-			HexWorld worldPane = new HexWorld(40,3, controller);
+			HexWorld worldPane = new HexWorld(4,3, controller);
 			controller.setWorld(w);
 
 			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
