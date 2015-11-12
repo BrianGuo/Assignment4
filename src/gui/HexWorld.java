@@ -19,10 +19,10 @@ public class HexWorld extends ScrollPane {
 		HexPane(c,r);
 
 	}
-	@Override
+	/*@Override
 	public boolean isResizable() {
 		return true;
-	}
+	}*/
 	
 	
 	public void Heights(double D) {
