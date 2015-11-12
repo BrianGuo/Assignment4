@@ -42,10 +42,12 @@ public class App extends Application {
 
 
 			World w = Factory.getRandomWorld();
-			HexWorld worldPane = new HexWorld(w.getColumns(),w.getRows(), controller);
+			HexWorld worldPane = new HexWorld(40,30, controller);
 			controller.setWorld(w);
+
 			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));*/
+
 
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);

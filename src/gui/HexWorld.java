@@ -2,6 +2,7 @@ package gui;
 
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseButton;
@@ -54,27 +55,29 @@ public class HexWorld extends ScrollPane {
 		getChildren().clear();
 		double HexWidth = 100;
 		AnchorPane p = new AnchorPane();
+		Scene dummyscene = new Scene(p, HexWidth*cols,HexWidth*rows);
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
 				double[] cornersX = new double[]{0,HexWidth/4,HexWidth*3/4,HexWidth,HexWidth*3/4,HexWidth/4};
-				double[] cornersY = new double[]{getHeight() - (double)Math.sqrt(3) * HexWidth/4,
-						getHeight() - (double)Math.sqrt(3) * HexWidth / 2,
-						getHeight()- (double)Math.sqrt(3) * HexWidth/2,
-						getHeight() - (double)Math.sqrt(3) * HexWidth/4,
-						getHeight(), getHeight()};
+				double[] cornersY = new double[]{p.getHeight() - (double)Math.sqrt(3) * HexWidth/4,
+						p.getHeight() - (double)Math.sqrt(3) * HexWidth / 2,
+						p.getHeight()- (double)Math.sqrt(3) * HexWidth/2,
+						p.getHeight() - (double)Math.sqrt(3) * HexWidth/4,
+						p.getHeight(), p.getHeight()};
 				if (i % 2 == 1){
 					for (int Yoffset = 0; Yoffset < cornersY.length; Yoffset++ ){
 						cornersY[Yoffset] = cornersY[Yoffset] - HexWidth*Math.sqrt(3)/4;
 					}
 				}
 				double xTotal = 3*cols*HexWidth/4 + HexWidth/4;
-				double xOffset = (getWidth() - xTotal)/2;
+				double xOffset = (p.getWidth() - xTotal)/2;
 				for(int i2 = 0; i2 < cornersX.length;i2++) {
-					cornersX[i2] += 0.75 * HexWidth*i + xOffset;
+					cornersX[i2] += 0.75 * HexWidth*i ;
 				}
 				double yTotal = HexWidth*Math.sqrt(3)*rows/2 + HexWidth*Math.sqrt(3)/4;
-				double yOffset = (getHeight() - yTotal)/2;
+				double yOffset = (p.getHeight() - yTotal)/2;
+				System.out.println(yOffset);
 				for(int i3 = 0; i3< cornersY.length; i3++) {
 					cornersY[i3] -= HexWidth*Math.sqrt(3)/2*j + yOffset;
 				}
