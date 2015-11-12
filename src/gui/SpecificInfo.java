@@ -1,49 +1,73 @@
 package gui;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.scene.text.Font;
 import world.Entity;
 
 import java.util.ArrayList;
 
+import javax.naming.Binding;
+
 public class SpecificInfo extends AnchorPane {
 	
 	Controller controller;
-	Text info;
+	TextFlow info;
 
 
-	CritterBinding critterStatus;
+	PropertyBinding critterStatus;
 
 
 	public SpecificInfo(Controller c) {
 		this.controller = c;
-		critterStatus = new CritterBinding();
-		info = new Text();
-		info.setY(20);
-		info.textProperty().bind(critterStatus);
-		getChildren().add(info);
+		critterStatus = new PropertyBinding();
+		info = new TextFlow();
+		info.setLayoutY(60);
+		critterStatus.addListener( new ChangeListener<Object>() {
+
+			@Override
+			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+				for (String s: critterStatus.computeValue()) {
+					Text t = new Text();
+					int n = s.indexOf(":");
+					t.setFont(Font.font("System", FontWeight.BOLD,14.0));
+					t.setText(s.substring(0,n));
+					Text t2 = new Text();
+					t2.setText(s.substring(n,s.length()) + "\n");
+					info.getChildren().addAll(t,t2);
+				}
+				
+			}
+
+			
+
+			
+		});
+		this.getChildren().add(info);
 	}
 
 
-	private class CritterBinding extends StringBinding{
-		public CritterBinding(){
+	private class PropertyBinding extends ObjectBinding<ArrayList<String>>{
+		public PropertyBinding(){
 			super();
 			bind(controller.focused);
 		}
 		@Override
-		protected String computeValue() {
-			String cur = "";
+		protected ArrayList<String> computeValue() {
+			System.out.println("Checkpoint 2");
 			if(controller.focused.getValue() != null) {
-				ArrayList<String> properties = controller.focused.getValue().properties();
-				for (String property : properties) {
-					cur += property + "\n";
-				}
+				return controller.focused.getValue().properties();
 			}
-			return cur;
+			return null;
 		}
 		public void bind(ObjectProperty<Entity> e){
 

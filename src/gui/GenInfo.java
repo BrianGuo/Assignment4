@@ -11,9 +11,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import world.Critter;
 import world.World;
@@ -48,14 +50,18 @@ public class GenInfo extends TabPane implements Observer{
 		controller = c;
 		timesteps.set(0);
 		numCritters.set(0);
-
+		AnchorPane p = new AnchorPane();
 		generalInfo = new Text();
 		generalInfo.textProperty().bind(status);
-
+		p.getChildren().add(generalInfo);
+		AnchorPane.setTopAnchor(generalInfo, 20.0);
+		MediaControl mc = new MediaControl(null);
+		AnchorPane.setBottomAnchor(mc, 15.0);
+		p.getChildren().add(mc);
 		Tab t = new Tab();
 		info = new ArrayList<String>();
 		t.setText("World status");
-		t.setContent(generalInfo);
+		t.setContent(p);
 		this.getTabs().add(t);
 		observe(controller);
 

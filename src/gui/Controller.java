@@ -4,6 +4,8 @@ package gui;
 import exceptions.IllegalOperationException;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -15,6 +17,7 @@ import javafx.event.Event;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
+import javafx.util.Duration;
 import simulator.Simulator;
 import world.Coordinate;
 import world.Critter;
@@ -51,14 +54,11 @@ public class Controller extends java.util.Observable {
     	catch(FileNotFoundException e) {
     		System.out.println("File Not Found");
     	}
-        /*focused.addListener(new ChangeListener<Entity>() {
-            @Override
-            public void changed(ObservableValue<? extends Entity> observable, Entity oldValue, Entity newValue) {
+        Timeline simTimeline = new Timeline();
+        simTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(300)),
+        e -> {
 
-            }
-        });
-        */
-        //sim.parseWorld("world.txt");
+        })
     }
 
 
@@ -70,14 +70,14 @@ public class Controller extends java.util.Observable {
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         focused.set(sim.getEntityAt(clicked.getCoordinate()));
-        System.out.println(clicked.getCoordinate());
-        System.out.println(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
         focused.setValue(getEntityAt(c));
+        System.out.println("Checkpoint1");
+        System.out.println(c);
     }
 
     public Entity getEntityAt(Coordinate c){
@@ -99,11 +99,7 @@ public class Controller extends java.util.Observable {
         Coordinate c = handleHexClick(event);
         System.out.println(c);
         try {
-            addEntity(c);
-            WorldHex clicked = (WorldHex)event.getSource();
-            Image img = critterImages[r.nextInt(4)];
-            clicked.setFill(new ImagePattern(img,0,0,1,1,true));
-            System.out.println("HI");
+            addEntity(c, (WorldHex) event.getSource());
         }
         catch(ArrayIndexOutOfBoundsException e){
             throw new IllegalOperationException("Clicked outside of the world.");
@@ -136,7 +132,6 @@ public class Controller extends java.util.Observable {
      * @param filename Filename of the critter
      */
     public void loadCritter(String filename){
-        System.out.println(filename);
         loadedEntity = filename;
         try{
             Critter c = Factory.getCritter(filename, sim.world.constants);
@@ -155,9 +150,11 @@ public class Controller extends java.util.Observable {
      * Adds the currently loaded entity into the world at the desired coordinate.
      * @param coordinate Coordinate to be added
      */
-    public void addEntity(Coordinate coordinate){
+    public void addEntity(Coordinate coordinate, WorldHex w){
         loaded.move(coordinate);
         if(sim.getEntityAt(coordinate) != null) return;
+        Image img = critterImages[r.nextInt(4)];
+        w.setFill(new ImagePattern(img, 0, 0, 1, 1, true));
         sim.addEntity(loaded);
         loadCritter(loadedEntity);
         setChanged();

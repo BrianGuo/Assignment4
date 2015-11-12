@@ -1,6 +1,7 @@
 package gui;
 
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -18,13 +19,14 @@ public class HexWorld extends ScrollPane {
 	int cols;
 	Controller controller;
 	double pressedX, pressedY;
+	WorldHex[][] world;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
 		cols = c;
 		this.controller = controller;
 		setPannable(true);
-		Scene dummyScene = new Scene(this, 400,400);
+		Scene dummyScene = new Scene(this, 900,900);
 		System.out.println(cols);
 		System.out.println(rows);
 		this.setOnMousePressed(event -> {
@@ -38,6 +40,7 @@ public class HexWorld extends ScrollPane {
             event.consume();
         });
 		HexPane(cols, rows);
+		setVvalue(1.0);
 
 	}
 	/*@Override
@@ -53,10 +56,12 @@ public class HexWorld extends ScrollPane {
 	}
 	
 	public void HexPane(int cols, int rows){
+		world = new WorldHex[cols][rows];
 		getChildren().clear();
-		double HexWidth = 100;
 		AnchorPane p = new AnchorPane();
 		Scene dummyscene = new Scene(p, getWidth(),getHeight());
+		double HexWidth = p.getWidth()/cols;
+		
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
@@ -104,6 +109,7 @@ public class HexWorld extends ScrollPane {
 						}
 					});
 					p.getChildren().add(P2);
+					world[i][j] = P2;
 				}
 			}
 		}
