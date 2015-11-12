@@ -4,6 +4,7 @@ package gui;
 import exceptions.IllegalOperationException;
 import exceptions.SyntaxError;
 import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,7 +24,7 @@ import java.io.FileReader;
 /**
  * Created by Max on 11/8/2015.
  */
-public class Controller {
+public class Controller extends java.util.Observable {
 	App App;
     Simulator sim;
     //Entity focused;
@@ -70,6 +71,8 @@ public class Controller {
     public void addEntityClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
         addEntity(c);
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -79,6 +82,8 @@ public class Controller {
     public void loadWorld(File file){
         try {
             sim.parseWorld(new FileReader(file));
+            setChanged();
+            notifyObservers();
         }
         catch(FileNotFoundException e){
             System.out.println("File not found");
@@ -94,6 +99,7 @@ public class Controller {
         try{
             Critter c = Factory.getCritter(filename, sim.world.constants);
             this.loaded = c;
+
         }
         catch(FileNotFoundException e){
             System.out.println("File not found");
@@ -111,6 +117,8 @@ public class Controller {
         loaded.move(coordinate);
         if(sim.getEntityAt(coordinate) == null) return;
         sim.addEntity(loaded);
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -119,11 +127,18 @@ public class Controller {
     public void addRandomEntity(ActionEvent event){
         if(loaded == null) throw new IllegalOperationException("No entity loaded!");
         sim.addRandomEntity(loaded);
-
+        setChanged();
+        notifyObservers();
     }
 
 
     public String getWorldName(){
         return sim.world.name;
+    }
+
+    public void advance(int n){
+        sim.advance(n);
+        setChanged();
+        notifyObservers();
     }
 }

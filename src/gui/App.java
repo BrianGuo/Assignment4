@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
+import world.Factory;
 import world.World;
 
 public class App extends Application {
@@ -61,7 +62,7 @@ public class App extends Application {
 			GenInfo g = new GenInfo(controller);
 
 			this.GenInfoPane = g;
-			g.addWorldTab(new World());
+			g.addWorldTab(Factory.getRandomWorld());
 			left.getItems().set(1,g);
 			SplitPane right = (SplitPane)split.getItems().get(1);
 			right.getItems().set(1, new Functions(primaryStage, controller));
