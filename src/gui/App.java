@@ -1,24 +1,12 @@
 package gui;
 
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import world.Factory;
 import world.World;
@@ -37,6 +25,8 @@ public class App extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
 		/*Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.out.println("Handler caught exception: " + throwable.getMessage());
+			System.out.println(throwable.getCause());
+			System.out.println(throwable.toString());
 			defaultHandler(throwable);
 		});*/
 		try{
@@ -50,9 +40,15 @@ public class App extends Application {
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
 
+
 			World w = Factory.getRandomWorld();
 			HexWorld worldPane = new HexWorld(40,3, controller);
 			controller.setWorld(w);
+
+			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));*/
+
+
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
 

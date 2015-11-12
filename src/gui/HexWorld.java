@@ -1,12 +1,15 @@
 package gui;
 
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 
 public class HexWorld extends ScrollPane {
@@ -14,6 +17,7 @@ public class HexWorld extends ScrollPane {
 	int rows;
 	int cols;
 	Controller controller;
+	double pressedX, pressedY;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
@@ -21,7 +25,20 @@ public class HexWorld extends ScrollPane {
 		this.controller = controller;
 		setPannable(true);
 		Scene dummyScene = new Scene(this, 400,400);
-		HexPane(c,r);
+		System.out.println(cols);
+		System.out.println(rows);
+		this.setOnMousePressed(event -> {
+            pressedX = event.getX();
+            pressedY = event.getY();
+        });
+		this.setOnMouseDragged(event -> {
+            setTranslateX(getTranslateX() + event.getX() - pressedX);
+            setTranslateY(getTranslateY() + event.getY() - pressedY);
+
+            event.consume();
+        });
+		this.
+		HexPane(cols, rows);
 
 	}
 	/*@Override
@@ -77,9 +94,14 @@ public class HexWorld extends ScrollPane {
 				P2.setStrokeWidth(HexWidth / 20);
 				P2.setStroke(Paint.valueOf("Green"));
 				P2.setCoordinate(i, j);
-				P2.setOnMouseClicked(controller::handleHexClick);
-
-
+				P2.setOnMouseClicked((event) ->{
+					if(event.isStillSincePress()){
+						if(event.getButton() == MouseButton.PRIMARY)
+							controller.handleFocusClick(event);
+						else if (event.getButton() == MouseButton.SECONDARY)
+							controller.addEntityClick(event);
+					}
+				});
 				p.getChildren().add(P2);
 			}
 		}

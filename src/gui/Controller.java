@@ -11,7 +11,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.ImagePattern;
 import simulator.Simulator;
 import world.Coordinate;
 import world.Critter;
@@ -20,22 +23,33 @@ import world.Factory;
 import world.World;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Random;
 
 /**
  * Created by Max on 11/8/2015.
  */
 public class Controller extends java.util.Observable {
+	Random r = new Random();
+	Image[] critterImages;
 	App App;
     Simulator sim;
     //Entity focused;
     Entity loaded;
     ObjectProperty<Entity> focused;
+    String loadedEntity = "";
 
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
         focused = new SimpleObjectProperty<>();
+        try{
+    		critterImages = new Image[]{new Image(new FileInputStream(new File("BirdCritter.png"))),new Image(new FileInputStream(new File("CatCritter.png"))),new Image(new FileInputStream(new File("PenguinCritter.png"))),new Image(new FileInputStream(new File("MooseCritter.png")))};
+    	}
+    	catch(FileNotFoundException e) {
+    		System.out.println("File Not Found");
+    	}
         /*focused.addListener(new ChangeListener<Entity>() {
             @Override
             public void changed(ObservableValue<? extends Entity> observable, Entity oldValue, Entity newValue) {
@@ -55,6 +69,8 @@ public class Controller extends java.util.Observable {
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         focused.set(sim.getEntityAt(clicked.getCoordinate()));
+
+        System.out.println(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
@@ -72,8 +88,25 @@ public class Controller extends java.util.Observable {
      * @param event The MouseEvent originating from the clicked hex
      */
     public void addEntityClick(MouseEvent event){
+        if(!sim.hasWorld()){
+            throw new IllegalOperationException("You must load a world first.");
+        }
+        if(loaded == null){
+            throw new IllegalOperationException("You must load a critter first.");
+        }
+        
         Coordinate c = handleHexClick(event);
-        addEntity(c);
+        System.out.println(c);
+        try {
+            addEntity(c);
+            WorldHex clicked = (WorldHex)event.getSource();
+            Image img = critterImages[r.nextInt(4)];
+            clicked.setFill(new ImagePattern(img,0,0,1,1,true));
+            System.out.println("HI");
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            throw new IllegalOperationException("Clicked outside of the world.");
+        }
         setChanged();
         notifyObservers();
     }
@@ -103,6 +136,7 @@ public class Controller extends java.util.Observable {
      */
     public void loadCritter(String filename){
         System.out.println(filename);
+        loadedEntity = filename;
         try{
             Critter c = Factory.getCritter(filename, sim.world.constants);
             this.loaded = c;
@@ -122,8 +156,9 @@ public class Controller extends java.util.Observable {
      */
     public void addEntity(Coordinate coordinate){
         loaded.move(coordinate);
-        if(sim.getEntityAt(coordinate) == null) return;
+        if(sim.getEntityAt(coordinate) != null) return;
         sim.addEntity(loaded);
+        loadCritter(loadedEntity);
         setChanged();
         notifyObservers();
     }
@@ -134,6 +169,7 @@ public class Controller extends java.util.Observable {
     public void addRandomEntity(ActionEvent event){
         if(loaded == null) throw new IllegalOperationException("No entity loaded!");
         sim.addRandomEntity(loaded);
+        loadCritter(loadedEntity);
         setChanged();
         notifyObservers();
     }
