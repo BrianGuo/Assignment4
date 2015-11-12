@@ -25,6 +25,7 @@ public class SpecificInfo extends AnchorPane {
 		info = new Text();
 		info.setY(20);
 		info.textProperty().bind(critterStatus);
+		getChildren().add(info);
 	}
 
 

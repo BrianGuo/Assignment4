@@ -42,7 +42,7 @@ public class App extends Application {
 
 
 			World w = Factory.getRandomWorld();
-			HexWorld worldPane = new HexWorld(4,3, controller);
+			HexWorld worldPane = new HexWorld(6,8, controller);
 			controller.setWorld(w);
 
 			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
@@ -61,6 +61,7 @@ public class App extends Application {
 			SpecificInfo spec = new SpecificInfo(controller);
 			System.out.println(worldPane.getHvalue());
 			System.out.println(worldPane.getVvalue());
+			right.getItems().set(0, spec);
 		}
 		catch(Exception e) {
 			e.printStackTrace();

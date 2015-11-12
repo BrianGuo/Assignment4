@@ -69,7 +69,7 @@ public class Controller extends java.util.Observable {
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         focused.set(sim.getEntityAt(clicked.getCoordinate()));
-
+        System.out.println(clicked.getCoordinate());
         System.out.println(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
