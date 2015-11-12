@@ -1,27 +1,14 @@
 package gui;
 
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import world.Factory;
-import world.World;
 
 public class App extends Application {
 	
@@ -50,9 +37,9 @@ public class App extends Application {
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
 
-			HexWorld worldPane = new HexWorld(4,3, controller);
+			WorldPane worldPane = new WorldPane(40,30, controller);
 			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
-			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+			//worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
 
@@ -71,7 +58,7 @@ public class App extends Application {
 	}
 	
 	public void redrawWorld(int cols, int rows) {
-		HexWorld worldPane = new HexWorld(cols,rows,controller);
+		WorldPane worldPane = new WorldPane(cols,rows,controller);
 	}
 	private void defaultHandler(Throwable throwable) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);

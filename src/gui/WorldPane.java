@@ -1,22 +1,37 @@
 package gui;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 
-public class HexWorld extends ScrollPane {
+public class WorldPane extends ScrollPane {
 	
 	int rows;
 	int cols;
 	Controller controller;
+	double pressedX, pressedY;
 
-	public HexWorld(int c, int r, Controller controller){
+	public WorldPane(int c, int r, Controller controller){
 		rows = r;
 		cols = c;
 		this.controller = controller;
 		setPannable(true);
-		
-		HexPane(c,r);
+		System.out.println(cols);
+		System.out.println(rows);
+		this.setOnMousePressed(event -> {
+            pressedX = event.getX();
+            pressedY = event.getY();
+        });
+		this.setOnMouseDragged(event -> {
+            setTranslateX(getTranslateX() + event.getX() - pressedX);
+            setTranslateY(getTranslateY() + event.getY() - pressedY);
+
+            event.consume();
+        });
+		this.
+		HexPane(cols,rows);
 
 	}
 	/*@Override
@@ -68,7 +83,11 @@ public class HexWorld extends ScrollPane {
 				P2.setStrokeWidth(HexWidth / 20);
 				P2.setStroke(Paint.valueOf("Green"));
 				P2.setCoordinate(i, j);
-				P2.setOnMouseClicked(controller::handleHexClick);
+				P2.setOnMouseClicked((event) ->{
+					if(event.isStillSincePress()){
+						controller.handleFocusClick(event);
+					}
+				});
 
 
 				getChildren().add(P2);
