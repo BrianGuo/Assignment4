@@ -55,13 +55,9 @@ public class GenInfo extends TabPane implements Observer{
 		generalInfo.textProperty().bind(status);
 		p.getChildren().add(generalInfo);
 		AnchorPane.setTopAnchor(generalInfo, 20.0);
-		Button play = new Button("Play");
-		AnchorPane.setBottomAnchor(play, 15.0);
-		
-		Button step = new Button("Step");
-		AnchorPane.setBottomAnchor(step, 15.0);
-		AnchorPane.setLeftAnchor(step, 45.0);
-		p.getChildren().addAll(play,step);
+		MediaControl mc = new MediaControl(null);
+		AnchorPane.setBottomAnchor(mc, 15.0);
+		p.getChildren().add(mc);
 		Tab t = new Tab();
 		info = new ArrayList<String>();
 		t.setText("World status");
