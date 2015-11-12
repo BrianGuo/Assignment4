@@ -33,6 +33,7 @@ public class Controller extends java.util.Observable {
     //Entity focused;
     Entity loaded;
     ObjectProperty<Entity> focused;
+    String loadedEntity = "";
 
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
@@ -56,6 +57,8 @@ public class Controller extends java.util.Observable {
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         focused.set(sim.getEntityAt(clicked.getCoordinate()));
+
+        System.out.println(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
@@ -73,8 +76,21 @@ public class Controller extends java.util.Observable {
      * @param event The MouseEvent originating from the clicked hex
      */
     public void addEntityClick(MouseEvent event){
+        if(!sim.hasWorld()){
+            throw new IllegalOperationException("You must load a world first.");
+        }
+        if(loaded == null){
+            throw new IllegalOperationException("You must load a critter first.");
+        }
+
         Coordinate c = handleHexClick(event);
-        addEntity(c);
+        System.out.println(c);
+        try {
+            addEntity(c);
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            throw new IllegalOperationException("Clicked outside of the world.");
+        }
         setChanged();
         notifyObservers();
     }
@@ -104,6 +120,7 @@ public class Controller extends java.util.Observable {
      */
     public void loadCritter(String filename){
         System.out.println(filename);
+        loadedEntity = filename;
         try{
             Critter c = Factory.getCritter(filename, sim.world.constants);
             this.loaded = c;
@@ -123,8 +140,9 @@ public class Controller extends java.util.Observable {
      */
     public void addEntity(Coordinate coordinate){
         loaded.move(coordinate);
-        if(sim.getEntityAt(coordinate) == null) return;
+        if(sim.getEntityAt(coordinate) != null) return;
         sim.addEntity(loaded);
+        loadCritter(loadedEntity);
         setChanged();
         notifyObservers();
     }
@@ -135,6 +153,7 @@ public class Controller extends java.util.Observable {
     public void addRandomEntity(ActionEvent event){
         if(loaded == null) throw new IllegalOperationException("No entity loaded!");
         sim.addRandomEntity(loaded);
+        loadCritter(loadedEntity);
         setChanged();
         notifyObservers();
     }

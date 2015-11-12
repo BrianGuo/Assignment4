@@ -4,6 +4,7 @@ package gui;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -34,7 +35,7 @@ public class HexWorld extends ScrollPane {
             event.consume();
         });
 		this.
-		HexPane(cols,rows);
+		HexPane(cols, rows);
 
 	}
 	/*@Override
@@ -89,7 +90,10 @@ public class HexWorld extends ScrollPane {
 				P2.setCoordinate(i, j);
 				P2.setOnMouseClicked((event) ->{
 					if(event.isStillSincePress()){
-						controller.handleFocusClick(event);
+						if(event.getButton() == MouseButton.PRIMARY)
+							controller.handleFocusClick(event);
+						else if (event.getButton() == MouseButton.SECONDARY)
+							controller.addEntityClick(event);
 					}
 				});
 
