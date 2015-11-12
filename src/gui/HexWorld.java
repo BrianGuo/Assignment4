@@ -1,7 +1,11 @@
 package gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 
 public class HexWorld extends ScrollPane {
@@ -34,6 +38,7 @@ public class HexWorld extends ScrollPane {
 	public void HexPane(int cols, int rows){
 		getChildren().clear();
 		double HexWidth = 100;
+		AnchorPane p = new AnchorPane();
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
@@ -71,9 +76,9 @@ public class HexWorld extends ScrollPane {
 				P2.setOnMouseClicked(controller::handleHexClick);
 
 
-				getChildren().add(P2);
-				System.out.println(isPannable());
+				p.getChildren().add(P2);
 			}
 		}
+		this.setContent(p);
 	}
 }
