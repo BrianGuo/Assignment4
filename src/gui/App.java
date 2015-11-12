@@ -60,7 +60,6 @@ public class App extends Application {
 			SplitPane right = (SplitPane)split.getItems().get(1);
 			right.getItems().set(1, new Functions(primaryStage, controller));
 			SpecificInfo spec = new SpecificInfo(controller);
-
 			right.getItems().set(0, spec);
 		}
 		catch(Exception e) {
