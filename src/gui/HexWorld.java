@@ -24,7 +24,7 @@ public class HexWorld extends ScrollPane {
 		cols = c;
 		this.controller = controller;
 		setPannable(true);
-		Scene dummyScene = new Scene(this, 400,400);
+		Scene dummyScene = new Scene(this, 900,900);
 		System.out.println(cols);
 		System.out.println(rows);
 		this.setOnMousePressed(event -> {
@@ -55,12 +55,14 @@ public class HexWorld extends ScrollPane {
 	
 	public void HexPane(int cols, int rows){
 		getChildren().clear();
-		double HexWidth = 100;
 		AnchorPane p = new AnchorPane();
 		Scene dummyscene = new Scene(p, getWidth(),getHeight());
+		double HexWidth = p.getWidth()/cols;
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
+				if (i>= cols || i < 0 || 2*(j+i/2) -i < 0 || 2*(j+i/2) - i >= 2*rows-cols)
+					continue;
 				double[] cornersX = new double[]{0,HexWidth/4,HexWidth*3/4,HexWidth,HexWidth*3/4,HexWidth/4};
 				double[] cornersY = new double[]{p.getHeight() - (double)Math.sqrt(3) * HexWidth/4,
 						p.getHeight() - (double)Math.sqrt(3) * HexWidth / 2,

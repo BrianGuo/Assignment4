@@ -69,14 +69,13 @@ public class Controller extends java.util.Observable {
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
         focused.set(sim.getEntityAt(clicked.getCoordinate()));
-
-        System.out.println(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
         focused.setValue(getEntityAt(c));
+        System.out.println("Checkpoint1");
     }
 
     public Entity getEntityAt(Coordinate c){
@@ -135,7 +134,6 @@ public class Controller extends java.util.Observable {
      * @param filename Filename of the critter
      */
     public void loadCritter(String filename){
-        System.out.println(filename);
         loadedEntity = filename;
         try{
             Critter c = Factory.getCritter(filename, sim.world.constants);
