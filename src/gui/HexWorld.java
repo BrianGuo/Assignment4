@@ -1,19 +1,24 @@
 package gui;
 
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Observable;
+import java.util.Observer;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
+import javafx.scene.transform.Rotate;
+import world.Coordinate;
+import world.Critter;
+import world.Entity;
 
-public class HexWorld extends ScrollPane {
+public class HexWorld extends ScrollPane implements Observer {
 	
 	int rows;
 	int cols;
@@ -27,8 +32,6 @@ public class HexWorld extends ScrollPane {
 		this.controller = controller;
 		setPannable(true);
 		Scene dummyScene = new Scene(this, 900,900);
-		System.out.println(cols);
-		System.out.println(rows);
 		this.setOnMousePressed(event -> {
             pressedX = event.getX();
             pressedY = event.getY();
@@ -39,9 +42,8 @@ public class HexWorld extends ScrollPane {
 
             event.consume();
         });
-		HexPane(cols, rows);
+		HexPane();
 		setVvalue(1.0);
-
 	}
 	/*@Override
 	public boolean isResizable() {
@@ -49,15 +51,15 @@ public class HexWorld extends ScrollPane {
 	}*/
 	
 	
-	public void Heights(double D) {
-		System.out.println("Max Height: " + this.getMaxHeight());
-		System.out.println("Set to :" + D);
-		setMaxHeight(D);
-	}
 	
-	public void HexPane(int cols, int rows){
+	
+	public void HexPane(){
+		this.cols = controller.getWorldCols();
+		this.rows = controller.getWorldRows();
+		System.out.println(cols);
+		System.out.println(rows);
 		world = new WorldHex[cols][rows];
-		getChildren().clear();
+		setContent(null);
 		AnchorPane p = new AnchorPane();
 		Scene dummyscene = new Scene(p, getWidth(),getHeight());
 		double HexWidth = p.getWidth()/cols;
@@ -77,15 +79,13 @@ public class HexWorld extends ScrollPane {
 							cornersY[Yoffset] = cornersY[Yoffset] - HexWidth * Math.sqrt(3) / 4;
 						}
 					}
-					double xTotal = 3 * cols * HexWidth / 4 + HexWidth / 4;
-					double xOffset = (p.getWidth() - xTotal) / 2;
 					for (int i2 = 0; i2 < cornersX.length; i2++) {
 						cornersX[i2] += 0.75 * HexWidth * i;
 					}
 					double yTotal = HexWidth * Math.sqrt(3) * rows / 2 + HexWidth * Math.sqrt(3) / 4;
-					System.out.println(p.getHeight());
+					
 					double yOffset = (p.getHeight() - yTotal) / 2;
-					System.out.println(yOffset);
+					
 					for (int i3 = 0; i3 < cornersY.length; i3++) {
 						cornersY[i3] -= HexWidth * Math.sqrt(3) / 2 * j + yOffset;
 						cornersY[i3] += HexWidth * Math.round(i /2.0) * Math.sqrt(3)/2;
@@ -96,7 +96,37 @@ public class HexWorld extends ScrollPane {
 						total[2 * n + 1] = cornersY[n];
 					}
 					WorldHex P2 = new WorldHex(total);
-					P2.setFill(Paint.valueOf("White"));
+					Entity t = controller.getEntityAt(new Coordinate(i,j));
+					if (t == null)
+						P2.setFill(Paint.valueOf("White"));
+					else{
+						double rotate = 0;
+						File imagefile = null;
+						switch(t.getClass().toString()){
+						case "class world.Critter":
+							rotate = 60.0*((Critter)t).getDirection();
+							imagefile = new File("critter.png");
+							break;
+						case "class world.Food":
+							imagefile = new File("food2.png");
+							break;
+						case "class world.Rock":
+							imagefile = new File("rock.png");
+							break;
+						default:
+							imagefile = new File("critter.png");
+							break;
+						}
+						try{
+							Image image = new Image(new FileInputStream(imagefile));
+							P2.setFill(new ImagePattern(image,0,0,1,1,true));
+						}
+						catch(FileNotFoundException e ) {
+							e.printStackTrace();
+						}
+						P2.setRotate(rotate);
+					}
+					//P2.setFill(Paint.valueOf("White"));
 					P2.setStrokeWidth(HexWidth / 20);
 					P2.setStroke(Paint.valueOf("Green"));
 					P2.setCoordinate(i, j);
@@ -114,5 +144,11 @@ public class HexWorld extends ScrollPane {
 			}
 		}
 		this.setContent(p);
+	}
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		HexPane();
 	}
 }

@@ -55,10 +55,10 @@ public class Controller extends java.util.Observable {
     		System.out.println("File Not Found");
     	}
         Timeline simTimeline = new Timeline();
-        simTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(300)),
+       /* simTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(300)),
         e -> {
 
-        })
+        })*/
     }
 
 
@@ -193,5 +193,12 @@ public class Controller extends java.util.Observable {
 
     public ArrayList<Coordinate> diffWorld(){
         return sim.diffWorld();
+    }
+    
+    public int getWorldCols() {
+    	return sim.getWorldColumns();
+    }
+    public int getWorldRows() {
+    	return sim.getWorldRows();
     }
 }

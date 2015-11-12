@@ -53,6 +53,7 @@ public class Functions extends Accordion {
 					controller.loadWorld(world);
 				}
 				catch(NullPointerException e){
+					e.printStackTrace();
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setTitle("Illegal operation");
 					alert.setContentText("Something went wrong");
