@@ -1,5 +1,7 @@
 package gui;
 
+import javafx.beans.InvalidationListener;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
@@ -21,34 +23,44 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.naming.Binding;
 
-public class SpecificInfo extends AnchorPane {
-	
+public class SpecificInfo extends AnchorPane implements Observer{
+
 	Controller controller;
 	TextFlow info;
 	ImageView picture = new ImageView();
 
 
-	PropertyBinding critterStatus;
+	//PropertyBinding critterStatus;
 
 
 	public SpecificInfo(Controller c) {
 		this.controller = c;
-		critterStatus = new PropertyBinding();
+//		critterStatus = new PropertyBinding();
 		info = new TextFlow();
 		info.setLayoutY(60);
 		AnchorPane.setTopAnchor(info, 60.0);
 		AnchorPane.setLeftAnchor(picture, 30.0);
 		AnchorPane.setLeftAnchor(info, 30.0);
-		critterStatus.addListener( new ChangeListener<Object>() {
 
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				Entity e = critterStatus.getValue();
-				File imagefile = null;
-				switch(e.getClass().toString()) {
+		observe(controller);
+		this.getChildren().add(picture);
+		this.getChildren().add(info);
+
+
+	}
+	public void observe(Observable o) {
+		o.addObserver(this);
+	}
+	public void update(java.util.Observable o, Object arg) {
+		Entity e = controller.focused.getValue();
+		File imagefile = null;
+		if(e != null) {
+			switch (e.getClass().toString()) {
 				case "class world.Critter":
 					imagefile = new File("critter.png");
 					break;
@@ -59,44 +71,39 @@ public class SpecificInfo extends AnchorPane {
 					imagefile = new File("rock.png");
 					break;
 				default:
-					imagefile = new File("critter.png");
+					imagefile = null;
 					break;
-				}
-				try{
-					picture.setImage(new Image(new FileInputStream(imagefile)));
-					picture.setFitHeight(50);
-					picture.setFitWidth(50);
-					getChildren().set(0, picture);
-				}
-				catch(FileNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				info.getChildren().clear();
-				for (String s: e.properties()) {
-					Text t = new Text();
-					int n = s.indexOf(":");
-					t.setFont(Font.font("System", FontWeight.BOLD,14.0));
-					t.setText(s.substring(0,n));
-					Text t2 = new Text();
-					t2.setText(s.substring(n,s.length()) + "\n");
-					info.getChildren().addAll(t,t2);
-				}
-				
 			}
 
-			
+			try {
+				picture.setImage(new Image(new FileInputStream(imagefile)));
+				picture.setFitHeight(50);
+				picture.setFitWidth(50);
+				getChildren().set(0, picture);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
 
-			
-		});
-		this.getChildren().add(picture);
-		this.getChildren().add(info);
+
+			info.getChildren().clear();
+			for (String s : e.properties()) {
+				Text t = new Text();
+				int n = s.indexOf(":");
+				t.setFont(Font.font("System", FontWeight.BOLD, 14.0));
+				t.setText(s.substring(0, n));
+				Text t2 = new Text();
+				t2.setText(s.substring(n, s.length()) + "\n");
+				info.getChildren().addAll(t, t2);
+			}
+
+
+		}
 	}
-
 
 	private class PropertyBinding extends ObjectBinding<Entity>{
 		public PropertyBinding(){
 			super();
-			bind(controller.focused);
+			super.bind(controller.focused);
 		}
 		@Override
 		protected Entity computeValue() {
@@ -112,7 +119,7 @@ public class SpecificInfo extends AnchorPane {
 		}
 	}
 
-	public void bind(ObjectProperty<Entity> e){
-		critterStatus.bind(e);
-	}
+//	public void bind(ObjectProperty<Entity> e){
+//		critterStatus.bind(e);
+//	}
 }
