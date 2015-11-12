@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -62,6 +63,12 @@ public class MediaControl extends BorderPane {
         	Tooltip t2 = new Tooltip("Step Once");
         	mediaBar.getChildren().add(nextButton);
         	Slider s = new Slider(1.0,60.0,30.0);
+        	mediaBar.getChildren().add(s);
+        	TextField fps = new TextField();
+        	fps.setMaxWidth(65.0);
+        	fps.setEditable(false);
+        	s.valueProperty().addListener(evt -> fps.setText("fps: " + (int)s.getValue()));
+        	mediaBar.getChildren().add(fps);
         	
         }
         catch(FileNotFoundException e) {
