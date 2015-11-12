@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 
 public class HexWorld extends ScrollPane {
@@ -23,6 +24,7 @@ public class HexWorld extends ScrollPane {
 		cols = c;
 		this.controller = controller;
 		setPannable(true);
+		Scene dummyScene = new Scene(this, 400,400);
 		System.out.println(cols);
 		System.out.println(rows);
 		this.setOnMousePressed(event -> {
@@ -35,8 +37,7 @@ public class HexWorld extends ScrollPane {
 
             event.consume();
         });
-		Scene dummyScene = new Scene(this, 400,400);
-		HexPane(c,r);
+		HexPane(cols, rows);
 
 	}
 	/*@Override
@@ -100,8 +101,6 @@ public class HexWorld extends ScrollPane {
 							controller.addEntityClick(event);
 					}
 				});
-
-
 				p.getChildren().add(P2);
 			}
 		}

@@ -12,7 +12,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.ImagePattern;
 import simulator.Simulator;
 import world.Coordinate;
 import world.Critter;
@@ -21,13 +23,17 @@ import world.Factory;
 import world.World;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Random;
 
 /**
  * Created by Max on 11/8/2015.
  */
 public class Controller extends java.util.Observable {
+	Random r = new Random();
+	Image[] critterImages;
 	App App;
     Simulator sim;
     //Entity focused;
@@ -38,6 +44,12 @@ public class Controller extends java.util.Observable {
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
         focused = new SimpleObjectProperty<>();
+        try{
+    		critterImages = new Image[]{new Image(new FileInputStream(new File("BirdCritter.png"))),new Image(new FileInputStream(new File("CatCritter.png"))),new Image(new FileInputStream(new File("PenguinCritter.png"))),new Image(new FileInputStream(new File("MooseCritter.png")))};
+    	}
+    	catch(FileNotFoundException e) {
+    		System.out.println("File Not Found");
+    	}
         /*focused.addListener(new ChangeListener<Entity>() {
             @Override
             public void changed(ObservableValue<? extends Entity> observable, Entity oldValue, Entity newValue) {
@@ -82,11 +94,15 @@ public class Controller extends java.util.Observable {
         if(loaded == null){
             throw new IllegalOperationException("You must load a critter first.");
         }
-
+        
         Coordinate c = handleHexClick(event);
         System.out.println(c);
         try {
             addEntity(c);
+            WorldHex clicked = (WorldHex)event.getSource();
+            Image img = critterImages[r.nextInt(4)];
+            clicked.setFill(new ImagePattern(img,0,0,1,1,true));
+            System.out.println("HI");
         }
         catch(ArrayIndexOutOfBoundsException e){
             throw new IllegalOperationException("Clicked outside of the world.");
