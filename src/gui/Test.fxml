@@ -10,7 +10,7 @@
   <children>
     <SplitPane dividerPositions="0.795180917807195" focusTraversable="true" prefHeight="300.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
-        <SplitPane dividerPositions="0.5198863636363636" focusTraversable="true" orientation="VERTICAL" prefHeight="298.0" prefWidth="123.0">
+        <SplitPane dividerPositions="0.6761363636363636" focusTraversable="true" orientation="VERTICAL" prefHeight="298.0" prefWidth="123.0">
           <items>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" />
             <TabPane prefHeight="159.0" prefWidth="391.0" tabClosingPolicy="UNAVAILABLE">
