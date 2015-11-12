@@ -28,11 +28,8 @@ public class App extends Application {
 		launch(args);
 	}
 	
-	AnchorPane WorldPane;
-	TabPane GenInfoPane;
-	AnchorPane TextPane;
-	Accordion FunctionsPane;
-
+	AnchorPane RootPane;
+	Controller controller;
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
@@ -44,14 +41,15 @@ public class App extends Application {
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
+			this.controller = controller;
 			AnchorPane pane = (AnchorPane) loader.load();
+			RootPane = pane;
 			primaryStage.setScene(new Scene(pane,700,700));
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
 
 			HexWorld worldPane = new HexWorld(4,3, controller);
-			this.WorldPane = worldPane;
 			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			left.getItems().set(0, worldPane);
@@ -59,8 +57,6 @@ public class App extends Application {
 
 			TabPane pane3 = (TabPane) left.getItems().get(1);
 			GenInfo g = new GenInfo(controller);
-
-			this.GenInfoPane = g;
 			g.addWorldTab(new World());
 			left.getItems().set(1,g);
 			SplitPane right = (SplitPane)split.getItems().get(1);
@@ -72,7 +68,10 @@ public class App extends Application {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void redrawWorld(int cols, int rows) {
+		HexWorld worldPane = new HexWorld(cols,rows,controller);
+	}
 	private void defaultHandler(Throwable throwable) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Illegal operation");

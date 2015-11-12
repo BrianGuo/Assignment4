@@ -48,6 +48,7 @@ public class Functions extends Accordion {
 			File world = fileChooser.showOpenDialog(s);
 			if (world != null) {
 				try {
+					file.setText(world.getAbsolutePath());
 					controller.loadWorld(world);
 				}
 				catch(NullPointerException e){

@@ -247,29 +247,17 @@ public class Simulator {
 	 * @param c		The column of the location to be hexed
 	 * @param r		The row of the location to be hexed
 	 */
-	public void hexLocation(int c, int r) {
+	public ArrayList<String> hexLocation(int c, int r) {
 		Entity e = world.hexAt(c, r);
+		ArrayList<String> result = new ArrayList<String>();
 		if (!world.inBounds(c, r))
-			System.out.println("This coordinate is out of bounds");
+			result.add("This coordinate is out of bounds");
 		else if (e == null)
-			System.out.println("There is nothing at this coordinate");
-		else if (e instanceof Rock)
-			System.out.println("This coordinate contains a rock");
-		else if (e instanceof Food) {
-			System.out.println("This coordinate contains food");
-			System.out.println("The amount of food is: " + ((Food)e).getAmt());
-		}
+			result.add("There is nothing at this coordinate");
 		else {
-			assert(e instanceof Critter);
-			Critter cr = (Critter) e;
-			System.out.println("This coordinate contains a critter");
-			System.out.println("This critter is of species: " +cr.getSpecies());
-			for (int i = 0; i < cr.getAttributeAtIndex(0); i++) {
-				System.out.println("The attribute at index " + i + " is the value " + cr.getAttributeAtIndex(i));
-			}
-			System.out.println("The program is:\n" + cr.getProgram().toString());
-			System.out.println("The last Rule executed was" + cr.getLastRule().toString());
+			return e.properties();
 		}
+		return result;
 	}
 
 	/**

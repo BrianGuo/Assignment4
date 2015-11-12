@@ -51,6 +51,7 @@ public class Controller {
      */
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
+        focused.set(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
