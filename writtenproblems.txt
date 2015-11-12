@@ -1,0 +1,21 @@
+1. public TVBool or(TVBool that) {
+	TVBool result = new TVBool();
+	result.state = Math.max(this.state, that.state);
+	return result;
+}
+
+2. The specifications for TVBool say that the field “state” represents true if it is positive, false if it is negative, unknown if it is zero. After running normalize(), a positive value of state will be changed to 1, meaning it remains true. A negative value will be changed to -1, meaning it remains false. An unknown value will stay unknown. Therefore, despite changing state, the boolean that this class represents is the same boolean.
+In the case of the not() function, we are not changing the state of “this” instance of the class, but returning a TVBool with the opposite state as ours. In this case, since every negative number will be set to a positive number, and every positive number will be set to a negative number, “not false” and “not true” are correct in practice. Also, the opposite of an unknown value is still unknown, so “not unknown” is correct as well.
+
+3. The hashcode() method would give different boolean values for two instances of TVBool that have different state variables (that aren’t zero). This is problematic because, despite having different state values, two booleans are equal if they are both true. This violates the contract: objects which are .equals() must have the same Hashcode(). Potentially, this means that two instances of TVBool could return false when .equals() is called despite the two values representing equal booleans.
+
+Correct implementation of Hashcode and equals:
+
+public int hashcode() {
+	normalize();
+	return state;
+}
+
+public int equals(Object o) {
+	return (o instanceof TVBool && o.hashcode() == hashcode());
+}

@@ -9,6 +9,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import world.Factory;
+import world.World;
 
 public class App extends Application {
 	
@@ -22,10 +23,10 @@ public class App extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
-		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+		/*Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.out.println("Handler caught exception: " + throwable.getMessage());
 			defaultHandler(throwable);
-		});
+		});*/
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
@@ -37,9 +38,13 @@ public class App extends Application {
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
 
-			WorldPane worldPane = new WorldPane(40,30, controller);
-			worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
-			//worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+
+			World w = Factory.getRandomWorld();
+			HexWorld worldPane = new HexWorld(w.getColumns(),w.getRows(), controller);
+			controller.setWorld(w);
+			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
+			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));*/
+
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
 
@@ -50,7 +55,8 @@ public class App extends Application {
 			SplitPane right = (SplitPane)split.getItems().get(1);
 			right.getItems().set(1, new Functions(primaryStage, controller));
 			SpecificInfo spec = new SpecificInfo(controller);
-			
+			System.out.println(worldPane.getHvalue());
+			System.out.println(worldPane.getVvalue());
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -58,7 +64,7 @@ public class App extends Application {
 	}
 	
 	public void redrawWorld(int cols, int rows) {
-		WorldPane worldPane = new WorldPane(cols,rows,controller);
+		HexWorld worldPane = new HexWorld(cols,rows,controller);
 	}
 	private void defaultHandler(Throwable throwable) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);

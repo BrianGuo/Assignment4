@@ -3,6 +3,7 @@ package gui;
 
 import exceptions.IllegalOperationException;
 import exceptions.SyntaxError;
+import interpret.CritterInterpreter;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -17,6 +18,7 @@ import world.Coordinate;
 import world.Critter;
 import world.Entity;
 import world.Factory;
+import world.World;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +35,7 @@ public class Controller extends java.util.Observable {
     ObjectProperty<Entity> focused;
 
     public Controller(){
-        sim = new Simulator();
+        sim = new Simulator(new CritterInterpreter());
         focused = new SimpleObjectProperty<>();
         /*focused.addListener(new ChangeListener<Entity>() {
             @Override
@@ -75,6 +77,10 @@ public class Controller extends java.util.Observable {
         addEntity(c);
         setChanged();
         notifyObservers();
+    }
+    
+    public void setWorld(World w) {
+    	sim.setWorld(w);
     }
 
     /**
