@@ -20,8 +20,8 @@ public class SpecificInfo extends AnchorPane {
 
 
 	public SpecificInfo(Controller c) {
-		critterStatus = new CritterBinding();
 		this.controller = c;
+		critterStatus = new CritterBinding();
 		info = new Text();
 		info.setY(20);
 		info.textProperty().bind(critterStatus);
@@ -31,6 +31,7 @@ public class SpecificInfo extends AnchorPane {
 	private class CritterBinding extends StringBinding{
 		public CritterBinding(){
 			super();
+			bind(controller.focused);
 		}
 		@Override
 		protected String computeValue() {
@@ -44,6 +45,7 @@ public class SpecificInfo extends AnchorPane {
 			return cur;
 		}
 		public void bind(ObjectProperty<Entity> e){
+
 			super.bind(e);
 		}
 	}

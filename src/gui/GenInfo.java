@@ -2,6 +2,8 @@ package gui;
 
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,7 +18,7 @@ import javafx.scene.text.Text;
 import world.Critter;
 import world.World;
 
-public class GenInfo extends TabPane {
+public class GenInfo extends TabPane implements Observer{
 	private ArrayList<String> info;
 	private Text generalInfo;
 	private Critter critter;
@@ -55,11 +57,15 @@ public class GenInfo extends TabPane {
 		t.setText("World status");
 		t.setContent(generalInfo);
 		this.getTabs().add(t);
+		observe(controller);
 
 		//Label l = new Label();
 
 	}
 
+	public void observe(Observable o) {
+		o.addObserver(this);
+	}
 	/**
 	 * Sets the current number of critters to n
 	 * @param n Number of critters
@@ -96,4 +102,9 @@ public class GenInfo extends TabPane {
 		getTabs().add(worldTab);
 	}
 
+	@Override
+	public void update(Observable o, Object arg) {
+		updateTimesteps(controller.sim.getTimesteps());
+		updateCritters(controller.sim.getNumCritters());
+	}
 }

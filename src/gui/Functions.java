@@ -40,6 +40,7 @@ public class Functions extends Accordion {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("World");
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Text Files", "*.txt"));
+
 		AnchorPane.setTopAnchor(b, 40.0);
 		TextField file = new TextField();
 		file.setEditable(false);

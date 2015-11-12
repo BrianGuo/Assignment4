@@ -1,10 +1,10 @@
 package gui;
 
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Paint;
 
-public class HexWorld extends AnchorPane {
+public class HexWorld extends ScrollPane {
 	
 	int rows;
 	int cols;
@@ -14,6 +14,8 @@ public class HexWorld extends AnchorPane {
 		rows = r;
 		cols = c;
 		this.controller = controller;
+		setPannable(true);
+		
 		HexPane(c,r);
 
 	}
@@ -22,18 +24,17 @@ public class HexWorld extends AnchorPane {
 		return true;
 	}
 	
+	
 	public void Heights(double D) {
 		System.out.println("Max Height: " + this.getMaxHeight());
 		System.out.println("Set to :" + D);
 		setMaxHeight(D);
 	}
-	public void HexPane2(int cols, int rows, SplitPane p) {
-		HexPane(cols,rows);
-		System.out.println(p.getDividers().get(0).positionProperty().doubleValue());
-	}
+	
 	public void HexPane(int cols, int rows){
 		getChildren().clear();
-		double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
+		double HexWidth = 100;
+		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
 				double[] cornersX = new double[]{0,HexWidth/4,HexWidth*3/4,HexWidth,HexWidth*3/4,HexWidth/4};
@@ -71,6 +72,7 @@ public class HexWorld extends AnchorPane {
 
 
 				getChildren().add(P2);
+				System.out.println(isPannable());
 			}
 		}
 	}
