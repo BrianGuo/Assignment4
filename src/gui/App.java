@@ -42,6 +42,7 @@ public class App extends Application {
 
 
 			World w = Factory.getRandomWorld();
+
 			HexWorld worldPane = new HexWorld(6,7, controller);
 			controller.setWorld(w);
 
@@ -59,6 +60,8 @@ public class App extends Application {
 			SplitPane right = (SplitPane)split.getItems().get(1);
 			right.getItems().set(1, new Functions(primaryStage, controller));
 			SpecificInfo spec = new SpecificInfo(controller);
+			System.out.println(worldPane.getHvalue());
+			System.out.println(worldPane.getVvalue());
 			right.getItems().set(0, spec);
 		}
 		catch(Exception e) {

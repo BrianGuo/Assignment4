@@ -36,6 +36,7 @@ public class SpecificInfo extends AnchorPane {
 
 			@Override
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+				info.getChildren().clear();
 				for (String s: critterStatus.computeValue()) {
 					Text t = new Text();
 					int n = s.indexOf(":");
