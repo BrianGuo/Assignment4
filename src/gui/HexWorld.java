@@ -25,6 +25,7 @@ public class HexWorld extends ScrollPane implements Observer {
 	Controller controller;
 	double pressedX, pressedY;
 	WorldHex[][] world;
+	AnchorPane p ;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
@@ -32,6 +33,8 @@ public class HexWorld extends ScrollPane implements Observer {
 		this.controller = controller;
 		setPannable(true);
 		Scene dummyScene = new Scene(this, 900,900);
+		p = new AnchorPane();
+		Scene dummyscene = new Scene(p, getWidth(),getHeight());
 		this.setOnMousePressed(event -> {
             pressedX = event.getX();
             pressedY = event.getY();
@@ -42,6 +45,7 @@ public class HexWorld extends ScrollPane implements Observer {
 
             event.consume();
         });
+		this.setContent(p);
 		HexPane();
 		setVvalue(1.0);
 	}
@@ -59,11 +63,11 @@ public class HexWorld extends ScrollPane implements Observer {
 		System.out.println(cols);
 		System.out.println(rows);
 		world = new WorldHex[cols][rows];
-		setContent(null);
-		AnchorPane p = new AnchorPane();
-		Scene dummyscene = new Scene(p, getWidth(),getHeight());
-		double HexWidth = p.getWidth()/cols;
+		p.getChildren().clear();
 		
+		double HexWidth = p.getWidth()/cols;
+		p.setMinWidth(HexWidth*cols);
+		p.setMinHeight(HexWidth*Math.sqrt(3) * rows/2);
 		//double HexWidth = Math.min(getWidth()/cols, getHeight()/(1.15*rows));
 		for(int i = 0; i < cols; i++ ){
 			for (int j = 0; j < rows; j++ ) {
@@ -79,13 +83,14 @@ public class HexWorld extends ScrollPane implements Observer {
 							cornersY[Yoffset] = cornersY[Yoffset] - HexWidth * Math.sqrt(3) / 4;
 						}
 					}
+					double xTotal = HexWidth*cols;
+					double xOffset = (p.getWidth() - xTotal)/2;
 					for (int i2 = 0; i2 < cornersX.length; i2++) {
 						cornersX[i2] += 0.75 * HexWidth * i;
 					}
 					double yTotal = HexWidth * Math.sqrt(3) * rows / 2 + HexWidth * Math.sqrt(3) / 4;
 					
 					double yOffset = (p.getHeight() - yTotal) / 2;
-					
 					for (int i3 = 0; i3 < cornersY.length; i3++) {
 						cornersY[i3] -= HexWidth * Math.sqrt(3) / 2 * j + yOffset;
 						cornersY[i3] += HexWidth * Math.round(i /2.0) * Math.sqrt(3)/2;
@@ -143,7 +148,6 @@ public class HexWorld extends ScrollPane implements Observer {
 				}
 			}
 		}
-		this.setContent(p);
 	}
 
 
