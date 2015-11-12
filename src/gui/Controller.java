@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -183,5 +184,17 @@ public class Controller extends java.util.Observable {
         sim.advance(n);
         setChanged();
         notifyObservers();
+    }
+
+    /**
+     * Called continuously when advanced continuously
+     * Does NOT notify observers; that is called manually
+     */
+    public void advanceContinuously(){
+        sim.advance(1);
+    }
+
+    public ArrayList<Coordinate> diffWorld(){
+        return sim.diffWorld();
     }
 }
