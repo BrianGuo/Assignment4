@@ -51,7 +51,7 @@ public class App extends Application {
 			SplitPane left = (SplitPane) split.getItems().get(0);
 
 			World w = Factory.getRandomWorld();
-			HexWorld worldPane = new HexWorld(40,30, controller);
+			HexWorld worldPane = new HexWorld(40,3, controller);
 			controller.setWorld(w);
 			left.getItems().set(0, worldPane);
 			left.setDividerPosition(0, 0.7);
