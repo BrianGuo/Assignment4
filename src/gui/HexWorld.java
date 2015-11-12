@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
+
+import exceptions.IllegalOperationException;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -25,6 +27,9 @@ public class HexWorld extends ScrollPane implements Observer {
 	Controller controller;
 	double pressedX, pressedY;
 	WorldHex[][] world;
+	Image critterImage;
+	Image rockImage;
+	Image foodImage;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
@@ -33,17 +38,28 @@ public class HexWorld extends ScrollPane implements Observer {
 		setPannable(true);
 		Scene dummyScene = new Scene(this, 900,900);
 		this.setOnMousePressed(event -> {
-            pressedX = event.getX();
-            pressedY = event.getY();
-        });
+			pressedX = event.getX();
+			pressedY = event.getY();
+		});
 		this.setOnMouseDragged(event -> {
-            setTranslateX(getTranslateX() + event.getX() - pressedX);
-            setTranslateY(getTranslateY() + event.getY() - pressedY);
+			setTranslateX(getTranslateX() + event.getX() - pressedX);
+			setTranslateY(getTranslateY() + event.getY() - pressedY);
 
-            event.consume();
-        });
+			event.consume();
+		});
+		try {
+			critterImage = new Image(new FileInputStream(new File("critter.png")));
+			rockImage = new Image(new FileInputStream(new File("rock.png")));
+			foodImage = new Image(new FileInputStream(new File("food2.png")));
+		}
+		catch(FileNotFoundException e){
+			e.printStackTrace();
+			throw new IllegalOperationException("Image files not found!");
+
+		}
 		HexPane();
 		setVvalue(1.0);
+
 	}
 	/*@Override
 	public boolean isResizable() {
@@ -101,29 +117,23 @@ public class HexWorld extends ScrollPane implements Observer {
 						P2.setFill(Paint.valueOf("White"));
 					else{
 						double rotate = 0;
-						File imagefile = null;
+						//File imagefile = null;
 						switch(t.getClass().toString()){
 						case "class world.Critter":
 							rotate = 60.0*((Critter)t).getDirection();
-							imagefile = new File("critter.png");
+
+							P2.setFill(new ImagePattern(critterImage, 0, 0, 1, 1, true));
 							break;
 						case "class world.Food":
-							imagefile = new File("food2.png");
+							P2.setFill(new ImagePattern(foodImage, 0, 0, 1, 1, true));
 							break;
 						case "class world.Rock":
-							imagefile = new File("rock.png");
+							P2.setFill(new ImagePattern(rockImage, 0, 0, 1, 1, true));
 							break;
 						default:
-							imagefile = new File("critter.png");
 							break;
 						}
-						try{
-							Image image = new Image(new FileInputStream(imagefile));
-							P2.setFill(new ImagePattern(image,0,0,1,1,true));
-						}
-						catch(FileNotFoundException e ) {
-							e.printStackTrace();
-						}
+
 						P2.setRotate(rotate);
 					}
 					//P2.setFill(Paint.valueOf("White"));

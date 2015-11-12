@@ -314,9 +314,7 @@ public class Simulator {
 		ArrayList<Coordinate> differences = new ArrayList<>();
 		for(int i = 0; i < world.getColumns(); i ++){
 			for(int j = 0; j < world.getRows(); j++){
-				if (getEntityAt(i,j) == null && old[i][j] != null)
-					differences.add(new Coordinate(i,j));
-				else if (getEntityAt(i,j) == null && old[i][j] == null)
+				if (getEntityAt(i,j) == null && old[i][j] == null)
 					continue;
 				else if(getEntityAt(i,j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))){
 					//this should work unless we get a collision...
