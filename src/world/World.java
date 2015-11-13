@@ -339,6 +339,7 @@ public class World{
      * @param e Entity to be added.
      */
     public void add(Entity e) {
+    	System.out.println(e.getLocation());
         //System.out.println(e.getClass());
         //System.out.println(e.getLocation().getRow());
         if (e != null && hexAt(e.getLocation()) == null) {

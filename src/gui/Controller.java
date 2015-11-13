@@ -165,13 +165,15 @@ public class Controller extends java.util.Observable {
      * @param coordinate Coordinate to be added
      */
     public void addEntity(Coordinate coordinate, WorldHex w){
-        if (loaded instanceof Critter)
+        if (loaded instanceof Critter){
+        	System.out.println(coordinate + "HI");
+        	loadCritter(loadedEntity);
         	loaded.move(coordinate);
+        }
+        else
+        	loaded.setLocation(coordinate);
         if(sim.getEntityAt(coordinate) != null) return;
-        Image img = critterImages[r.nextInt(4)];
-        w.setFill(new ImagePattern(img, 0, 0, 1, 1, true));
         sim.addEntity(loaded);
-        loadCritter(loadedEntity);
         setChanged();
         notifyObservers();
     }

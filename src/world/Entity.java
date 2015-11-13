@@ -52,7 +52,9 @@ abstract public class Entity {
     public void move (Coordinate c) throws IllegalCoordinateException{
         location.move(c.getCol(), c.getRow());
     }
-
+    public void setLocation(Coordinate c) {
+    	location = c;
+    }
     public boolean equals(Entity other){
         if(other == null){
             return false;

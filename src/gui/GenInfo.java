@@ -126,9 +126,12 @@ public class GenInfo extends TabPane implements Observer{
 			addWorldTab(controller.sim.world);
 			this.world = controller.sim.world;
 		}
-		else if ( this.critter == null && controller.loaded!= null || controller.loaded != null && !(((Critter)controller.loaded).getSpecies().equals(this.critter.getSpecies()))){
-			addCritterTab((Critter)controller.loaded);
-			this.critter = (Critter)controller.loaded;
+		else if (controller.loaded instanceof Critter){
+			if ( this.critter == null && controller.loaded!= null || controller.loaded != null && !(((Critter)controller.loaded).getSpecies().equals(this.critter.getSpecies()))){
+				addCritterTab((Critter)controller.loaded);
+				this.critter = (Critter)controller.loaded;
+			}
+			
 		}
 	}
 }

@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import world.Rock;
 
 public class Functions extends Accordion {
 	AnchorPane critterPane;
@@ -23,6 +24,9 @@ public class Functions extends Accordion {
 		this.getPanes().add(CritterPane);
 		TitledPane WorldPane = new TitledPane("World Functions", WorldPane(s));
 		this.getPanes().add(WorldPane);
+		TitledPane RockPane = new TitledPane("Add Rock", RockPane(s));
+		this.getPanes().add(RockPane);
+		
 
 
 	}
@@ -129,10 +133,26 @@ public class Functions extends Accordion {
 		try{
 			Image img = new Image(new FileInputStream(new File("rock.png")));
 			ImageView imgv = new ImageView(img);
+			imgv.setFitHeight(40.0);
+			imgv.setFitWidth(40.0);
 			ToggleButton rockButton = new ToggleButton("",imgv);
 			rockButton.setOnAction(action -> {
-				
+				if (rockButton.isSelected())
+					controller.loaded = new Rock(0, 0, null);
+				else
+					controller.loadCritter(controller.loadedEntity);
 			});
+			rockButton.setMaxHeight(40.0);
+			rockButton.setMaxWidth(40.0);
+			p.getChildren().add(rockButton);
+			p.widthProperty().addListener(evt -> {
+				rockButton.setLayoutX(p.getWidth()/2 - 20);
+			});
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return p;
 	}
 	
 	

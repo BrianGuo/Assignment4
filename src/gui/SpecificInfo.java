@@ -54,7 +54,7 @@ public class SpecificInfo extends AnchorPane implements Observer{
 			s = bu.readLine();
 			
 			while(s != null) {
-				System.out.println(s+ "\n");
+				
 				Text t2 = new Text();
 				t2.setText(s + "\n");
 				info.getChildren().add(t2);
@@ -135,7 +135,7 @@ public class SpecificInfo extends AnchorPane implements Observer{
 		}
 		@Override
 		protected Entity computeValue() {
-			System.out.println("Checkpoint 2");
+			
 			if(controller.focused.getValue() != null) {
 				return controller.focused.getValue();
 			}
@@ -157,7 +157,6 @@ public class SpecificInfo extends AnchorPane implements Observer{
 			s = bu.readLine();
 			
 			while(s != null) {
-				System.out.println(s+ "\n");
 				Text t2 = new Text();
 				t2.setText(s + "\n");
 				info.getChildren().add(t2);
