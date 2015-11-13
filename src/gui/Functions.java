@@ -15,7 +15,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class Functions extends Accordion {
-	
 	AnchorPane critterPane;
 	AnchorPane WorldPane;
 	Controller controller;
@@ -29,6 +28,8 @@ public class Functions extends Accordion {
 
 
 	}
+	
+	
 	public AnchorPane WorldPane(Stage s) {
 		AnchorPane p = new AnchorPane();
 		Text t = new Text();

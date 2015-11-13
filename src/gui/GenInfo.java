@@ -64,7 +64,7 @@ public class GenInfo extends TabPane implements Observer{
 		t.setContent(p);
 		this.getTabs().add(t);
 		observe(controller);
-
+		this.world = controller.sim.world;
 		//Label l = new Label();
 
 	}
@@ -112,5 +112,8 @@ public class GenInfo extends TabPane implements Observer{
 	public void update(Observable o, Object arg) {
 		updateTimesteps(controller.sim.getTimesteps());
 		updateCritters(controller.sim.getNumCritters());
+		if (!(controller.sim.world.equals( this.world))) {
+			addWorldTab(controller.sim.world);
+		}
 	}
 }

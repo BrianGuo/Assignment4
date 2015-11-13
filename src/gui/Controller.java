@@ -195,7 +195,7 @@ public class Controller extends java.util.Observable {
 			        setChanged();
 			        notifyObservers();
 		    }
-		    if (numTimes > getWorldCols()*getWorldRows()*0.9){
+		    if (numTimes > getWorldCols()*getWorldRows()*0.8){
     			Alert alert = new Alert(Alert.AlertType.WARNING);
             	alert.setTitle("Very Large Number");
             	alert.setContentText("The number specified was very large\n World may be cluttered");
