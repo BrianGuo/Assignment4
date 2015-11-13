@@ -127,9 +127,11 @@ public class Simulator {
 		catch (SyntaxError e) {
 			System.out.println("Your world file has syntax errors");
 		}
+		/*
 		catch(NoSuchElementException e) {
 			System.out.println("There's something REALLY off about your file");
 		}
+		*/
 		catch (FileNotFoundException e) {
 			System.out.println("Your File Was Not Found");
 		}

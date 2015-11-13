@@ -7,12 +7,14 @@ import java.io.FileNotFoundException;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -74,14 +76,26 @@ public class MediaControl extends BorderPane {
         	Tooltip t2 = new Tooltip("Step Once");
             nextButton.setTooltip(t2);
         	mediaBar.getChildren().add(nextButton);
-        	Slider s = new Slider(1.0,60.0,30.0);
+        	Slider s = new Slider(0.0,60.0,30.0);
         	mediaBar.getChildren().add(s);
         	TextField fps = new TextField();
-        	fps.setMaxWidth(65.0);
+        	fps.setMaxWidth(160.0);
         	fps.setEditable(false);
-        	s.valueProperty().addListener(evt -> fps.setText("fps: " + (int)s.getValue()));
+            fps.setText("Steps per second: 30");
+        	s.valueProperty().addListener(evt -> {
+                fps.setText("Steps per second: " + (int) s.getValue());
+                if(playButton.isSelected())
+                    controller.play(s.getValue());
+            });
         	mediaBar.getChildren().add(fps);
-        	
+            playButton.setOnAction((event) -> {
+                System.out.println(playButton.isSelected());
+                if(playButton.isSelected())
+                    controller.play(s.getValue());
+                else
+                    controller.stop();
+            });
+
         }
         catch(FileNotFoundException e) {
         	e.printStackTrace();

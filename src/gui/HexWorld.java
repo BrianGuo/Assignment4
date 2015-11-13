@@ -75,7 +75,6 @@ public class HexWorld extends ScrollPane implements Observer {
 	public void HexPane(){
 		this.cols = controller.getWorldCols();
 		this.rows = controller.getWorldRows();
-		System.out.println(p.getHeight());
 		world = new WorldHex[cols][rows];
 		p.getChildren().clear();
 		

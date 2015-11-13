@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -45,6 +46,8 @@ public class Controller extends java.util.Observable {
     Entity loaded;
     ObjectProperty<Entity> focused; //gdi this doesn't work
     String loadedEntity = "";
+    final Timeline simTimeline;
+    final Timeline UITimeline;
 
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
@@ -55,7 +58,10 @@ public class Controller extends java.util.Observable {
     	catch(FileNotFoundException e) {
     		System.out.println("File Not Found");
     	}
-        Timeline simTimeline = new Timeline();
+        simTimeline = new Timeline();
+        UITimeline = new Timeline();
+        simTimeline.setCycleCount(Timeline.INDEFINITE);
+        UITimeline.setCycleCount(Timeline.INDEFINITE);
        /* simTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(300)),
         e -> {
 
@@ -127,7 +133,10 @@ public class Controller extends java.util.Observable {
             notifyObservers();
         }
         catch(FileNotFoundException e){
-            System.out.println("File not found");
+            System.out.println("File not found"); //shouldn't happen
+        }
+        catch(NoSuchElementException e){
+            throw new NoSuchElementException("Error while parsing file.");
         }
     }
 
@@ -145,8 +154,8 @@ public class Controller extends java.util.Observable {
         catch(FileNotFoundException e){
             System.out.println("File not found");
         }
-        catch(SyntaxError e){
-            //...
+        catch(Exception e){
+            throw new RuntimeException("Syntax error in chosen file");
         }
     }
 
@@ -219,11 +228,12 @@ public class Controller extends java.util.Observable {
      * Called continuously when advanced continuously
      * Does NOT notify observers; that is called manually
      */
-    public void advanceContinuously(){
+    synchronized public void advanceContinuously(){
         sim.advance(1);
+        //System.out.println("?");
     }
 
-    public ArrayList<Coordinate> diffWorld(){
+    synchronized public ArrayList<Coordinate> diffWorld(){
         return sim.diffWorld();
     }
     
@@ -233,4 +243,46 @@ public class Controller extends java.util.Observable {
     public int getWorldRows() {
     	return sim.getWorldRows();
     }
+
+    /**
+     * Starts stepping the world continuously, at speed steps per second.
+     * Alternatively, changes the speed of the world to speed steps per second if already running.
+     * @param speed Speed to step at.
+     */
+    public void play(double speed){
+        System.out.println(speed);
+        //the world update speed
+        KeyFrame k1;
+        KeyFrame k2;
+        if(speed != 0.0) {
+            k1 = new KeyFrame(Duration.millis(1000 / speed), event -> {
+                advanceContinuously();
+            });
+            k2 = new KeyFrame(Duration.millis(1000 / 30.0), event -> {
+                setChanged();
+                notifyObservers();
+            });
+        }
+        else{
+            k1 = new KeyFrame(Duration.millis(1000), event -> {
+                //dummy KeyFrame that doesn't advance anything
+            });
+            k2 = k1;
+        }
+        //to update the UI
+
+        simTimeline.stop();
+        UITimeline.stop();
+        simTimeline.getKeyFrames().clear();
+        UITimeline.getKeyFrames().clear();
+        simTimeline.getKeyFrames().add(k1);
+        UITimeline.getKeyFrames().add(k2);
+        simTimeline.play();
+        UITimeline.play();
+    }
+    public void stop(){
+        simTimeline.stop();
+        UITimeline.stop();
+    }
+
 }
