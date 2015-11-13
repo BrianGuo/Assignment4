@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
@@ -76,8 +77,8 @@ public class Controller extends java.util.Observable {
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
         focused.setValue(getEntityAt(c));
-        System.out.println("Checkpoint1");
         System.out.println(c);
+        System.out.println(focused);
     }
 
     public Entity getEntityAt(Coordinate c){
@@ -164,12 +165,40 @@ public class Controller extends java.util.Observable {
     /**
      * Adds the currently loaded entity into the world at a random location.
      */
-    public void addRandomEntity(ActionEvent event){
-        if(loaded == null) throw new IllegalOperationException("No entity loaded!");
-        sim.addRandomEntity(loaded);
-        loadCritter(loadedEntity);
-        setChanged();
-        notifyObservers();
+    public void addRandomEntity(ActionEvent event, String num){
+    	int numTimes = 0;
+    	if (num == null){
+    		Alert alert = new Alert(Alert.AlertType.ERROR);
+        	alert.setTitle("Invalid Field");
+        	alert.setContentText("You must specify a number of Critters to put");
+        	alert.showAndWait();
+    	}
+    	else {
+    		try{
+    			numTimes = Integer.parseInt(num);
+    		}
+    		catch(NumberFormatException e) {
+    			Alert alert = new Alert(Alert.AlertType.ERROR);
+            	alert.setTitle("Invalid Field");
+            	alert.setContentText("You must input a number");
+            	alert.showAndWait();
+    		}
+    	}
+    	if(loaded == null) throw new IllegalOperationException("No entity loaded!");
+    	else {
+		    for(int i = 0; i < numTimes; i++ ) {
+			    sim.addRandomEntity(loaded);
+			        loadCritter(loadedEntity);
+			        setChanged();
+			        notifyObservers();
+		    }
+		    if (numTimes > getWorldCols()*getWorldRows()*0.9){
+    			Alert alert = new Alert(Alert.AlertType.WARNING);
+            	alert.setTitle("Very Large Number");
+            	alert.setContentText("The number specified was very large\n World may be cluttered");
+            	alert.showAndWait();
+    		}
+	    }
     }
 
 

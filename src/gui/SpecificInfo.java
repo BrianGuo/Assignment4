@@ -47,6 +47,11 @@ public class SpecificInfo extends AnchorPane {
 			@Override
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
 				Entity e = critterStatus.getValue();
+				if (e == null){
+					info.getChildren().clear();
+					picture.setImage(null);
+					return;
+				}
 				File imagefile = null;
 				switch(e.getClass().toString()) {
 				case "class world.Critter":
