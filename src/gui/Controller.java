@@ -202,18 +202,20 @@ public class Controller extends java.util.Observable {
     	}
     	if(loaded == null) throw new IllegalOperationException("No entity loaded!");
     	else {
+            System.out.println(numTimes);
+            System.out.println(getWorldCols()*getWorldRows()*0.6);
+            if (numTimes > getWorldCols()*getWorldRows()*0.6){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Very Large Number");
+                alert.setContentText("The number specified was very large\n World may be cluttered");
+                alert.showAndWait();
+            }
 		    for(int i = 0; i < numTimes; i++ ) {
 			    sim.addRandomEntity(loaded);
 			        loadCritter(loadedEntity);
 			        setChanged();
 			        notifyObservers();
 		    }
-		    if (numTimes > getWorldCols()*getWorldRows()*0.8){
-    			Alert alert = new Alert(Alert.AlertType.WARNING);
-            	alert.setTitle("Very Large Number");
-            	alert.setContentText("The number specified was very large\n World may be cluttered");
-            	alert.showAndWait();
-    		}
 	    }
     }
 

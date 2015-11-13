@@ -32,11 +32,11 @@ public class MediaControl extends BorderPane {
 
     public MediaControl(final MediaPlayer mp, Controller controller) {
         this.mp = mp;
-        setStyle("-fx-background-color: #bfc2c7;");
+        //setStyle("-fx-background-color: #bfc2c7;");
         mediaView = new MediaView(mp);
         Pane mvPane = new Pane() {                };
         mvPane.getChildren().add(mediaView);
-        mvPane.setStyle("-fx-background-color: black;"); 
+        //mvPane.setStyle("-fx-background-color: black;");
         setCenter(mvPane);
         mediaBar = new HBox();
         mediaBar.setAlignment(Pos.CENTER);
@@ -45,7 +45,7 @@ public class MediaControl extends BorderPane {
         this.controller = controller;
         
         try{
-        	Image img = new Image(new FileInputStream(new File("play-button.jpg")));
+        	Image img = new Image(new FileInputStream(new File("play-button.png")));
         	ImageView imgv = new ImageView(img);
         	imgv.setFitHeight(20.0);
         	imgv.setFitWidth(20.0);
@@ -70,7 +70,7 @@ public class MediaControl extends BorderPane {
         	Slider s = new Slider(0.0,60.0,30.0);
         	mediaBar.getChildren().add(s);
         	TextField fps = new TextField();
-        	fps.setMaxWidth(160.0);
+        	fps.setMaxWidth(180.0);
         	fps.setEditable(false);
             fps.setText("Steps per second: 30");
         	s.valueProperty().addListener(evt -> {

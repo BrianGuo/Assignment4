@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import world.Factory;
 import world.World;
 
+import java.io.File;
+
 public class App extends Application {
 	
 	public static void main(String[] args) {
@@ -35,7 +37,12 @@ public class App extends Application {
 			this.controller = controller;
 			AnchorPane pane = (AnchorPane) loader.load();
 			RootPane = pane;
-			primaryStage.setScene(new Scene(pane,900,700));
+			Scene scene = new Scene(pane, 900, 700);
+			File f = new File("style.css");
+			scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+			System.out.println(scene.getStylesheets());
+			primaryStage.setScene(scene);
+
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);
