@@ -25,23 +25,24 @@ public class App extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
-		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+		/*Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.out.println("Handler caught exception: " + throwable.getMessage());
 			System.out.println(throwable.getCause());
 			System.out.println(throwable.toString());
 			defaultHandler(throwable);
-		});
+		});*/
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
 			this.controller = controller;
 			AnchorPane pane = (AnchorPane) loader.load();
 			RootPane = pane;
-			Scene scene = new Scene(pane, 700, 700);
+			Scene scene = new Scene(pane, 900, 700);
 			File f = new File("style.css");
 			scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
 			System.out.println(scene.getStylesheets());
 			primaryStage.setScene(scene);
+
 			primaryStage.show();
 			SplitPane split = (SplitPane) pane.getChildren().get(0);
 			SplitPane left = (SplitPane) split.getItems().get(0);

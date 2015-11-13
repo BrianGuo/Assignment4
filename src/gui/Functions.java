@@ -1,21 +1,19 @@
 package gui;
 
 import java.io.File;
+import java.io.FileInputStream;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import world.Rock;
 
 public class Functions extends Accordion {
-	
 	AnchorPane critterPane;
 	AnchorPane WorldPane;
 	Controller controller;
@@ -26,9 +24,14 @@ public class Functions extends Accordion {
 		this.getPanes().add(CritterPane);
 		TitledPane WorldPane = new TitledPane("World Functions", WorldPane(s));
 		this.getPanes().add(WorldPane);
+		TitledPane RockPane = new TitledPane("Add Rock", RockPane(s));
+		this.getPanes().add(RockPane);
+		
 
 
 	}
+	
+	
 	public AnchorPane WorldPane(Stage s) {
 		AnchorPane p = new AnchorPane();
 		Text t = new Text();
@@ -122,6 +125,33 @@ public class Functions extends Accordion {
             f2.setLayoutX(b2.getLayoutX() + 140.0);
         });
 		System.out.println(p.getChildren());
+		return p;
+	}
+	
+	public AnchorPane RockPane(Stage s) {
+		AnchorPane p = new AnchorPane();
+		try{
+			Image img = new Image(new FileInputStream(new File("rock.png")));
+			ImageView imgv = new ImageView(img);
+			imgv.setFitHeight(40.0);
+			imgv.setFitWidth(40.0);
+			ToggleButton rockButton = new ToggleButton("",imgv);
+			rockButton.setOnAction(action -> {
+				if (rockButton.isSelected())
+					controller.loaded = new Rock(0, 0, null);
+				else
+					controller.loadCritter(controller.loadedEntity);
+			});
+			rockButton.setMaxHeight(40.0);
+			rockButton.setMaxWidth(40.0);
+			p.getChildren().add(rockButton);
+			p.widthProperty().addListener(evt -> {
+				rockButton.setLayoutX(p.getWidth()/2 - 20);
+			});
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 		return p;
 	}
 	

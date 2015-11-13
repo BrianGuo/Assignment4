@@ -17,6 +17,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import jdk.nashorn.internal.runtime.regexp.JoniRegExp.Factory;
 import world.Critter;
 import world.World;
 
@@ -56,7 +57,7 @@ public class GenInfo extends TabPane implements Observer{
 		p.getChildren().add(generalInfo);
 		AnchorPane.setTopAnchor(generalInfo, 20.0);
 		MediaControl mc = new MediaControl(null, c);
-		AnchorPane.setBottomAnchor(mc, 15.0);
+		AnchorPane.setBottomAnchor(mc, 0.0);
 		p.getChildren().add(mc);
 		Tab t = new Tab();
 		info = new ArrayList<String>();
@@ -64,7 +65,7 @@ public class GenInfo extends TabPane implements Observer{
 		t.setContent(p);
 		this.getTabs().add(t);
 		observe(controller);
-
+		this.world = controller.sim.world;
 		//Label l = new Label();
 
 	}
@@ -89,6 +90,15 @@ public class GenInfo extends TabPane implements Observer{
 	}
 
 	public void addCritterTab(Critter c) {
+		Tab critterTab = new Tab();
+		critterTab.setText(c.getSpecies());
+		Text CritterInfo = new Text();
+		ArrayList<String> properties = c.properties();
+		for(String i : properties ) {
+			CritterInfo.setText(CritterInfo.getText() + i + "\n");
+		}
+		critterTab.setContent(CritterInfo);
+		getTabs().add(critterTab);
 	}
 	
 	public void addWorldTab(World w) {
@@ -112,5 +122,16 @@ public class GenInfo extends TabPane implements Observer{
 	public void update(Observable o, Object arg) {
 		updateTimesteps(controller.sim.getTimesteps());
 		updateCritters(controller.sim.getNumCritters());
+		if (!(controller.sim.world.equals( this.world))) {
+			addWorldTab(controller.sim.world);
+			this.world = controller.sim.world;
+		}
+		else if (controller.loaded instanceof Critter){
+			if ( this.critter == null && controller.loaded!= null || controller.loaded != null && !(((Critter)controller.loaded).getSpecies().equals(this.critter.getSpecies()))){
+				addCritterTab((Critter)controller.loaded);
+				this.critter = (Critter)controller.loaded;
+			}
+			
+		}
 	}
 }
