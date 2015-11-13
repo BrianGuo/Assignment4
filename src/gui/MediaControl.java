@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -53,9 +54,10 @@ public class MediaControl extends BorderPane {
         	ImageView imgv = new ImageView(img);
         	imgv.setFitHeight(20.0);
         	imgv.setFitWidth(20.0);
-        	final Button playButton  = new Button("", imgv);
+        	final ToggleButton playButton  = new ToggleButton("", imgv);
         	Tooltip t = new Tooltip("Step Indefinitely");
         	playButton.setTooltip(t);
+        	
         	mediaBar.getChildren().add(playButton);
         	Image img2 = new Image(new FileInputStream(new File("next-button.png")));
         	ImageView imgv2 = new ImageView(img2);
@@ -66,6 +68,9 @@ public class MediaControl extends BorderPane {
                         controller.advance(1);
                     }
             );
+            playButton.setOnAction(event -> {
+        		nextButton.setDisable(!(nextButton.isDisable()));
+        	});
         	Tooltip t2 = new Tooltip("Step Once");
             nextButton.setTooltip(t2);
         	mediaBar.getChildren().add(nextButton);
