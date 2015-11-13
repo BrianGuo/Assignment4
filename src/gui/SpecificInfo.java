@@ -36,7 +36,6 @@ public class SpecificInfo extends AnchorPane implements Observer{
 	TextFlow info;
 	ImageView picture = new ImageView();
 
-
 	//PropertyBinding critterStatus;
 
 
@@ -65,6 +64,7 @@ public class SpecificInfo extends AnchorPane implements Observer{
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 		AnchorPane.setTopAnchor(info, 60.0);
 		AnchorPane.setLeftAnchor(picture, 30.0);
 		AnchorPane.setLeftAnchor(info, 30.0);
@@ -123,6 +123,8 @@ public class SpecificInfo extends AnchorPane implements Observer{
 		else{
 			picture.setImage(null);
 			info.getChildren().clear();
+			displayHelp();
+			
 		}
 	}
 
@@ -144,7 +146,28 @@ public class SpecificInfo extends AnchorPane implements Observer{
 			super.bind(e);
 		}
 	}
-
+	private void displayHelp() {
+		try{
+			BufferedReader bu = new BufferedReader(new FileReader("help.txt"));
+			String s = bu.readLine();
+			Text t = new Text();
+			t.setFont(Font.font("System",FontWeight.BOLD,16.0));
+			t.setText(s + "\n");
+			info.getChildren().add(t);
+			s = bu.readLine();
+			
+			while(s != null) {
+				System.out.println(s+ "\n");
+				Text t2 = new Text();
+				t2.setText(s + "\n");
+				info.getChildren().add(t2);
+				s = bu.readLine();
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 //	public void bind(ObjectProperty<Entity> e){
 //		critterStatus.bind(e);
 //	}

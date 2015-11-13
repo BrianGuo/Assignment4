@@ -1,13 +1,11 @@
 package gui;
 
 import java.io.File;
+import java.io.FileInputStream;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -124,6 +122,17 @@ public class Functions extends Accordion {
         });
 		System.out.println(p.getChildren());
 		return p;
+	}
+	
+	public AnchorPane RockPane(Stage s) {
+		AnchorPane p = new AnchorPane();
+		try{
+			Image img = new Image(new FileInputStream(new File("rock.png")));
+			ImageView imgv = new ImageView(img);
+			ToggleButton rockButton = new ToggleButton("",imgv);
+			rockButton.setOnAction(action -> {
+				
+			});
 	}
 	
 	

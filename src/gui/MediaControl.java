@@ -27,13 +27,6 @@ import javafx.util.Duration;
 public class MediaControl extends BorderPane {
     private MediaPlayer mp;
     private MediaView mediaView;
-    private final boolean repeat = false;
-    private boolean stopRequested = false;
-    private boolean atEndOfMedia = false;
-    private Duration duration;
-    private Slider timeSlider;
-    private Label playTime;
-    private Slider volumeSlider;
     private HBox mediaBar;
     Controller controller;
 
@@ -70,9 +63,7 @@ public class MediaControl extends BorderPane {
                         controller.advance(1);
                     }
             );
-            playButton.setOnAction(event -> {
-        		nextButton.setDisable(!(nextButton.isDisable()));
-        	});
+           
         	Tooltip t2 = new Tooltip("Step Once");
             nextButton.setTooltip(t2);
         	mediaBar.getChildren().add(nextButton);
@@ -89,6 +80,7 @@ public class MediaControl extends BorderPane {
             });
         	mediaBar.getChildren().add(fps);
             playButton.setOnAction((event) -> {
+            	nextButton.setDisable(!(nextButton.isDisable()));
                 System.out.println(playButton.isSelected());
                 if(playButton.isSelected())
                     controller.play(s.getValue());

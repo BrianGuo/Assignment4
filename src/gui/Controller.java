@@ -44,6 +44,7 @@ public class Controller extends java.util.Observable {
     Simulator sim;
     //Entity focused;
     Entity loaded;
+    World loadedWorld;
     ObjectProperty<Entity> focused; //gdi this doesn't work
     String loadedEntity = "";
     final Timeline simTimeline;
@@ -102,20 +103,19 @@ public class Controller extends java.util.Observable {
         if(!sim.hasWorld()){
             throw new IllegalOperationException("You must load a world first.");
         }
-        if(loaded == null){
-            throw new IllegalOperationException("You must load a critter first.");
+        if(loaded != null){
+        	Coordinate c = handleHexClick(event);
+        	try {
+                addEntity(c, (WorldHex) event.getSource());
+            }
+            catch(ArrayIndexOutOfBoundsException e){
+                throw new IllegalOperationException("Clicked outside of the world.");
+            }
+        	notifyObservers();
+            setChanged();
         }
-        
-        Coordinate c = handleHexClick(event);
-        System.out.println(c);
-        try {
-            addEntity(c, (WorldHex) event.getSource());
-        }
-        catch(ArrayIndexOutOfBoundsException e){
-            throw new IllegalOperationException("Clicked outside of the world.");
-        }
-        setChanged();
-        notifyObservers();
+        else
+        	throw new IllegalOperationException("You must select something to add");
     }
     
     public void setWorld(World w) {
@@ -129,6 +129,7 @@ public class Controller extends java.util.Observable {
     public void loadWorld(File file){
         try {
             sim.parseWorld(new FileReader(file));
+            this.loadedWorld = sim.world;
             setChanged();
             notifyObservers();
         }
@@ -164,7 +165,8 @@ public class Controller extends java.util.Observable {
      * @param coordinate Coordinate to be added
      */
     public void addEntity(Coordinate coordinate, WorldHex w){
-        loaded.move(coordinate);
+        if (loaded instanceof Critter)
+        	loaded.move(coordinate);
         if(sim.getEntityAt(coordinate) != null) return;
         Image img = critterImages[r.nextInt(4)];
         w.setFill(new ImagePattern(img, 0, 0, 1, 1, true));

@@ -35,7 +35,7 @@ public class Critter extends Entity{
 		cur += appearance();
 		cur += Arrays.hashCode(attributes);
 		cur += p.hashCode();
-		cur += LastRule.hashCode();
+		//cur += LastRule.hashCode();
 		cur += species.hashCode();
 		cur += location.getCol() * 100000 + location.getRow() * 100;
 		return (int) cur;

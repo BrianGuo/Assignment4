@@ -15,7 +15,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
-import javafx.scene.transform.Rotate;
 import world.Coordinate;
 import world.Critter;
 import world.Entity;
