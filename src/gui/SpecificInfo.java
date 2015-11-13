@@ -55,7 +55,6 @@ public class SpecificInfo extends AnchorPane implements Observer{
 			s = bu.readLine();
 			
 			while(s != null) {
-				System.out.println(s+ "\n");
 				Text t2 = new Text();
 				t2.setText(s + "\n");
 				info.getChildren().add(t2);

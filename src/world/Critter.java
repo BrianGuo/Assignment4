@@ -493,6 +493,8 @@ public class Critter extends Entity{
 			ary.add("mem[" + i + "]: " + attributes[i]);
 		}
 		ary.add("Complexity: " + complexity());
+		ary.add("Last rule: " + ((getLastRule() == null) ? "No rules executed" : getLastRule()));
+		ary.add("Program: \n" + getProgram());
 		return ary;
 	}
 
