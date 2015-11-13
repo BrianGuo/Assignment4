@@ -19,9 +19,11 @@ import world.Critter;
 import world.Entity;
 import javafx.scene.image.ImageView;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -43,6 +45,26 @@ public class SpecificInfo extends AnchorPane implements Observer{
 //		critterStatus = new PropertyBinding();
 		info = new TextFlow();
 		info.setLayoutY(60);
+		try{
+			BufferedReader bu = new BufferedReader(new FileReader("help.txt"));
+			String s = bu.readLine();
+			Text t = new Text();
+			t.setFont(Font.font("System",FontWeight.BOLD,16.0));
+			t.setText(s + "\n");
+			info.getChildren().add(t);
+			s = bu.readLine();
+			
+			while(s != null) {
+				System.out.println(s+ "\n");
+				Text t2 = new Text();
+				t2.setText(s + "\n");
+				info.getChildren().add(t2);
+				s = bu.readLine();
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		AnchorPane.setTopAnchor(info, 60.0);
 		AnchorPane.setLeftAnchor(picture, 30.0);
 		AnchorPane.setLeftAnchor(info, 30.0);
@@ -97,6 +119,10 @@ public class SpecificInfo extends AnchorPane implements Observer{
 			}
 
 
+		}
+		else{
+			picture.setImage(null);
+			info.getChildren().clear();
 		}
 	}
 

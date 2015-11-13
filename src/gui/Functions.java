@@ -85,6 +85,8 @@ public class Functions extends Accordion {
 		TextField file = new TextField();
 		file.setEditable(false);
 		AnchorPane.setTopAnchor(file, 80.0);
+		Button b2 = new Button("Add critter randomly");
+		b2.setDisable(true);
 		b.setOnAction((event) -> {
 			File critter = fileChooser.showOpenDialog(s);
 			if (critter != null) {
@@ -92,6 +94,7 @@ public class Functions extends Accordion {
 					String critterPath = critter.getAbsolutePath();
 					file.setText(critterPath);
 					controller.loadCritter(critterPath);
+					b2.setDisable(false);
 				} catch (NullPointerException e) {
 					Alert alert = new Alert(Alert.AlertType.ERROR);
 					alert.setTitle("Illegal operation");
@@ -101,7 +104,6 @@ public class Functions extends Accordion {
 			}
 
 		});
-		Button b2 = new Button("Add critter randomly");
 		TextField f2 = new TextField();
 		f2.setMaxWidth(50);
 		f2.setText("1");

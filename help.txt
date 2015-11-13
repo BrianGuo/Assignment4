@@ -1,0 +1,23 @@
+Welcome to the Help Menu!
+
+To Load a critter, open the 
+Critter Functions menu 
+and select a critter file.
+To load a world, open the 
+World Functions menu 
+and select a world file.
+
+To add a critter, use either 
+the right mouse click 
+to add a critter to a single hex
+Or use the Add Critters 
+Randomly button 
+to randomly add however 
+many critters you want
+
+To determine the rate 
+of update, drag the slider
+To start the simulation, hit play
+
+To simulate a single 
+timestep, hit the next button
