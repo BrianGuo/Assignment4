@@ -440,7 +440,7 @@ public class Critter extends Entity{
 				otherSpecies += other.species.charAt(i);
 		}
 		String newSpecies = thisSpecies + otherSpecies;
-		Critter baby = new Critter(this.attributes,
+		Critter baby = new Critter(newAttributes,
 				(int) (Math.random() * 6), newSpecies,
 				babyLocation, constants, newProgram);
 
