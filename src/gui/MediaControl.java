@@ -32,8 +32,9 @@ public class MediaControl extends BorderPane {
     private Label playTime;
     private Slider volumeSlider;
     private HBox mediaBar;
+    Controller controller;
 
-    public MediaControl(final MediaPlayer mp) {
+    public MediaControl(final MediaPlayer mp, Controller controller) {
         this.mp = mp;
         setStyle("-fx-background-color: #bfc2c7;");
         mediaView = new MediaView(mp);
@@ -45,6 +46,7 @@ public class MediaControl extends BorderPane {
         mediaBar.setAlignment(Pos.CENTER);
         mediaBar.setPadding(new Insets(5, 10, 5, 10));
         BorderPane.setAlignment(mediaBar, Pos.CENTER);
+        this.controller = controller;
         
         try{
         	Image img = new Image(new FileInputStream(new File("play-button.jpg")));
@@ -60,7 +62,12 @@ public class MediaControl extends BorderPane {
         	imgv2.setFitHeight(20.0);
         	imgv2.setFitWidth(20.0);
         	final Button nextButton = new Button("", imgv2);
+            nextButton.setOnAction(event ->{
+                        controller.advance(1);
+                    }
+            );
         	Tooltip t2 = new Tooltip("Step Once");
+            nextButton.setTooltip(t2);
         	mediaBar.getChildren().add(nextButton);
         	Slider s = new Slider(1.0,60.0,30.0);
         	mediaBar.getChildren().add(s);

@@ -43,7 +43,7 @@ public class Controller extends java.util.Observable {
     Simulator sim;
     //Entity focused;
     Entity loaded;
-    ObjectProperty<Entity> focused;
+    ObjectProperty<Entity> focused; //gdi this doesn't work
     String loadedEntity = "";
 
     public Controller(){
@@ -70,13 +70,16 @@ public class Controller extends java.util.Observable {
      */
     public Coordinate handleHexClick(MouseEvent event){
         WorldHex clicked = (WorldHex) event.getSource();
-        focused.set(sim.getEntityAt(clicked.getCoordinate()));
+        //focused.set(sim.getEntityAt(clicked.getCoordinate()));
         return clicked.getCoordinate();
     }
 
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
         focused.setValue(getEntityAt(c));
+        setChanged();
+        notifyObservers();
+        System.out.println("Checkpoint1");
         System.out.println(c);
         System.out.println(focused);
     }

@@ -55,7 +55,7 @@ public class GenInfo extends TabPane implements Observer{
 		generalInfo.textProperty().bind(status);
 		p.getChildren().add(generalInfo);
 		AnchorPane.setTopAnchor(generalInfo, 20.0);
-		MediaControl mc = new MediaControl(null);
+		MediaControl mc = new MediaControl(null, c);
 		AnchorPane.setBottomAnchor(mc, 15.0);
 		p.getChildren().add(mc);
 		Tab t = new Tab();
