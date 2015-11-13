@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import world.Food;
 import world.Rock;
 
 public class Functions extends Accordion {
@@ -26,6 +27,8 @@ public class Functions extends Accordion {
 		this.getPanes().add(WorldPane);
 		TitledPane RockPane = new TitledPane("Add Rock", RockPane(s));
 		this.getPanes().add(RockPane);
+		TitledPane FoodPane = new TitledPane("Add Food", FoodPane(s));
+		this.getPanes().add(FoodPane);
 		
 
 
@@ -138,7 +141,7 @@ public class Functions extends Accordion {
 			ToggleButton rockButton = new ToggleButton("",imgv);
 			rockButton.setOnAction(action -> {
 				if (rockButton.isSelected())
-					controller.loaded = new Rock(0, 0, null);
+					controller.loaded = new Rock(0, 0, controller.sim.world.constants);
 				else
 					controller.loadCritter(controller.loadedEntity);
 			});
@@ -147,6 +150,58 @@ public class Functions extends Accordion {
 			p.getChildren().add(rockButton);
 			p.widthProperty().addListener(evt -> {
 				rockButton.setLayoutX(p.getWidth()/2 - 20);
+			});
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return p;
+	}
+	
+	public AnchorPane FoodPane(Stage s) {
+		AnchorPane p = new AnchorPane();
+		try{
+			Image img = new Image(new FileInputStream(new File("food2.png")));
+			ImageView imgv = new ImageView(img);
+			imgv.setFitHeight(40.0);
+			imgv.setFitWidth(40.0);
+			ToggleButton foodButton = new ToggleButton("",imgv);
+			TextField foodcount = new TextField();
+			foodcount.setMaxWidth(100);
+			foodcount.setText("100");
+			AnchorPane.setTopAnchor(foodcount, 60.0);
+			foodButton.setOnAction(action -> {
+				if (foodButton.isSelected()){
+					int foodnum;
+			    	if (foodcount.getText() == null){
+			    		Alert alert = new Alert(Alert.AlertType.ERROR);
+			        	alert.setTitle("Invalid Field");
+			        	alert.setContentText("You must specify a food amount");
+			        	alert.showAndWait();
+			    	}
+			    	else {
+			    		try{
+			    			foodnum = Integer.parseInt(foodcount.getText());
+			    			controller.loaded = new Food(0, 0,foodnum, controller.sim.world.constants);
+			    		}
+			    		catch(NumberFormatException e) {
+			    			Alert alert = new Alert(Alert.AlertType.ERROR);
+			            	alert.setTitle("Invalid Field");
+			            	alert.setContentText("You must input a number");
+			            	alert.showAndWait();
+			    		}
+			    	}
+				}
+				else
+					controller.loadCritter(controller.loadedEntity);
+			});
+			foodButton.setMaxHeight(40.0);
+			foodButton.setMaxWidth(40.0);
+			p.getChildren().add(foodButton);
+			p.getChildren().add(foodcount);
+			p.widthProperty().addListener(evt -> {
+				foodButton.setLayoutX(p.getWidth()/2 - 20);
+				foodcount.setLayoutX(p.getWidth()/2 - 40);
 			});
 		}
 		catch(Exception e){
