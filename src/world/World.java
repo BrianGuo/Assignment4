@@ -196,7 +196,7 @@ public class World{
             //ack.
             case FORWARD:
             	try{
-	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+	            	Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
 	            	if(hexAt(forward) == null && inBounds(forward)){
 	            		move(critter,forward);
 	                    critter.move(forward);
@@ -211,7 +211,7 @@ public class World{
             	break;
             case BACKWARD:
             	try{
-	                Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+	                Coordinate backward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, -1);
 	                if(hexAt(backward) == null && inBounds(backward)){
                         move(critter, backward);
 	                    critter.move(backward);
@@ -241,7 +241,7 @@ public class World{
 
             case EAT:
             	try{
-	            	Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+	            	Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
 	                Food eaten = critter.eat(hexAt(forward));
 	                if(eaten != null && eaten.isConsumed()){ //the magic of short-circuiting!
 	                    clean(eaten);
@@ -255,7 +255,7 @@ public class World{
                 break;
             case ATTACK:
             	try{
-                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
 	            	Critter attacked = critter.attack(hexAt(forward));
 
                     judge(attacked);
@@ -272,7 +272,7 @@ public class World{
                 break;
             case BUD:
                 try {
-                    Coordinate backward = Sensor.coordAheadAt(critter, this, -1);
+                    Coordinate backward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, -1);
                     if (inBounds(backward))
                     	add(critter.bud(backward));
                     else
@@ -286,7 +286,7 @@ public class World{
                 break;
             case MATE:
                 try {
-                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
                     Critter baby = critter.woo(hexAt(forward), getRandomNearbyUnoccupiedLocation(critter.getLocation()));
                     add(baby);
                     try {
@@ -303,7 +303,7 @@ public class World{
                 break;
             case TAG:
             	try{
-                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
 	            	critter.tag(hexAt(forward), expr);
 
             	}
@@ -314,7 +314,7 @@ public class World{
                 break;
             case SERVE:
                 try {
-                    Coordinate forward = Sensor.coordAheadAt(critter, this, 1);
+                    Coordinate forward = Sensor.coordAheadAt(critter.getLocation(), critter.getDirection(), this, 1);
                     Food dinner = critter.serve(expr, forward);
                     if (dinner != null) {
                         //add will fail if the space is occupied

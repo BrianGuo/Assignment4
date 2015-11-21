@@ -94,11 +94,11 @@ public class CritterTest {
 
     @Test
     public void testServe() throws Exception {
-        c1.serve(5, Sensor.coordAheadAt(c1, w, 1));
+        c1.serve(5, Sensor.coordAheadAt(c1.getLocation(),c1.getDirection(), w, 1));
         assertEquals(494, c1.getAttributeAtIndex(4));
         c2.setDirection(3);
         c2.consumeEnergy(450);
-        Food newFood = c2.serve(100, Sensor.coordAheadAt(c2, w, 1));
+        Food newFood = c2.serve(100, Sensor.coordAheadAt(c2.getLocation(),c2.getDirection(), w, 1));
         assertTrue(newFood.getCol() ==5);
         assertEquals(50 - c2.size(), newFood.getAmt());
         w.add(newFood);

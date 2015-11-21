@@ -1,12 +1,14 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import exceptions.IllegalCoordinateException;
 import world.Coordinate;
 import world.Critter;
 import world.Entity;
+import world.Food;
 import parse.Token;
 import parse.TokenType;
 import world.World;
@@ -121,10 +123,9 @@ public class Sensor extends UnaryNode implements Expr {
 			sense = t;
 	}
 
-	public static Coordinate coordAheadAt(Critter c, World w, int distance) throws IllegalCoordinateException{
+	public static Coordinate coordAheadAt(Coordinate coordinates, int direction, World w, int distance) throws IllegalCoordinateException{
 		Coordinate newCoordinates = null;
-		Coordinate coordinates = c.getLocation();
-			switch (c.getDirection()){
+			switch (direction){
 				case 0:
 					newCoordinates = new Coordinate(coordinates.getCol(),coordinates.getRow()+1*distance);
 					break;
@@ -150,10 +151,95 @@ public class Sensor extends UnaryNode implements Expr {
 		return newCoordinates;
 
 	}
-
+	public int evaluateSmell(Critter c, World w) {
+		PriorityQueue<HexQueueObject> p = new PriorityQueue<HexQueueObject>();
+		Coordinate ahead = coordAheadAt(c.getLocation(), c.getDirection(), w, 1);
+		if (w.hexAt(ahead) instanceof Food){
+			return 0;
+		}
+		else {
+			if(w.hexAt(ahead) == null)
+				p.add(new HexQueueObject(c.getDirection(), 1, ahead ));
+			p.add(new HexQueueObject(c.getDirection()+1, 1, c.getLocation()));
+			p.add(new HexQueueObject(c.getDirection()-1, 1, c.getLocation()));
+			HexQueueObject food =  evaluateQueue(p, w);
+			if (food == null)
+				return 1000000;
+			Coordinate foodLocation = food.getLocation();
+			double deltaY = foodLocation.getRow() - c.getRow();
+			double deltaX = foodLocation.getCol() - c.getCol();
+			System.out.println("This is delta Y: " + deltaY);
+			System.out.println("This is delta X: " + deltaX);
+			int trueDirection = 0;
+			if (deltaX == 0) {
+				if (deltaY < 0) {
+					trueDirection = 3;
+				}
+			}
+			else if (deltaX > 0) {
+				double slope = deltaY/deltaX;
+				if (slope > 1/2){
+					if (slope < 2)
+						trueDirection = 1;
+				}
+				else{
+					if (slope > 0)
+						trueDirection = 2;
+					else
+						trueDirection = 3;
+				}
+			}
+			else{
+				double slope = deltaY/deltaX;
+				if (slope > 1/2) {
+					if (slope > 1)
+						trueDirection = 3;
+					else
+						trueDirection = 4;
+				}
+				else{
+					if (slope > 0) {
+						trueDirection = 5;
+					}
+					else
+						trueDirection = 0;
+				}
+			}
+			int relativeDirection = (trueDirection - c.getDirection())%6;
+			System.out.println(trueDirection);
+			System.out.println(c.getDirection());
+			if (relativeDirection <0)
+				relativeDirection += 6;
+			return 1000*food.getDistance() + relativeDirection;
+		}
+	}
+	
+	public HexQueueObject evaluateQueue(PriorityQueue<HexQueueObject> p, World w) {
+		HexQueueObject h = p.remove();
+		try{
+			Coordinate ahead = coordAheadAt(h.getLocation(), h.getDirection(), w, 1);
+			if (w.hexAt(ahead) instanceof Food){
+				return h;
+			}
+			if (h.getDistance() > 10)
+				return null;
+			else{
+				int direction = h.getDirection();
+				int distance = h.getDistance() + 1;
+				if (w.hexAt(ahead) == null)
+					p.add(new HexQueueObject(direction, distance, ahead));
+				p.add(new HexQueueObject((direction-1)%6, distance, h.getLocation()));
+				p.add(new HexQueueObject((direction+1)%6, distance, h.getLocation()));
+				return evaluateQueue(p,w);
+			}
+		}
+		catch(IllegalCoordinateException e) {
+			return evaluateQueue(p,w);
+		}
+	}
 	public int evaluateAhead(Critter c, World w, int distance){
 		try {
-			Coordinate newCoordinate = coordAheadAt(c, w, distance);
+			Coordinate newCoordinate = coordAheadAt(c.getLocation(), c.getDirection(), w, distance);
 			if (!w.inBounds(newCoordinate)) {
 				return w.constants.ROCK_VALUE;
 			}
@@ -188,8 +274,8 @@ public class Sensor extends UnaryNode implements Expr {
 
 	@Override
 	public int evaluate(Critter c, World w) {
-		if (r == null)
-			return 0;
+		if (sense.getType() == TokenType.SMELL)
+			return evaluateSmell(c,w);
 		else if (sense.getType() == TokenType.AHEAD) {
 			int coefficient = r.evaluate(c, w);
 			return evaluateAhead(c,w,coefficient);
