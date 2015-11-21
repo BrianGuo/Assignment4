@@ -45,7 +45,7 @@ public class MediaControl extends BorderPane {
         this.controller = controller;
         
         try{
-        	Image img = new Image(new FileInputStream(new File("play-button.png")));
+        	Image img = new Image(new FileInputStream(new File("play-button.jpg")));
         	ImageView imgv = new ImageView(img);
         	imgv.setFitHeight(20.0);
         	imgv.setFitWidth(20.0);
