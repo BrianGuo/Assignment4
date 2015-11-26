@@ -1,12 +1,19 @@
 package server;
 
 import static spark.Spark.*;
-/**
- * Created by Max on 11/26/2015.
- */
+import com.google.gson.*;
 public class Main {
 
         public static void main(String[] args) {
-            get("/hello", (req, res) -> "Hello World");
+            Gson gson = new Gson();
+
+
+            get("/hello", (request, response) -> "Hello World");
+            post("/login", (request, response) ->{
+                User user = gson.fromJson(request.body(), User.class);
+                return request.attributes() + "<br>hi!<br>" + request.body() + "<br>" + gson.toJson(user);
+            });
         }
+
+
 }
