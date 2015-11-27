@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Class-Path: junit-4.11.jar hamcrest-core-1.3.jar hamcrest-library-1.3.
+ jar jetty-security-9.0.2.v20130417.jar spark-core-2.2.jar jetty-xml-9
+ .0.2.v20130417.jar jetty-http-9.0.2.v20130417.jar jetty-webapp-9.0.2.
+ v20130417.jar jetty-io-9.0.2.v20130417.jar jetty-servlet-9.0.2.v20130
+ 417.jar javax.servlet-3.0.0.v201112011016.jar slf4j-api-1.7.7.jar gso
+ n-2.5.jar jetty-server-9.0.2.v20130417.jar slf4j-simple-1.7.7.jar jet
+ ty-util-9.0.2.v20130417.jar
+Main-Class: server.Main
+

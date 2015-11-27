@@ -20,6 +20,7 @@ public class Critter extends Entity{
 	int[] attributes;
 	Rule LastRule;
 	Critter lover;
+	int creator;
 
 	//keeps track of whether the critter is dead
 	boolean isDead = false;
@@ -40,6 +41,14 @@ public class Critter extends Entity{
 		cur += location.getCol() * 100000 + location.getRow() * 100;
 		return (int) cur;
 	}
+
+	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
+				   Program program, int creator_id) {
+		this(attributes, direction, species, coordinates, constants, program);
+		this.creator = creator_id;
+
+	}
+
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program) {
 		super(constants);

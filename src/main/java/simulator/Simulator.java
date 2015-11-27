@@ -5,13 +5,17 @@ package simulator;
 import world.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.lang.reflect.Array;
+import java.util.*;
+
 import exceptions.MissingElementException;
 import exceptions.SyntaxError;
 import interpret.*;
 import interpret.CritterInterpreter;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 
@@ -21,6 +25,12 @@ public class Simulator {
 	public World world;
 	int timesteps;
 	Entity[][] old;
+	ArrayList<ArrayList<Coordinate>> changes;
+	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+	private final Lock readLock = readWriteLock.readLock();
+	private final Lock writeLock = readWriteLock.writeLock();
+
+
 
 	
 	/**
@@ -42,6 +52,7 @@ public class Simulator {
 			((CritterInterpreter)interpreter).setWorld(world);
 		timesteps = 0;
 		old = new Entity[getWorldColumns()][getWorldRows()];
+		changes = new ArrayList<>();
 	}
 	
 	/**
@@ -51,6 +62,7 @@ public class Simulator {
 	public Simulator (Interpreter i) {
 		interpreter = i;
 		timesteps = 0;
+		changes = new ArrayList<>();
 	}
 
 	/**
@@ -58,24 +70,32 @@ public class Simulator {
 	 * @param n   the number of timesteps to advance the world
 	 */
 	public void advance(int n){
-		if (hasWorld()){
-			for (int i =0; i< n; i++ ){
-				LinkedList<Critter> copy = new LinkedList<Critter>();
-				copy.addAll(world.getCritters());
-				for (Critter c: copy){
-					if (!(world.getCritters().contains(c)))
-						continue;
-					((CritterInterpreter) interpreter).setCritter(c);
-					Outcome o = interpreter.interpret(c.getProgram());
-					world.evaluate(o);
-					world.judge(c);
+		writeLock.lock();
+		try {
+			if (hasWorld()) {
+				for (int i = 0; i < n; i++) {
+					LinkedList<Critter> copy = new LinkedList<>();
+					copy.addAll(world.getCritters());
+					for (Critter c : copy) {
+						if (!(world.getCritters().contains(c)))
+							continue;
+						((CritterInterpreter) interpreter).setCritter(c);
+						Outcome o = interpreter.interpret(c.getProgram());
+						world.evaluate(o);
+						world.judge(c);
+					}
+					timesteps++;
 				}
-				timesteps ++;
+			} else {
+				System.out.println("You haven't loaded a world");
 			}
+			changes.add(diffWorld());
+			old = world.getMap();
 		}
-		else{
-			System.out.println("You haven't loaded a world");
+		finally{
+			writeLock.unlock();
 		}
+
 	}
 	
 	/**
@@ -83,6 +103,7 @@ public class Simulator {
 	 * @param w    the world to be set to
 	 */
 	public void setWorld(World w){
+		//TODO: does this need a lock?
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(w);
@@ -142,7 +163,13 @@ public class Simulator {
 	 * @return   the number of timesteps taken
 	 */
 	public int getTimesteps() {
-		return timesteps;
+		readLock.lock();
+		try {
+			return timesteps;
+		}
+		finally{
+			readLock.unlock();
+		}
 	}
 	
 	/**
@@ -150,7 +177,13 @@ public class Simulator {
 	 * @return    the number of critters in the world
 	 */
 	public int getNumCritters() {
-		return world.getCritters().size();
+		readLock.lock();
+		try {
+			return world.getCritters().size();
+		}
+		finally{
+			readLock.unlock();
+		}
 	}
 	
 	/**
@@ -169,7 +202,14 @@ public class Simulator {
 	 * @return The entity at [col, row], or null if empty/OOB
 	 */
 	public Entity getEntityAt(int col, int row){
-		return world.hexAt(col, row);
+		//TODO: does this need a lock?  finalize API
+		readLock.lock();
+		try {
+			return world.hexAt(col, row);
+		}
+		finally{
+			readLock.unlock();
+		}
 	}
 
 	/**
@@ -202,11 +242,17 @@ public class Simulator {
 	 * @throws SyntaxError				   If the file has a SyntaxError
 	 */
 	public void putCritterRandomly(String filename, int n) throws MissingElementException, FileNotFoundException, SyntaxError{
-		if (!hasWorld())
-			throw new MissingElementException();
-		for (int i = 0 ; i < n; i++ ){
-			Critter c = Factory.getCritter(filename,world.constants);
-			world.addRandom(c);
+		writeLock.lock();
+		try {
+			if (!hasWorld())
+				throw new MissingElementException();
+			for (int i = 0; i < n; i++) {
+				Critter c = Factory.getCritter(filename, world.constants);
+				world.addRandom(c);
+			}
+		}
+		finally{
+			writeLock.unlock();
 		}
 	}
 
@@ -216,7 +262,13 @@ public class Simulator {
 	 * @param entity Entity to be added
 	 */
 	public void addRandomEntity(Entity entity){
-		world.addRandom(entity);
+		writeLock.lock();
+		try {
+			world.addRandom(entity);
+		}
+		finally {
+			writeLock.unlock();
+		}
 	}
 	
 	/**
@@ -266,7 +318,14 @@ public class Simulator {
 	 * Returns entity at coordinate in the world.  Wrapper for world method.
 	 */
 	public Entity getEntityAt(Coordinate coordinate){
-		return world.hexAt(coordinate);
+		readLock.lock();
+		try{
+			return world.hexAt(coordinate);
+		}
+		finally{
+			readLock.unlock();
+		}
+
 	}
 
 	/**
@@ -274,7 +333,13 @@ public class Simulator {
 	 * @param entity Entity to be added, with the correct coordinate
 	 */
 	public void addEntity(Entity entity){
-		world.add(entity);
+		writeLock.lock();
+		try{
+			world.add(entity);
+		}
+		finally {
+			writeLock.unlock();
+		}
 	}
 
 	/**
@@ -311,22 +376,46 @@ public class Simulator {
 	 * @return An ArrayList containing coordinates of every difference
 	 */
 	public ArrayList<Coordinate> diffWorld(){
-		//TODO deal with changing attributes--use hashCode()?
-		
+		//TODO: need lock here?
+		//readLock.lock();
+		//try {
 		ArrayList<Coordinate> differences = new ArrayList<>();
-		for(int i = 0; i < world.getColumns(); i ++){
-			for(int j = 0; j < world.getRows(); j++){
-				if (getEntityAt(i,j) == null && old[i][j] == null)
+		for (int i = 0; i < world.getColumns(); i++) {
+			for (int j = 0; j < world.getRows(); j++) {
+				if (getEntityAt(i, j) == null && old[i][j] == null)
 					continue;
-				else if(getEntityAt(i,j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))){
+				else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
 					//this should work unless we get a collision...
 					//also check for nulls
-					differences.add(new Coordinate(i,j));
-				};
+					differences.add(new Coordinate(i, j));
+				}
+				;
 			}
 		}
 		old = world.getMap();
 		return differences;
+		//}
+		//finally{
+//			readLock.unlock();
+		//}
+	}
+	//TODO: JSON!
+	public Set<Coordinate> getDiffs(int step){
+		readLock.lock();
+		try {
+			HashSet<Coordinate> diffCoords = new HashSet<>();
+			for (int i = step; i < changes.size(); i++) {
+				for (int j = 0; j < changes.get(i).size(); j++) {
+					diffCoords.add(changes.get(i).get(j));
+				}
+
+			}
+
+			return diffCoords;
+		}
+		finally {
+			readLock.unlock();
+		}
 	}
 
 }
