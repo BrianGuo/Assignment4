@@ -34,9 +34,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-/**
- * Created by Max on 11/8/2015.
- */
+
 public class Controller extends java.util.Observable {
 	Random r = new Random();
 	Image[] critterImages;

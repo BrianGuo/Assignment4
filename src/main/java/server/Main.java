@@ -9,9 +9,11 @@ public class Main {
 
 
             get("/hello", (request, response) -> "Hello World");
+
+            //Done
             post("/login", (request, response) ->{
                 User user = gson.fromJson(request.body(), User.class);
-                return request.attributes() + "<br>hi!<br>" + request.body() + "<br>" + gson.toJson(user);
+                return gson.toJson(user);
             });
         }
 
