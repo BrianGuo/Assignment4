@@ -43,7 +43,7 @@ public class World{
     public WorldConstants constants;
 
 
-    LinkedList<Critter> critters;
+    HashMap<Integer,Critter> critters;
 
     /**
      * Front-end using coordinate.
@@ -134,7 +134,7 @@ public class World{
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
-        critters = new LinkedList<>();
+        critters = new HashMap<Integer, Critter>();
     }
 
     /**
@@ -153,7 +153,7 @@ public class World{
         ROWS = constants.DEFAULT_ROWS;
         map = new Entity[COLUMNS][ROWS];
         name = new Date(System.currentTimeMillis()).toString();
-        critters = new LinkedList<>();
+        critters = new HashMap<Integer,Critter>();
         populate();
     }
 
@@ -361,7 +361,7 @@ public class World{
         }
     }
 
-    public LinkedList<Critter> getCritters(){
+    public HashMap<Integer,Critter> getCritters(){
         return critters;
     }
 
@@ -451,7 +451,7 @@ public class World{
         map[c.getCol()][c.getRow()] = null; //just in case
         map[c.getCol()][c.getRow()] = new Food(c.getCol(), c.getRow(),
                 c.size() * constants.FOOD_PER_SIZE, constants);
-        critters.remove(c);
+        critters.values().remove(c);
     }
 
     /**
