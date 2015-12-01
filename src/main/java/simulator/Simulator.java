@@ -74,7 +74,7 @@ public class Simulator {
 		try {
 			if (hasWorld()) {
 				for (int i = 0; i < n; i++) {
-					LinkedList<Critter> copy = new LinkedList<>();
+					ArrayList<Critter> copy = new ArrayList<>();
 					copy.addAll(world.getCritters().values());
 					for (Critter c : copy) {
 						if (!(world.getCritters().values().contains(c)))
