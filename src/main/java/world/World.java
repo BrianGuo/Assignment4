@@ -335,20 +335,28 @@ public class World{
     /**
      * Adds an entity to the world.
      * Precondition: e is a valid location and the location to be added onto is empty.
-     * Silently fails otherwise.
      * @param e Entity to be added.
+     * @return the Entity added if successful, null if unsuccessful
      */
-    public void add(Entity e) {
-    	System.out.println(e.getLocation());
+
+    public Entity add(Entity e) {
+    	//System.out.println(e.getLocation());
         //System.out.println(e.getClass());
         //System.out.println(e.getLocation().getRow());
         if (e != null && hexAt(e.getLocation()) == null) {
             map[e.getCol()][e.getRow()] = e;
             if(e instanceof Critter){ //Forgive me father, for I have sinned
-                critters.add((Critter) e);
+                Critter c = (Critter) e;
+                critters.put(c.getId(), c);
+                return c;
+                //TODO: what if the user inputs an id?
             }
+            return e;
         }
+        return null;
     }
+
+
 
     public void addRandom(Entity e){
         try{
