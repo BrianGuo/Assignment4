@@ -1,8 +1,6 @@
 package world;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 import ast.Program;
 import ast.ProgramImpl;
@@ -21,6 +19,49 @@ public class Critter extends Entity{
 	Rule LastRule;
 	Critter lover;
 	int creator;
+
+	static Random r = new Random();
+
+
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * Sets the ID of a critter.
+	 * This is called when the user provides an ID to create the critter with.
+	 * @param id the new ID to try to set to
+	 * @return true if set succeeded, false if did not
+	 */
+	public boolean setId(int id) {
+		synchronized(usedIDs) {
+			if (!usedIDs.contains(id)){
+				this.id = id;
+				updateIdList(id);
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+
+	int id;
+
+	//TODO: is synchronization on the set enough?
+
+	/**
+	 * Updates the list of used IDs with a given new ID, if possible.
+	 * @param newId The new ID of the critter to try to add.
+	 * @return true if the ID is not already taken, false if ID already in set of used IDs.
+	 * @effect adds newId to usedIDs if not already there
+	 */
+	static boolean updateIdList(int newId){
+		return usedIDs.add(newId);
+	}
+
+	//need synchronization in case 2 clients add w/ same ID
+	static final Set<Integer> usedIDs = Collections.synchronizedSet(new HashSet<Integer>());
 
 	//keeps track of whether the critter is dead
 	boolean isDead = false;
@@ -44,14 +85,33 @@ public class Critter extends Entity{
 
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program, int creator_id) {
+
 		this(attributes, direction, species, coordinates, constants, program);
 		this.creator = creator_id;
 
 	}
 
+	/**
+	 * Standard initializer that sets up the constants and id of the critter.
+	 * @requires less than Integer.MAX_INT total critters in the history of the world; performance
+	 * may decrease due to collisions at a lower number
+	 * @param constants constants of the world
+	 */
+	public Critter(WorldConstants constants){
+		super(constants);
+		int next;
+		do{
+			next = r.nextInt();
+			setId(next);
+		}
+		while(!usedIDs.contains(next));
+		//in hindsight, this means giving setId a boolean return value was useless
+		//because I'd rather not put the assignment in the loop guard and pretend this is C
+	}
+
 	public Critter(int[] attributes, int direction, String species, Coordinate coordinates, WorldConstants constants,
 				   Program program) {
-		super(constants);
+		this(constants);
 		assert(attributes[0] >= 8);
 		this.attributes = attributes;
 		this.direction = direction;
