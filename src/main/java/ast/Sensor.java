@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Random;
 
@@ -159,58 +160,14 @@ public class Sensor extends UnaryNode implements Expr {
 		}
 		else {
 			if(w.hexAt(ahead) == null)
-				p.add(new HexQueueObject(c.getDirection(), 1, ahead ));
-			p.add(new HexQueueObject(c.getDirection()+1, 1, c.getLocation()));
-			p.add(new HexQueueObject(c.getDirection()-1, 1, c.getLocation()));
+				p.add(new HexQueueObject(c.getDirection(), 1, ahead, c.getDirection() ));
+			for (int i = 1; i < 6; i++) {
+				p.add(new HexQueueObject(c.getDirection()+i, 1, c.getLocation(), c.getDirection()+i));
+			}
 			HexQueueObject food =  evaluateQueue(p, w);
 			if (food == null)
 				return 1000000;
-			Coordinate foodLocation = food.getLocation();
-			double deltaY = foodLocation.getRow() - c.getRow();
-			double deltaX = foodLocation.getCol() - c.getCol();
-			System.out.println("This is delta Y: " + deltaY);
-			System.out.println("This is delta X: " + deltaX);
-			int trueDirection = 0;
-			if (deltaX == 0) {
-				if (deltaY < 0) {
-					trueDirection = 3;
-				}
-			}
-			else if (deltaX > 0) {
-				double slope = deltaY/deltaX;
-				if (slope > 1/2){
-					if (slope < 2)
-						trueDirection = 1;
-				}
-				else{
-					if (slope > 0)
-						trueDirection = 2;
-					else
-						trueDirection = 3;
-				}
-			}
-			else{
-				double slope = deltaY/deltaX;
-				if (slope > 1/2) {
-					if (slope > 1)
-						trueDirection = 3;
-					else
-						trueDirection = 4;
-				}
-				else{
-					if (slope > 0) {
-						trueDirection = 5;
-					}
-					else
-						trueDirection = 0;
-				}
-			}
-			int relativeDirection = (trueDirection - c.getDirection())%6;
-			System.out.println(trueDirection);
-			System.out.println(c.getDirection());
-			if (relativeDirection <0)
-				relativeDirection += 6;
-			return 1000*food.getDistance() + relativeDirection;
+			return 1000*food.getDistance() + food.getInitialDirection();
 		}
 	}
 	
@@ -227,14 +184,17 @@ public class Sensor extends UnaryNode implements Expr {
 				int direction = h.getDirection();
 				int distance = h.getDistance() + 1;
 				if (w.hexAt(ahead) == null)
-					p.add(new HexQueueObject(direction, distance, ahead));
-				p.add(new HexQueueObject((direction-1)%6, distance, h.getLocation()));
-				p.add(new HexQueueObject((direction+1)%6, distance, h.getLocation()));
+					p.add(new HexQueueObject(direction, distance, ahead, h.getInitialDirection()));
+				p.add(new HexQueueObject((direction-1)%6, distance, h.getLocation(), h.getInitialDirection()));
+				p.add(new HexQueueObject((direction+1)%6, distance, h.getLocation(), h.getInitialDirection()));
 				return evaluateQueue(p,w);
 			}
 		}
 		catch(IllegalCoordinateException e) {
 			return evaluateQueue(p,w);
+		}
+		catch(NoSuchElementException e) {
+			return null;
 		}
 	}
 	public int evaluateAhead(Critter c, World w, int distance){

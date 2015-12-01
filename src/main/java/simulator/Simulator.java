@@ -75,9 +75,9 @@ public class Simulator {
 			if (hasWorld()) {
 				for (int i = 0; i < n; i++) {
 					LinkedList<Critter> copy = new LinkedList<>();
-					copy.addAll(world.getCritters());
+					copy.addAll(world.getCritters().values());
 					for (Critter c : copy) {
-						if (!(world.getCritters().contains(c)))
+						if (!(world.getCritters().values().contains(c)))
 							continue;
 						((CritterInterpreter) interpreter).setCritter(c);
 						Outcome o = interpreter.interpret(c.getProgram());
