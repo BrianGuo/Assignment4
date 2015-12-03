@@ -2,6 +2,8 @@ package server;
 
 import static spark.Spark.*;
 import com.google.gson.*;
+import com.google.gson.stream.MalformedJsonException;
+import exceptions.SyntaxError;
 import simulator.Simulator;
 import world.Critter;
 import world.CritterSerializer;
@@ -38,7 +40,14 @@ public class Main {
         post("/login", (request, response) ->{
             Gson userGson = new GsonBuilder().registerTypeAdapter(User.class, new UserSerializer())
                     .setPrettyPrinting().create();
-            User user = userGson.fromJson(request.body(), User.class);
+            User user;
+            try {
+                user = userGson.fromJson(request.body(), User.class);
+            }
+            catch(Exception e){ //java said no MalformedJsonException is thrown in try..when it is...
+                halt(400, "Malformed JSON received.");
+                return "bye";
+            }
             //return user.getLevel() + user.getPassword();
 
 
@@ -96,8 +105,21 @@ public class Main {
         });
 
         post("/world", (request, response) -> {
-            String worldDef = gson.fromJson(request.body(), String.class);
-            return worldDef;
+            WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
+            if(worldDef.description == null){
+                halt(400, "Invalid JSON format");
+            }
+            try{
+                sim.parseWorldString(worldDef.description);
+            }
+            catch(SyntaxError e){
+                halt(400, "Invalid world file given");
+                return "bye";
+            }
+            //TODO: finish this
+
+
+            return worldDef.description;
             //return "hi";
         });
 
