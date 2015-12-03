@@ -33,7 +33,9 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Random;
-
+import org.apache.http.*;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 public class Controller extends java.util.Observable {
 	Random r = new Random();
@@ -47,6 +49,8 @@ public class Controller extends java.util.Observable {
     String loadedEntity = "";
     final Timeline simTimeline;
     final Timeline UITimeline;
+    CloseableHttpClient httpclient = HttpClients.createDefault();
+    
 
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
