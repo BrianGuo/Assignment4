@@ -162,7 +162,7 @@ public class Sensor extends UnaryNode implements Expr {
 			if(w.hexAt(ahead) == null)
 				p.add(new HexQueueObject(c.getDirection(), 1, ahead, c.getDirection() ));
 			for (int i = 1; i < 6; i++) {
-				p.add(new HexQueueObject(c.getDirection()+i, 1, c.getLocation(), c.getDirection()+i));
+				p.add(new HexQueueObject((c.getDirection()+i)%6, 1, c.getLocation(), (c.getDirection()+i)%6));
 			}
 			HexQueueObject food =  evaluateQueue(p, w);
 			if (food == null)
@@ -185,7 +185,7 @@ public class Sensor extends UnaryNode implements Expr {
 				int distance = h.getDistance() + 1;
 				if (w.hexAt(ahead) == null)
 					p.add(new HexQueueObject(direction, distance, ahead, h.getInitialDirection()));
-				p.add(new HexQueueObject((direction-1)%6, distance, h.getLocation(), h.getInitialDirection()));
+				p.add(new HexQueueObject((direction+5)%6, distance, h.getLocation(), h.getInitialDirection()));
 				p.add(new HexQueueObject((direction+1)%6, distance, h.getLocation(), h.getInitialDirection()));
 				return evaluateQueue(p,w);
 			}
