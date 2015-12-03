@@ -93,8 +93,12 @@ public class Main {
             }, 0, 1000);
 */
             return session_id;
+        });
 
-
+        post("/world", (request, response) -> {
+            String worldDef = gson.fromJson(request.body(), String.class);
+            return worldDef;
+            //return "hi";
         });
 
     }

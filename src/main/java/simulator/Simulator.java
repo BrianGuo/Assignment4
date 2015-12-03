@@ -5,6 +5,8 @@ package simulator;
 import world.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -139,26 +141,39 @@ public class Simulator {
 		
 	}
 
-	public void parseWorld(FileReader f){
-		try {
+	public void parseWorld(Reader f) throws FileNotFoundException{
+		//try {
 			this.world = Factory.getWorld(f);
 			if (interpreter != null)
 				((CritterInterpreter) interpreter).setWorld(world);
 			old = new Entity[getWorldColumns()][getWorldRows()];
-		}
+//		}
+		/*
 		catch (SyntaxError e) {
 			System.out.println("Your world file has syntax errors");
 		}
+		*/
 		/*
 		catch(NoSuchElementException e) {
 			System.out.println("There's something REALLY off about your file");
 		}
 		*/
+		/*
 		catch (FileNotFoundException e) {
 			System.out.println("Your File Was Not Found");
 		}
+		*/
 	}
-	
+
+	/**
+	 * Parses a world that is given as a long string of the entire definition.
+	 * @param s String that is the world definition
+	 */
+	public void parseWorldString(String s) throws FileNotFoundException{
+		Reader sr = new StringReader(s);
+		parseWorld(sr);
+	}
+
 	/**
 	 * Returns the timesteps field
 	 * @return   the number of timesteps taken
