@@ -2,14 +2,22 @@ package server;
 
 import static spark.Spark.*;
 import com.google.gson.*;
+import simulator.Simulator;
+import world.Critter;
+import world.CritterSerializer;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main {
     /**
      * HashMap of users, with the key being the user's session_id.
      */
     static HashMap<Integer, User> users = new HashMap<>();
+
+    static Simulator sim = new Simulator();
+    static final Timer timer = new Timer();
 
     /**
      * Gets a logged-in user by session_id.
@@ -43,6 +51,49 @@ public class Main {
                 halt(401, "Could not login with that level/password combination.");
                 return "Unauthorized."; //doesn't make it here
             }
+
+        });
+
+        get("/critters", (request, response) -> {
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
+                    .setPrettyPrinting().create();
+            //JsonObject result = new JsonObject();
+            JsonArray critterArray = new JsonArray();
+            //result.add(critterArray);
+            int session_id;
+            try {
+                session_id = Integer.parseInt(request.queryParams("session_id"));
+            }
+            catch (NumberFormatException e){
+                halt(401, "Illegal session_id"); //ex.  session_id of "Q"
+                return "Unauthorized";
+            }
+
+            User user = users.get(session_id);
+            if(user == null)
+                halt(401, "Invalid session_id"); //ex. session_id of "-1", which will never happen
+
+            for(Critter c: sim.world.getCritters().values()){
+                JsonElement cJ = critterGson.toJsonTree(c); //JsonElement of the critter thing
+                JsonObject cJo = cJ.getAsJsonObject();
+                if(!Security.authorize(user, c)){
+                    cJo.remove("recently_executed_rule");
+                }
+                critterArray.add(cJo);
+            }
+            response.status(201);
+
+            //return critterArray;
+            /*
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    sim.advance(1);
+                }
+            }, 0, 1000);
+*/
+            return session_id;
+
 
         });
 
