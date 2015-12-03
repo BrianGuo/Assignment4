@@ -19,6 +19,8 @@ public class Critter extends Entity{
 	Rule LastRule;
 	Critter lover;
 	int creator;
+	int id;
+
 
 	static Random r = new Random();
 
@@ -46,7 +48,7 @@ public class Critter extends Entity{
 	}
 
 
-	int id;
+
 
 	//TODO: is synchronization on the set enough?
 
