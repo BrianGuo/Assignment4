@@ -154,6 +154,74 @@ public class HexWorld extends ScrollPane implements Observer {
 		}
 	}
 
+	public void drawHex(int col, int row, double HexWidth) {
+		double[] cornersX = new double[]{0, HexWidth / 4, HexWidth * 3 / 4, HexWidth, HexWidth * 3 / 4, HexWidth / 4};
+		double[] cornersY = new double[]{p.getHeight()-5 - (double) Math.sqrt(3) * HexWidth / 4,
+				p.getHeight()-5 - (double) Math.sqrt(3) * HexWidth / 2,
+				p.getHeight()-5 - (double) Math.sqrt(3) * HexWidth / 2,
+				p.getHeight()-5 - (double) Math.sqrt(3) * HexWidth / 4,
+				p.getHeight()-5, p.getHeight()-5};
+		if (col % 2 == 1) {
+			for (int Yoffset = 0; Yoffset < cornersY.length; Yoffset++) {
+				cornersY[Yoffset] = cornersY[Yoffset] - HexWidth * Math.sqrt(3) / 4;
+			}
+		}
+		double xTotal = HexWidth*cols;
+		double xOffset = (p.getWidth() - xTotal)/2;
+		for (int i2 = 0; i2 < cornersX.length; i2++) {
+			cornersX[i2] += 0.75 * HexWidth * col;
+		}
+		double yTotal = HexWidth * Math.sqrt(3) * rows / 2 + HexWidth * Math.sqrt(3) / 4;
+		
+		for (int i3 = 0; i3 < cornersY.length; i3++) {
+			cornersY[i3] -= HexWidth * Math.sqrt(3) / 2 * row;
+			cornersY[i3] += HexWidth * Math.round(col /2.0) * Math.sqrt(3)/2;
+		}
+		double[] total = new double[12];
+		for (int n = 0; n < 6; n++) {
+			total[2 * n] = cornersX[n];
+			total[2 * n + 1] = cornersY[n];
+		}
+		WorldHex P2 = new WorldHex(total);
+		Entity t = controller.getEntityAt(new Coordinate(col,row));
+		if (t == null)
+			P2.setFill(Paint.valueOf("White"));
+		else{
+			double rotate = 0;
+			//File imagefile = null;
+			switch(t.getClass().toString()){
+			case "class world.Critter":
+				rotate = 60.0*((Critter)t).getDirection();
+
+				P2.setFill(new ImagePattern(critterImage, 0, 0, 1, 1, true));
+				break;
+			case "class world.Food":
+				P2.setFill(new ImagePattern(foodImage, 0, 0, 1, 1, true));
+				break;
+			case "class world.Rock":
+				P2.setFill(new ImagePattern(rockImage, 0, 0, 1, 1, true));
+				break;
+			default:
+				break;
+			}
+
+			P2.setRotate(rotate);
+		}
+		//P2.setFill(Paint.valueOf("White"));
+		P2.setStrokeWidth(HexWidth / 20);
+		P2.setStroke(Paint.valueOf("Green"));
+		P2.setCoordinate(col, row);
+		P2.setOnMouseClicked((event) -> {
+			if (event.isStillSincePress()) {
+				if (event.getButton() == MouseButton.PRIMARY)
+					controller.handleFocusClick(event);
+				else if (event.getButton() == MouseButton.SECONDARY)
+					controller.addEntityClick(event);
+			}
+		});
+		p.getChildren().add(P2);
+		world[col][row] = P2;
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {

@@ -43,7 +43,7 @@ public class World{
     public WorldConstants constants;
 
 
-    HashMap<Integer,Critter> critters;
+    LinkedHashMap<Integer,Critter> critters;
 
     /**
      * Front-end using coordinate.
@@ -134,7 +134,7 @@ public class World{
         ROWS = rows;
         map = new Entity[COLUMNS][ROWS];
         this.name = name;
-        critters = new HashMap<Integer, Critter>();
+        critters = new LinkedHashMap<Integer, Critter>();
     }
 
     /**
@@ -153,7 +153,7 @@ public class World{
         ROWS = constants.DEFAULT_ROWS;
         map = new Entity[COLUMNS][ROWS];
         name = new Date(System.currentTimeMillis()).toString();
-        critters = new HashMap<Integer,Critter>();
+        critters = new LinkedHashMap<Integer,Critter>();
         populate();
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.Expose;
 
 import java.lang.reflect.Type;
 
@@ -25,8 +26,9 @@ public class User {
     }
 
     private int session_id = 0;
-    private transient String level;
-    private transient String password;
+
+    private String level;
+    private String password;
 
     public User(String level, String password){
         initID();

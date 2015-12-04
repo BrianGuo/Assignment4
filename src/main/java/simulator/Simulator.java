@@ -74,10 +74,11 @@ public class Simulator {
 		try {
 			if (hasWorld()) {
 				for (int i = 0; i < n; i++) {
-					ArrayList<Critter> copy = new ArrayList<>();
-					copy.addAll(world.getCritters().values());
-					for (Critter c : copy) {
-						if (!(world.getCritters().values().contains(c)))
+					//LinkedList<Critter> copy = new LinkedList<>();
+					LinkedHashMap<Integer, Critter> copy = new LinkedHashMap<>(world.getCritters());
+					//copy.addAll(world.getCritters());
+					for (Critter c : copy.values()) {
+						if (!(world.getCritters().containsValue(c)))
 							continue;
 						((CritterInterpreter) interpreter).setCritter(c);
 						Outcome o = interpreter.interpret(c.getProgram());
