@@ -54,6 +54,7 @@ public class Main {
             if(Security.authenticate(user.getLevel(), user.getPassword())) {
                 users.put(user.getSession_id(), user);
                 response.status(200);
+                response.type("application/json");
                 return userGson.toJson(user);
             }
             else{
@@ -90,7 +91,9 @@ public class Main {
                 }
                 critterArray.add(cJo);
             }
+            response.type("application/json");
             response.status(201);
+
 
             //return critterArray;
             /*
