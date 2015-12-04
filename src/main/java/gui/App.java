@@ -2,16 +2,27 @@ package gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import world.Factory;
 import world.World;
 
 import java.io.File;
+import java.util.Optional;
 
 public class App extends Application {
 	
@@ -50,6 +61,36 @@ public class App extends Application {
 
 			World w = Factory.getRandomWorld();
 			controller.setWorld(w);
+			Dialog<Pair<String,String>> dialog = new Dialog<>();
+			dialog.setTitle("Login Dialog");
+			dialog.setHeaderText("Please log in");
+			ButtonType loginButtonType = new ButtonType("Login", ButtonData.OK_DONE);
+			dialog.getDialogPane().getButtonTypes().add(loginButtonType);
+			dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+			GridPane grid = new GridPane();
+			grid.setHgap(10);
+			grid.setVgap(10);
+			grid.setPadding(new Insets(20, 150, 10, 10));
+			TextField level = new TextField();
+			level.setPromptText("level");
+			PasswordField password = new PasswordField();
+			password.setPromptText("Password");
+			grid.add(new Label("level:"), 0, 0);
+			grid.add(level, 1, 0);
+			grid.add(new Label("Password:"), 0, 1);
+			grid.add(password, 1, 1);
+			//Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+			//loginButton.setDisable(true);
+			dialog.getDialogPane().setContent(grid);
+			dialog.setResultConverter(dialogButton -> {
+			    if (dialogButton == loginButtonType) {
+			        return new Pair<>(level.getText(), password.getText());
+			    }
+			    return null;
+			});
+			Optional<Pair<String,String>> result = dialog.showAndWait();
+			controller.validate(result);
+		
 			HexWorld worldPane = new HexWorld(6,8, controller);
 
 			controller.addObserver(worldPane);
@@ -69,9 +110,9 @@ public class App extends Application {
 			SpecificInfo spec = new SpecificInfo(controller);
 			right.getItems().set(0, spec);
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 	}
 	
 	public void redrawWorld(int cols, int rows) {

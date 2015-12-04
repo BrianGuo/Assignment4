@@ -19,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import simulator.Simulator;
 import world.Coordinate;
 import world.Critter;
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Random;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -82,7 +84,21 @@ public class Controller extends java.util.Observable {
 
         })*/
     }
-
+    
+    public void validate(Optional<Pair<String,String>> session) {
+    	try{
+	    	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/login");
+	    	StringEntity ent = new StringEntity("{\"level\":" + session.get().getKey() + "," + "\"password\":" + session.get().getValue() + "}", ContentType.APPLICATION_JSON);
+	    	System.out.println(ent.getContent().read());
+	    	post.setEntity(ent);
+	    	CloseableHttpResponse response = httpclient.execute(post);
+	    	System.out.println(response.toString());
+    	}
+    	catch(Exception e) {
+    		System.out.println("didn't work");
+    		e.printStackTrace();
+    	}
+    }
 
     /**
      * Gets the coordinates of the hex clicked on the map.
@@ -117,6 +133,7 @@ public class Controller extends java.util.Observable {
         	CloseableHttpResponse response = httpclient.execute(get);
         	HttpEntity ent =  response.getEntity();
         	Gson gson = new GsonBuilder().create();
+        	System.out.print(response);
         	WorldState section = gson.fromJson(ent.toString(), WorldState.class);
         	if (section.getState().length > 0) {
         		return section.getState()[0];
@@ -304,7 +321,7 @@ public class Controller extends java.util.Observable {
         notifyObservers();*/
     	try{
 	    	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/world?session_id=" + sessionID);
-	    	StringEntity params = new StringEntity("\"count\":"+ n, ContentType.APPLICATION_JSON);
+	    	StringEntity params = new StringEntity("{\"count\":"+ n + "}", ContentType.APPLICATION_JSON);
     	}
     	catch(Exception e) {
     		System.out.println("Did not work");
