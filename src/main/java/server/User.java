@@ -12,6 +12,8 @@ import java.lang.reflect.Type;
  * Created by Max on 11/26/2015.
  */
 public class User {
+
+    //session_id of a User always >= 0....until overflows happen.  Which they shouldn't.
     static int last_id = 0;
     public int getSession_id() {
         return session_id;

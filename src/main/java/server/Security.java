@@ -1,5 +1,7 @@
 package server;
 
+import world.Critter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class Security {
      * Precondition: user is well-formed and actually has a level
      * @param user The user to authorize
      * @param level The minimum level required
-     * @return true if authorized, false othwerise
+     * @return true if authorized, false otherwise
      */
     public static boolean authorize(User user, String level){
         String userLevel = user.getLevel();
@@ -45,6 +47,17 @@ public class Security {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Checks that a user has access to a critter.
+     * Returns true if user is an admin or the critter was created by the user.
+     * @param user User requesting access
+     * @param critter Critter to be accessed
+     * @return true if authorized, false otherwise
+     */
+    public static boolean authorize(User user, Critter critter){
+        return user.getLevel().equals("admin") || critter.getId() == user.getSession_id();
     }
 
     //read from web.xml
