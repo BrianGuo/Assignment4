@@ -27,7 +27,7 @@ public class Simulator {
 	Entity[][] old;
 	ArrayList<ArrayList<Integer>> critterDeaths = new ArrayList<>();
 	HashMap<Integer, Critter> oldCritters = new HashMap<>();
-	ArrayList<ArrayList<Coordinate>> changes;
+	public ArrayList<ArrayList<Coordinate>> changes;
 	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	private final Lock readLock = readWriteLock.readLock();
 	private final Lock writeLock = readWriteLock.writeLock();
@@ -46,6 +46,7 @@ public class Simulator {
 	 * @param i  the interpreter to be stored
 	 */
 	public Simulator (World w, Interpreter i) {
+		//TODO: what teimstep does the world  start at?
 		interpreter = i;
 		world = w;
 		if (interpreter != null)
@@ -54,6 +55,7 @@ public class Simulator {
 		old = new Entity[getWorldColumns()][getWorldRows()];
 		oldCritters = new HashMap<>();
 		changes = new ArrayList<>();
+		update();
 	}
 	
 	/**
@@ -422,17 +424,21 @@ public class Simulator {
 
 			for (int i = 0; i < world.getColumns(); i++) {
 				for (int j = 0; j < world.getRows(); j++) {
+					if(world.inBounds(i,j)) {
 
-					if(i >= old.length || j >= old[0].length){ //out of bounds
-						differences.add(new Coordinate(i,j));
-					}
-					else if (getEntityAt(i, j) == null && old[i][j] == null) {
-						continue;
-					}
-					else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
-						//this should work unless we get a collision...
-						//also check for nulls
-						differences.add(new Coordinate(i, j));
+						if (i >= old.length || j >= old[0].length) { //out of bounds
+							differences.add(new Coordinate(i, j));
+						} else if (getEntityAt(i, j) == null && old[i][j] == null) {
+							continue;
+						} else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
+							//this should work unless we get a collision...
+							//also check for nulls
+							differences.add(new Coordinate(i, j));
+
+
+							System.out.println("old:" + old[i][j]);
+							System.out.println("new:" + getEntityAt(i, j));
+						}
 					}
 
 				}
