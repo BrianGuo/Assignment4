@@ -79,6 +79,13 @@ public class SpecificInfo extends AnchorPane implements Observer{
 	public void observe(Observable o) {
 		o.addObserver(this);
 	}
+	
+	
+	@Override
+	public boolean isResizable() {
+		return true;
+	}
+	
 	public void update(java.util.Observable o, Object arg) {
 		Entity e = controller.focused.getValue();
 		File imagefile = null;
