@@ -439,10 +439,15 @@ public class Controller extends java.util.Observable {
     	try{
 	    	HttpPost post = new HttpPost(serverURL + "/CritterWorld/step?session_id=" + sessionID);
 	    	JsonObject jo = new JsonObject();
-	    	jo.addProperty("String", n);
+	    	jo.addProperty("count", n);
 	    	StringEntity params = new StringEntity(gson.toJson(jo), ContentType.APPLICATION_JSON);
+	    	System.out.println(1);
 	    	post.setEntity(params);
-	    	httpclient.execute(post);
+
+			System.out.println(2);
+	    	CloseableHttpResponse response = httpclient.execute(post);
+			response.close();
+			System.out.println(3);
 	    	setChanged();
 	    	notifyObservers();
     	}
@@ -459,7 +464,7 @@ public class Controller extends java.util.Observable {
      */
     synchronized public void advanceContinuously(double speed){
         try{
-        	HttpPost post = new HttpPost("http://" + serverURL + "/CritterWorld/run?session_id=" + sessionID);
+        	HttpPost post = new HttpPost(serverURL + "/CritterWorld/run?session_id=" + sessionID);
         	StringEntity entity = new StringEntity("{\"rate\":" + speed + "}");
             post.setEntity(entity);
             httpclient.execute(post);

@@ -90,6 +90,7 @@ public class Simulator {
 						world.judge(c);
 					}
 					timesteps++;
+					old = world.getMap();
 					update();
 				}
 			} else {
