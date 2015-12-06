@@ -31,6 +31,7 @@ import world.Rock;
 import world.World;
 import world.WorldConstants;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,6 +55,7 @@ import org.apache.http.client.entity.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 public class Controller extends java.util.Observable {
 	Random r = new Random();
@@ -132,9 +134,10 @@ public class Controller extends java.util.Observable {
 
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
-        /*focused.setValue(getEntityAt(c));
+        focused.setValue(getEntityAt(c));
         setChanged();
         notifyObservers();
+        /*
         System.out.println("Checkpoint1");
         System.out.println(c);
         System.out.println(focused);*/
@@ -145,9 +148,9 @@ public class Controller extends java.util.Observable {
     	HttpGet get = new HttpGet("http://localhost:4567/CritterWorld/world?update_since" + lastTimestep + "&"
     	        + "from_row=" + c.getRow() + "&"
     	        + "to_row=" + c.getRow() + "&"
-    	        + "from_col" + c.getCol() + "&"
-    	        + "to_col" + c.getCol() + "&" 
-    	        + "session_id" + sessionID);
+    	        + "from_col=" + c.getCol() + "&"
+    	        + "to_col=" + c.getCol() + "&" 
+    	        + "session_id=" + sessionID);
         try{
         	CloseableHttpResponse response = httpclient.execute(get);
         	HttpEntity ent =  response.getEntity();
@@ -155,7 +158,24 @@ public class Controller extends java.util.Observable {
         	System.out.print(response);
         	WorldState section = gson.fromJson(ent.toString(), WorldState.class);
         	if (section.getState().length > 0) {
-        		return section.getState()[0];
+        		HexEntity h = section.getState()[0];
+        		int row = h.getRow();
+        		int col = h.getCol();
+        		switch(section.getState()[0].getType()){
+	    		case "rock":
+	    			Rock r = new Rock(col, row, null);
+	    			return r;
+	    		case "food":
+	    			Food f = new Food(col, row, h.getValue(), null);
+	    			return f;
+	    		case "critter":
+	    			Critter cr = new Critter(h.getMem(), h.getDirection(), h.getSpecID(), new Coordinate(col, row), null, null);
+	    			return cr;
+	    		case "nothing":
+	    			return new NoEntity(col,row);    			
+	    		default:
+	    			return null;
+	    		}
         	}
         	else
         		return null;
@@ -203,11 +223,19 @@ public class Controller extends java.util.Observable {
             notifyObservers();*/
         	FileReader f = new FileReader(file);
         	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/world?session_id" + sessionID);
-        	FileEntity fileEnt = new FileEntity(file,ContentType.APPLICATION_JSON);
-        	post.setEntity(fileEnt);
+        	HttpPost post = new HttpPost("http://" + serverURL + "/CritterWorld/world?session_id=" + sessionID);
+        	BufferedReader reader = new BufferedReader(new FileReader(file));
+        	String description = "";
+        	String next = reader.readLine();
+        	while(next != null) {
+        		description += next;
+        		next = reader.readLine() + "\n"; 
+        	}
+        	StringEntity entity = new StringEntity("{\"description\":" + description + "}");
+        	post.setEntity(entity);
         	CloseableHttpResponse response = httpclient.execute(post);
-        	
+        	setChanged();
+        	notifyObservers();
         	
         }
         catch(FileNotFoundException e){
@@ -269,8 +297,8 @@ public class Controller extends java.util.Observable {
         	loaded.setLocation(coordinate);
         //if(sim.getEntityAt(coordinate) != null) return;
         //sim.addEntity(loaded);
-        //setChanged();
-        //notifyObservers();
+        setChanged();
+        notifyObservers();
         
        
     }
@@ -307,12 +335,12 @@ public class Controller extends java.util.Observable {
                 alert.setContentText("The number specified was very large\n World may be cluttered");
                 alert.showAndWait();
             }
-		    for(int i = 0; i < numTimes; i++ ) {
+		    /*for(int i = 0; i < numTimes; i++ ) {
 			    sim.addRandomEntity(loaded);
 		        loadCritter(loadedEntity);
 		        setChanged();
 		        notifyObservers();
-		    }
+		    }*/
 		    HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/critters?session_id=" + sessionID);
             NewCritterPositions inputVar = new NewCritterPositions((Critter)loaded);
             inputVar.setNum(numTimes);
@@ -321,11 +349,14 @@ public class Controller extends java.util.Observable {
             post.setEntity(myEntity);
             try{
             	httpclient.execute(post);
+            	setChanged();
+            	notifyObservers();
             }
             catch(Exception e) {
             	System.out.println("didn't work");
             	e.printStackTrace();
             }
+            
 	    }
     }
 
@@ -334,39 +365,39 @@ public class Controller extends java.util.Observable {
         return sim.world.name;
     }
 
-    public Map updateWorld(int updateSince) {
+    public WorldState updateWorld(int updateSince) {
     	try{
 	    	HttpGet get = new HttpGet("http://" + serverURL + "/CritterWorld/world?session_id=" + sessionID + "&update_since=" + updateSince);
 	    	CloseableHttpResponse response = httpclient.execute(get);
 	    	HttpEntity e = response.getEntity();
-	    	Map map = gson.fromJson(EntityUtils.toString(e), Map.class);
-	    	Map[] entities = (Map[]) map.get("state");
-	    	ArrayList<Entity> state = new ArrayList<Entity>();
-	    	for (Map m : entities) {
-	    		int row = Integer.parseInt((String)m.get("row"));
-	    		int col = Integer.parseInt((String)m.get("col"));
-	    		switch((String) m.get("type")){
+	    	WorldState state = gson.fromJson(EntityUtils.toString(e), WorldState.class);
+	    	HexEntity[] entities =  state.getState();
+	    	ArrayList<Entity> state2 = new ArrayList<Entity>();
+	    	for (HexEntity m : entities) {
+	    		int row = m.getRow();
+	    		int col = m.getCol();
+	    		switch(m.getType()){
 	    		case "rock":
 	    			Rock r = new Rock(col, row, null);
-	    			state.add(r);
+	    			state2.add(r);
 	    			break;
 	    		case "food":
-	    			Food f = new Food(col, row, Integer.parseInt((String)m.get("value")), null);
-	    			state.add(f);
+	    			Food f = new Food(col, row, m.getValue(), null);
+	    			state2.add(f);
 	    			break;
 	    		case "critter":
-	    			Critter cr = new Critter((int[])m.get("mem"), (int)m.get("direction"), (String)m.get("species_id"), new Coordinate((int)m.get("col"), (int)m.get("row")), null, null);
-	    			state.add(cr);
+	    			Critter cr = new Critter(m.getMem(), m.getDirection(), m.getSpecID(), new Coordinate(col, row), null, null);
+	    			state2.add(cr);
 	    			break;
 	    		case "nothing":
-	    			state.add(new NoEntity((int)m.get("col"), (int)m.get("row")));
+	    			state2.add(new NoEntity(col,row));
 	    			break;
 	    		default:
 	    			break;
 	    		}
 	    	}
-	    	map.put("diff", state);
-	    	return map;
+	    	state.setRefactored(state2);;
+	    	return state;
     	}
     	catch(Exception e) {
     		System.out.println("didn't work");
@@ -394,9 +425,18 @@ public class Controller extends java.util.Observable {
      * Called continuously when advanced continuously
      * Does NOT notify observers; that is called manually
      */
-    synchronized public void advanceContinuously(){
-        sim.advance(1);
-        //System.out.println("?");
+    synchronized public void advanceContinuously(double speed){
+        try{
+        	HttpPost post = new HttpPost("http://" + serverURL + "/CritterWorld/run?session_id=" + sessionID);
+        	StringEntity entity = new StringEntity("{\"rate\":" + speed + "}");
+            post.setEntity(entity);
+            httpclient.execute(post);
+        }
+        catch(Exception e) {
+        	System.out.println("Didn't work");
+        	e.printStackTrace();
+        }
+        
     }
 
     synchronized public ArrayList<Coordinate> diffWorld(){
@@ -422,7 +462,7 @@ public class Controller extends java.util.Observable {
         KeyFrame k2;
         if(speed != 0.0) {
             k1 = new KeyFrame(Duration.millis(1000 / speed), event -> {
-                advanceContinuously();
+                advanceContinuously(speed);
             });
             k2 = new KeyFrame(Duration.millis(1000 / 30.0), event -> {
                 setChanged();

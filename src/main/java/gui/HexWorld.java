@@ -78,10 +78,10 @@ public class HexWorld extends ScrollPane implements Observer {
 	
 	
 	public void HexPane(int updateSince){
-		Map m = controller.updateWorld(updateSince);
-		if (Integer.parseInt((String)m.get("cols"))!= this.cols || Integer.parseInt((String)m.get("rows")) != this.rows){
-			this.cols = Integer.parseInt((String)m.get("cols"));
-			this.rows = Integer.parseInt((String)m.get("rows"));
+		WorldState m = controller.updateWorld(updateSince);
+		if (m.getCols()!= this.cols || m.getRows() != this.rows){
+			this.cols = m.getCols();
+			this.rows = m.getRows();
 			world = new WorldHex[cols][rows];
 			p.getChildren().clear();
 			
@@ -96,11 +96,11 @@ public class HexWorld extends ScrollPane implements Observer {
 				}
 			}
 		}
-		ArrayList<Entity> diff = (ArrayList<Entity>)m.get("diff");
+		ArrayList<Entity> diff = m.getRefactored();
 		double HexWidth = p.getWidth()/cols;
 		for (Entity e: diff)
 			drawHex(e.getCol(),e.getRow(),HexWidth, e);
-		lastUpdate = Integer.parseInt((String) m.get("current_version_number"));
+		lastUpdate = m.getCurrentVersion();
 	}
 
 	public void drawHex(int col, int row, double HexWidth, Entity e) {

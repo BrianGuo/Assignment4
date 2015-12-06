@@ -128,8 +128,8 @@ public class GenInfo extends TabPane implements Observer{
 			}
 			
 		}*/
-		Map m = controller.updateWorld(updateSince);
-		updateTimesteps(Integer.parseInt((String)m.get("current_timestep")));
-		updateCritters(Integer.parseInt((String)m.get("population")));
+		WorldState m = controller.updateWorld(updateSince);
+		updateTimesteps(m.getTimestep());
+		updateCritters(m.getPopulation());
 	}
 }
