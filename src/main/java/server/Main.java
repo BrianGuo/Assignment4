@@ -23,7 +23,7 @@ public class Main {
     static HashMap<Integer, User> users = new HashMap<>();
 
     static Simulator sim = new Simulator();
-    static final Timer timer = new Timer();
+    static Timer timer = new Timer();
     static private double rate;
 
     /**
@@ -92,12 +92,7 @@ public class Main {
 
             //return critterArray;
             /*
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    sim.advance(1);
-                }
-            }, 0, 1000);
+
 */
             //TODO: complete
             return "hi";
@@ -145,13 +140,53 @@ public class Main {
             else{
                 count = 1;
             }
-            if (count <= 0) count = 1;
+            if (count < 0)
+                halt(406, "Not acceptable--negative count");
 
-
+            //TODO: need synchronization?
             sim.advance(count);
+            response.type("text/plain");
 
-            return sim.getTimesteps() + sim.getCurrent_version_number();
+            return "Ok";
         });
+
+        post("/*/run", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "write")){
+                halt(401, "Unauthorized");
+            }
+            Map<String, Double> m = gson.fromJson(request.body(), Map.class);
+            double simRate;
+            if(m!= null && m.containsKey("rate")){
+                simRate = m.get("rate");
+                if(simRate < 0){
+                    halt(406);
+                }
+            }
+            else{
+                halt(406, "No rate specified");
+                return "invalid";
+            }
+
+            rate = simRate;
+
+            timer.cancel();
+            if(rate > 0) {
+                timer = new Timer();
+
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        System.out.println(sim.getTimesteps());
+                        System.out.println(sim.getCurrent_version_number());
+                        sim.advance(1);
+                    }
+                }, 0, (int) ((1 / rate) * 1000));
+            }
+            response.type("text/plain");
+            return "Ok";
+        });
+
 
     }
 
