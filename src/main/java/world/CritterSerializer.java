@@ -12,16 +12,16 @@ public class CritterSerializer implements JsonSerializer<Critter> {
     @Override
     public JsonElement serialize(Critter critter, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-        String id = String.valueOf(critter.getId());
+        int id = critter.getId();
         String creator = String.valueOf(critter.creator);
         String species_id = critter.getSpecies().replace(' ', '_'); //sanitize spaces
         String program = critter.getProgram().toString();
-        System.out.println(program);
-        String row = String.valueOf(critter.getLocation().getRow());
-        String col = String.valueOf(critter.getLocation().getCol());
-        String memory = Arrays.toString(critter.attributes);
-        String recently_executed_rule = "3"; //TODO: replace with actual one
-        String direction = String.valueOf(critter.getDirection());
+
+        int row = critter.getLocation().getRow();
+        int col = critter.getLocation().getCol();
+        int[] memory = critter.attributes;
+        int recently_executed_rule = critter.recentlyExecutedRule;
+        int direction = critter.getDirection();
 
         object.addProperty("id", id);
         //object.addProperty("creator", creator);
@@ -30,11 +30,14 @@ public class CritterSerializer implements JsonSerializer<Critter> {
         //object.addProperty("program", program);
         object.addProperty("row", row);
         object.addProperty("col", col);
-        object.addProperty("memory", memory);
+
+        JsonArray e = new JsonArray();
+        for(int i: memory){
+            e.add(i);
+        }
+        object.add("mem", e);
         object.addProperty("recently_executed_rule", recently_executed_rule);
         object.addProperty("direction", direction);
-        System.out.println("??");
-        System.out.println(object.get("program"));
         return object;
     }
 }

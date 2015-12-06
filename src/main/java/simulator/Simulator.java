@@ -52,7 +52,8 @@ public class Simulator {
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
 		current_version_number = 0;
-		old = new Entity[getWorldColumns()][getWorldRows()];
+		//this makes it match the public testing server's behavior
+		old = new Entity[0][0];
 		oldCritters = new HashMap<>();
 		changes = new ArrayList<>();
 		update();
@@ -89,6 +90,7 @@ public class Simulator {
 						world.judge(c);
 					}
 					timesteps++;
+					old = world.getMap();
 					update();
 				}
 			} else {
@@ -431,13 +433,11 @@ public class Simulator {
 						} else if (getEntityAt(i, j) == null && old[i][j] == null) {
 							continue;
 						} else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
+
+
 							//this should work unless we get a collision...
 							//also check for nulls
 							differences.add(new Coordinate(i, j));
-
-
-							System.out.println("old:" + old[i][j]);
-							System.out.println("new:" + getEntityAt(i, j));
 						}
 					}
 

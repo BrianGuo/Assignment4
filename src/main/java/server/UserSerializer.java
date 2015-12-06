@@ -15,8 +15,7 @@ public class UserSerializer implements JsonSerializer<User> {
     @Override
     public JsonElement serialize(User user, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject object = new JsonObject();
-        String id = Integer.toString(user.getSession_id());
-        object.addProperty("session_id", id);
+        object.addProperty("session_id", user.getSession_id());
         return object;
     }
 }
