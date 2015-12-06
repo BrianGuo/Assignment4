@@ -52,7 +52,8 @@ public class Simulator {
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
 		current_version_number = 0;
-		old = new Entity[getWorldColumns()][getWorldRows()];
+		//this makes it match the public testing server's behavior
+		old = new Entity[0][0];
 		oldCritters = new HashMap<>();
 		changes = new ArrayList<>();
 		update();
@@ -502,6 +503,8 @@ public class Simulator {
 		try{
 			HashSet<Integer> deadCritters = new HashSet<>();
 			for(int i = step; i < critterDeaths.size(); i++){
+				System.out.println("i:" + i);
+				System.out.println("step:" + step);
 				for(int j = 0; j < critterDeaths.get(i).size(); j++){
 					deadCritters.add(critterDeaths.get(i).get(j));
 				}

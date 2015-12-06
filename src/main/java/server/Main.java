@@ -237,7 +237,7 @@ public class Main {
         }
         //if(update_since < 0) update_since = 0;
 
-        root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
+
         Gson entityGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
                 .setPrettyPrinting().disableHtmlEscaping().create();
 
@@ -256,6 +256,7 @@ public class Main {
                     }
                 }
             }
+            root.add("dead_critters", gson.toJsonTree(sim.getObituaries(0).toArray()));
         }
         else {
             for (Coordinate c : sim.getDiffs(update_since)) {
@@ -269,6 +270,7 @@ public class Main {
                     critterArray.add(cJo);
                 }
             }
+            root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
         }
 
         response.type("application/json");
