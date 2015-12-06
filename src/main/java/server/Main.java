@@ -5,15 +5,11 @@ import com.google.gson.*;
 //import com.google.gson.
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
-import parse.ParserFactory;
 import simulator.Simulator;
 import simulator.WorldSerializer;
 import world.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -86,12 +82,8 @@ public class Main {
             //result.add(critterArray);
             User user = authenticate(request);
             for(Critter c: sim.world.getCritters().values()){
-                JsonElement cJ = critterGson.toJsonTree(c); //JsonElement of the critter thing
-                JsonObject cJo = cJ.getAsJsonObject();
-                if(!Security.authorize(user, c)){
-                    cJo.remove("recently_executed_rule");
-                    cJo.remove("program");
-                }
+                JsonObject cJo = critterGson.toJsonTree(c).getAsJsonObject(); //JsonElement of the critter thing
+                censorCritter(user, c, cJo);
                 critterArray.add(cJo);
             }
             response.type("application/json");
@@ -125,50 +117,69 @@ public class Main {
             //return "hi";
         });
 
+        //when update_since is negative, the entire world is returned.
         get("/*/world", (request, response) -> {
             readLock.lock();
             try {
+                User user = authenticate(request);
                 Gson worldGson = new GsonBuilder().registerTypeAdapter(Simulator.class, new WorldSerializer())
                         .setPrettyPrinting().create();
                 JsonObject root = worldGson.toJsonTree(sim).getAsJsonObject();
                 root.addProperty("rate", rate);
-                System.out.println(request.queryParams("update_since"));
-                System.out.println(Integer.parseInt(request.queryParams("update_since")));
-
-
                 int update_since;
                 try{
                     update_since = Integer.parseInt(request.queryParams("update_since"));
                     root.addProperty("update_since", request.queryParams("update_since"));
                 }
                 catch(NumberFormatException e){
-                    update_since = 0;
+                    update_since = -1;
                 }
-                if(update_since < 0) update_since = 0;
+                //if(update_since < 0) update_since = 0;
 
                 root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
-
-
-                /*RuntimeTypeAdapterFactory<Entity> adapter =
-                        RuntimeTypeAdapterFactory
-                                .of(Entity.class)
-                                .registerSubtype(Rock.class)
-                                .registerSubtype(Critter.class)
-                                .registerSubtype(Food.class)
-                                .registerSubtype(Nothing.class);
-
-                Gson gson2 = new GsonBuilder().registerTypeAdapterFactory(adapter).setPrettyPrinting().create();
-*/
                 Gson entityGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
                         .setPrettyPrinting().disableHtmlEscaping().create();
 
-                System.out.println(entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
-                        ,Entity.class));
 
+
+
+                JsonArray critterArray = new JsonArray();
+                //result.add(critterArray);
+
+                //if update_since is not given, return ENTIRE world without diffing
+
+                if(update_since < 0){
+                    for(int i = 0; i < sim.getWorldColumns(); i++){
+                        for(int j = 0; j < sim.getWorldColumns(); j++){
+                            if(sim.world.inBounds(i,j)){
+                                Entity e = sim.getEntityAt(i,j);
+                                JsonObject cJo = getCoordAsJson(user, entityGson, i, j, e);
+                                critterArray.add(cJo);
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (Coordinate c : sim.getDiffs(update_since)) {
+                        //System.out.println(sim.getDiffs(update_since));
+                        System.out.println(sim.changes);
+                        Entity e = sim.getEntityAt(c);
+                        System.out.println(e);
+                        JsonObject cJo = getCoordAsJson(user, entityGson, c.getCol(), c.getRow(), e);
+                        critterArray.add(cJo);
+                    }
+                }
 
                 response.type("application/json");
-                return entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
-                        ,Entity.class).replace("\\n", "\n");
+
+                root.addProperty("current_version_number", sim.getCurrent_version_number());
+                root.addProperty("current_timestep", sim.getTimesteps());
+                root.add("state", critterArray);
+                return root;
+                //return entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
+//                        ,Entity.class).replace("\\n", "\n");
+
+
                 //TODO: FINISH
                 //return "hi";
             }
@@ -207,18 +218,17 @@ public class Main {
 
         post("/*/run", (request, response) -> {
             User user = authenticate(request);
-            if(!Security.authorize(user, "write")){
+            if (!Security.authorize(user, "write")) {
                 halt(401, "Unauthorized");
             }
             Map<String, Double> m = gson.fromJson(request.body(), Map.class);
             double simRate;
-            if(m!= null && m.containsKey("rate")){
+            if (m != null && m.containsKey("rate")) {
                 simRate = m.get("rate");
-                if(simRate < 0){
+                if (simRate < 0) {
                     halt(406);
                 }
-            }
-            else{
+            } else {
                 halt(406, "No rate specified");
                 return "invalid";
             }
@@ -226,7 +236,7 @@ public class Main {
             rate = simRate;
 
             timer.cancel();
-            if(rate > 0) {
+            if (rate > 0) {
                 timer = new Timer();
 
                 timer.scheduleAtFixedRate(new TimerTask() {
@@ -243,6 +253,24 @@ public class Main {
         });
 
 
+    }
+
+    private static JsonObject getCoordAsJson(User user, Gson entityGson, int i, int j, Entity e) {
+        if(e == null)
+            e = new Nothing(i,j);
+        JsonObject cJo = entityGson.toJsonTree(e, Entity.class).getAsJsonObject(); //JsonElement of the critter thing
+        System.out.println(cJo);
+        if (e instanceof Critter) {
+            censorCritter(user, (Critter) e, cJo);
+        }
+        return cJo;
+    }
+
+    private static void censorCritter(User user, Critter c, JsonObject cJo) {
+        if(!Security.authorize(user, c)){
+            cJo.remove("recently_executed_rule");
+            cJo.remove("program");
+        }
     }
 
     /**

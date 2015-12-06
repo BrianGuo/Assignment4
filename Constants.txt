@@ -4,8 +4,8 @@ ENERGY_PER_SIZE 500 {How much energy a critter can have per point of size}
 FOOD_PER_SIZE 200 {How much food is created per point of size when a critter dies}
 MAX_SMELL_DISTANCE 10 {Maximum distance at which food can be sensed}
 ROCK_VALUE -1 {The value reported when a rock is sensed}
-COLUMNS 50 {Default number of columns in the world map}
-ROWS 68 {Default number of rows in the world map}
+COLUMNS 5 {Default number of columns in the world map}
+ROWS 7 {Default number of rows in the world map}
 MAX_RULES_PER_TURN 999 {The maximum number of rules that can be run per critter turn}
 SOLAR_FLUX 1 {Energy gained from sun by doing nothing}
 MOVE_COST 3 {Energy cost of moving (per unit size)}
