@@ -7,17 +7,10 @@ import java.util.Observer;
 
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import jdk.nashorn.internal.runtime.regexp.JoniRegExp.Factory;
 import world.Critter;
 import world.World;
 
@@ -120,7 +113,7 @@ public class GenInfo extends TabPane implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		updateTimesteps(controller.sim.getTimesteps());
+		updateTimesteps(controller.sim.getCurrent_version_number());
 		updateCritters(controller.sim.getNumCritters());
 		if (!(controller.sim.world.equals( this.world))) {
 			addWorldTab(controller.sim.world);

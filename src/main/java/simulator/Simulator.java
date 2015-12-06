@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import exceptions.MissingElementException;
@@ -16,7 +15,6 @@ import interpret.*;
 import interpret.CritterInterpreter;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
@@ -25,7 +23,7 @@ public class Simulator {
 	
 	Interpreter interpreter;
 	public World world;
-	int timesteps;
+	int current_version_number;
 	Entity[][] old;
 	ArrayList<ArrayList<Integer>> critterDeaths = new ArrayList<>();
 	HashMap<Integer, Critter> oldCritters = new HashMap<>();
@@ -33,10 +31,9 @@ public class Simulator {
 	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	private final Lock readLock = readWriteLock.readLock();
 	private final Lock writeLock = readWriteLock.writeLock();
+	private int timesteps;
 
 
-
-	
 	/**
 	 * Regular Constructor Used entirely for testing purposes
 	 * This shouldn't be used
@@ -54,7 +51,7 @@ public class Simulator {
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
-		timesteps = 0;
+		current_version_number = 0;
 		old = new Entity[getWorldColumns()][getWorldRows()];
 		oldCritters = new HashMap<>();
 		changes = new ArrayList<>();
@@ -66,13 +63,13 @@ public class Simulator {
 	 */
 	public Simulator (Interpreter i) {
 		interpreter = i;
-		timesteps = 0;
+		current_version_number = 0;
 		changes = new ArrayList<>();
 	}
 
 	/**
-	 * advances the world a number of timesteps
-	 * @param n   the number of timesteps to advance the world
+	 * advances the world a number of current_version_number
+	 * @param n   the number of current_version_number to advance the world
 	 */
 	public void advance(int n){
 		writeLock.lock();
@@ -90,6 +87,7 @@ public class Simulator {
 						world.evaluate(o);
 						world.judge(c);
 					}
+					timesteps++;
 					update();
 				}
 			} else {
@@ -176,13 +174,13 @@ public class Simulator {
 	}
 
 	/**
-	 * Returns the timesteps field
-	 * @return   the number of timesteps taken
+	 * Returns the current_version_number field
+	 * @return   the number of current_version_number taken
 	 */
-	public int getTimesteps() {
+	public int getCurrent_version_number() {
 		readLock.lock();
 		try {
-			return timesteps;
+			return current_version_number;
 		}
 		finally{
 			readLock.unlock();
@@ -381,7 +379,7 @@ public class Simulator {
 	private void update() {
 		changes.add(diffWorld());
 		critterDeaths.add(diffObituaries());
-		timesteps++;
+		current_version_number++;
 	}
 
 	/**
@@ -510,4 +508,7 @@ public class Simulator {
 		}
 	}
 
+	public int getTimesteps() {
+		return timesteps;
+	}
 }
