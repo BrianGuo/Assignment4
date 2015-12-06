@@ -25,7 +25,7 @@ public class CritterSerializer implements JsonSerializer<Critter> {
         String recently_executed_rule = "3"; //TODO: replace with actual one
 
         object.addProperty("id", id);
-        object.addProperty("creator", creator);
+        //object.addProperty("creator", creator);
         object.addProperty("species_id", species_id);
         object.addProperty("program", program);
         object.addProperty("row", row);

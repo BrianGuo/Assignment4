@@ -7,6 +7,7 @@ import exceptions.SyntaxError;
 import simulator.Simulator;
 import world.Critter;
 import world.CritterSerializer;
+import world.Factory;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -33,11 +34,12 @@ public class Main {
     public static void main(String[] args) {
         Gson gson = new Gson();
         Security.init();
+        sim.setWorld(Factory.getRandomWorld());
 
-        get("/hello", (request, response) -> "Hello World");
+        get("/*/hello", (request, response) -> "Hello World");
 
         //Done
-        post("/login", (request, response) ->{
+        post("/*/login", (request, response) ->{
             Gson userGson = new GsonBuilder().registerTypeAdapter(User.class, new UserSerializer())
                     .setPrettyPrinting().create();
             User user;
@@ -64,7 +66,7 @@ public class Main {
 
         });
 
-        get("/critters", (request, response) -> {
+        get("/*/critters", (request, response) -> {
             Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
                     .setPrettyPrinting().create();
             //JsonObject result = new JsonObject();
@@ -88,6 +90,7 @@ public class Main {
                 JsonObject cJo = cJ.getAsJsonObject();
                 if(!Security.authorize(user, c)){
                     cJo.remove("recently_executed_rule");
+                    cJo.remove("program");
                 }
                 critterArray.add(cJo);
             }
@@ -107,7 +110,7 @@ public class Main {
             return session_id;
         });
 
-        post("/world", (request, response) -> {
+        post("/*/world", (request, response) -> {
             WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
             if(worldDef.description == null){
                 halt(400, "Invalid JSON format");
