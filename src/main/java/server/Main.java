@@ -90,17 +90,37 @@ public class Main {
             }
             response.type("application/json");
             response.status(201);
+            return critterArray;
+        });
 
+        get("/*/critter", (request, response) -> {
+            User user = authenticate(request);
+            int id;
+            try {
+                System.out.println(request.queryParams("id"));
+                id = Integer.parseInt(request.queryParams("id"));
+            }
+            catch(NumberFormatException e){
+                halt(400, "Invalid id provided");
+                return "no";
+            }
+            Critter wanted = sim.world.getCritters().get(id);
 
-            //return critterArray;
-            /*
-
-*/
-            //TODO: complete
-            return "hi";
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+                    .setPrettyPrinting().create();
+            JsonObject cJo = critterGson.toJsonTree(wanted, Entity.class).getAsJsonObject();
+            censorCritter(user, wanted, cJo);
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(cJo);
         });
 
         post("/*/world", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "admin")){
+                halt(401, "Only an admin can create a new world");
+                return "no";
+            }
             WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
             if(worldDef == null || worldDef.description == null){
                 halt(400, "Invalid JSON format");
@@ -125,7 +145,6 @@ public class Main {
         //when update_since is negative, the entire world is returned.
         //entire world is also returned unless all 4 bounds provided
         get("/*/world", (request, response) -> {
-            System.out.println("reading world state");
             readLock.lock();
             try {
                 User user = authenticate(request);
