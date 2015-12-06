@@ -7,6 +7,7 @@ import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import parse.ParserFactory;
 import simulator.Simulator;
+import simulator.WorldSerializer;
 import world.Critter;
 import world.CritterSerializer;
 import world.Factory;
@@ -15,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Main {
     /**
@@ -25,6 +29,12 @@ public class Main {
     static Simulator sim = new Simulator();
     static Timer timer = new Timer();
     static private double rate;
+
+
+    static private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    static private final Lock readLock = readWriteLock.readLock();
+    static private final Lock writeLock = readWriteLock.writeLock();
+    //probably should have just put locks in here to begin with...
 
     /**
      * Gets a logged-in user by session_id.
@@ -118,8 +128,34 @@ public class Main {
         });
 
         get("/*/world", (request, response) -> {
-            //TODO: FINISH
-            return "hi";
+            readLock.lock();
+            try {
+                Gson worldGson = new GsonBuilder().registerTypeAdapter(Simulator.class, new WorldSerializer())
+                        .setPrettyPrinting().create();
+                JsonObject root = worldGson.toJsonTree(sim).getAsJsonObject();
+                root.addProperty("rate", rate);
+                System.out.println(request.queryParams("update_since"));
+                System.out.println(Integer.parseInt(request.queryParams("update_since")));
+
+
+                int update_since;
+                try{
+                    update_since = Integer.parseInt(request.queryParams("update_since"));
+                    root.addProperty("update_since", request.queryParams("update_since"));
+                }
+                catch(NumberFormatException e){
+                    update_since = 0;
+                }
+                if(update_since < 0) update_since = 0;
+
+                root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
+
+                //TODO: FINISH
+                return "hi";
+            }
+            finally{
+                readLock.unlock();
+            }
         });
 
 
@@ -190,7 +226,12 @@ public class Main {
 
     }
 
-
+    /**
+     * Looks at a request that contains a session_id and checks that it corresponds to a valid user.
+     * Halts with 400 response if illegal ID (ex. a letter), 401 response if user not found
+     * @param request request
+     * @return The User logged in if valid
+     */
     private static User authenticate(spark.Request request) {
         int session_id = -1;
         try {
