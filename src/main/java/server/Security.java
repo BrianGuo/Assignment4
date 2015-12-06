@@ -57,7 +57,7 @@ public class Security {
      * @return true if authorized, false otherwise
      */
     public static boolean authorize(User user, Critter critter){
-        return user.getLevel().equals("admin") || critter.getId() == user.getSession_id();
+        return user.getLevel().equals("admin") || critter.creator == user.getSession_id();
     }
 
     //read from web.xml

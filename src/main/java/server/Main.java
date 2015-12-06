@@ -106,12 +106,17 @@ public class Main {
             }
             Critter wanted = sim.world.getCritters().get(id);
 
-            Gson critterGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
                     .setPrettyPrinting().create();
-            JsonObject cJo = critterGson.toJsonTree(wanted, Entity.class).getAsJsonObject();
-            censorCritter(user, wanted, cJo);
             response.status(200);
             response.type("application/json");
+            
+            if(wanted == null){
+                return gson.toJson(new JsonObject());
+            }
+            JsonObject cJo = critterGson.toJsonTree(wanted, Critter.class).getAsJsonObject();
+            censorCritter(user, wanted, cJo);
+
             return gson.toJson(cJo);
         });
 
