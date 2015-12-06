@@ -7,6 +7,8 @@ import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import simulator.Simulator;
 import simulator.WorldSerializer;
+import spark.Request;
+import spark.Response;
 import world.*;
 
 import java.util.*;
@@ -100,8 +102,9 @@ public class Main {
 
         post("/*/world", (request, response) -> {
             WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
-            if(worldDef.description == null){
+            if(worldDef == null || worldDef.description == null){
                 halt(400, "Invalid JSON format");
+                return "null";
             }
             try{
                 sim.parseWorldString(worldDef.description);
@@ -122,71 +125,30 @@ public class Main {
             readLock.lock();
             try {
                 User user = authenticate(request);
-                Gson worldGson = new GsonBuilder().registerTypeAdapter(Simulator.class, new WorldSerializer())
-                        .setPrettyPrinting().create();
-                JsonObject root = worldGson.toJsonTree(sim).getAsJsonObject();
-                root.addProperty("rate", rate);
-                int update_since;
+
                 try{
-                    update_since = Integer.parseInt(request.queryParams("update_since"));
-                    root.addProperty("update_since", request.queryParams("update_since"));
+                    int from_row = Integer.parseInt(request.queryParams("from_row"));
+                    int to_row = Integer.parseInt(request.queryParams("to_row"));
+                    int from_col = Integer.parseInt(request.queryParams("from_col"));
+                    int to_col = Integer.parseInt(request.queryParams("to_col"));
+
+
                 }
                 catch(NumberFormatException e){
-                    update_since = -1;
-                }
-                //if(update_since < 0) update_since = 0;
-
-                root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
-                Gson entityGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
-                        .setPrettyPrinting().disableHtmlEscaping().create();
-
-
-
-
-                JsonArray critterArray = new JsonArray();
-                //result.add(critterArray);
-
-                //if update_since is not given, return ENTIRE world without diffing
-
-                if(update_since < 0){
-                    for(int i = 0; i < sim.getWorldColumns(); i++){
-                        for(int j = 0; j < sim.getWorldColumns(); j++){
-                            if(sim.world.inBounds(i,j)){
-                                Entity e = sim.getEntityAt(i,j);
-                                JsonObject cJo = getCoordAsJson(user, entityGson, i, j, e);
-                                critterArray.add(cJo);
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Coordinate c : sim.getDiffs(update_since)) {
-                        //System.out.println(sim.getDiffs(update_since));
-                        System.out.println(sim.changes);
-                        Entity e = sim.getEntityAt(c);
-                        System.out.println(e);
-                        JsonObject cJo = getCoordAsJson(user, entityGson, c.getCol(), c.getRow(), e);
-                        critterArray.add(cJo);
-                    }
+                    halt(401, "Invalid bounds provided");
+                    return "Invalid";
                 }
 
-                response.type("application/json");
-
-                root.addProperty("current_version_number", sim.getCurrent_version_number());
-                root.addProperty("current_timestep", sim.getTimesteps());
-                root.add("state", critterArray);
-                return root;
-                //return entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
-//                        ,Entity.class).replace("\\n", "\n");
+                //if(from_row >= 0 && )
 
 
-                //TODO: FINISH
-                //return "hi";
+                return handleWorldStatus(gson, request, response, user, 0, sim.getWorldRows(), 0, sim.getWorldColumns());
             }
             finally{
                 readLock.unlock();
             }
         });
+
 
 
         post("/*/step", (request, response) -> {
@@ -253,6 +215,64 @@ public class Main {
         });
 
 
+    }
+
+    private static Object handleWorldStatus(Gson gson, Request request, Response response, User user,
+                                            int from_row, int to_row, int from_col, int to_col) {
+        Gson worldGson = new GsonBuilder().registerTypeAdapter(Simulator.class, new WorldSerializer())
+                .setPrettyPrinting().create();
+        JsonObject root = worldGson.toJsonTree(sim).getAsJsonObject();
+        root.addProperty("rate", rate);
+        int update_since;
+        try{
+            update_since = Integer.parseInt(request.queryParams("update_since"));
+            root.addProperty("update_since", request.queryParams("update_since"));
+        }
+        catch(NumberFormatException e){
+            update_since = -1;
+        }
+        //if(update_since < 0) update_since = 0;
+
+        root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
+        Gson entityGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+                .setPrettyPrinting().disableHtmlEscaping().create();
+
+        JsonArray critterArray = new JsonArray();
+        //result.add(critterArray);
+
+        //if update_since is not given, return ENTIRE world without diffing
+
+        if(update_since < 0){
+            for(int i = from_col; i <= to_col; i++){
+                for(int j = from_row; j <= to_row; j++){
+                    if(sim.world.inBounds(i,j)){
+                        Entity e = sim.getEntityAt(i,j);
+                        JsonObject cJo = getCoordAsJson(user, entityGson, i, j, e);
+                        critterArray.add(cJo);
+                    }
+                }
+            }
+        }
+        else {
+            for (Coordinate c : sim.getDiffs(update_since)) {
+                //System.out.println(sim.getDiffs(update_since));
+                if(c.getRow() >= from_row && c.getRow() <= to_row &&
+                        c.getCol() >= from_col && c.getRow() <= to_col) {
+                    System.out.println(sim.changes);
+                    Entity e = sim.getEntityAt(c);
+                    System.out.println(e);
+                    JsonObject cJo = getCoordAsJson(user, entityGson, c.getCol(), c.getRow(), e);
+                    critterArray.add(cJo);
+                }
+            }
+        }
+
+        response.type("application/json");
+
+        root.addProperty("current_version_number", sim.getCurrent_version_number());
+        root.addProperty("current_timestep", sim.getTimesteps());
+        root.add("state", critterArray);
+        return root;
     }
 
     private static JsonObject getCoordAsJson(User user, Gson entityGson, int i, int j, Entity e) {
