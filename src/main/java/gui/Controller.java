@@ -439,12 +439,14 @@ public class Controller extends java.util.Observable {
     	try{
 	    	HttpPost post = new HttpPost(serverURL + "/CritterWorld/step?session_id=" + sessionID);
 	    	JsonObject jo = new JsonObject();
-	    	jo.addProperty("String", n);
+	    	jo.addProperty("count", n);
 	    	StringEntity params = new StringEntity(gson.toJson(jo), ContentType.APPLICATION_JSON);
 	    	post.setEntity(params);
 	    	httpclient.execute(post);
+	    	System.out.println("got here 1");
 	    	setChanged();
 	    	notifyObservers();
+	    	System.out.println("got here 2");
     	}
     	catch(Exception e) {
     		System.out.println("Did not work");
