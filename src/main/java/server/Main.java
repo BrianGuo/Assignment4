@@ -125,6 +125,7 @@ public class Main {
         //when update_since is negative, the entire world is returned.
         //entire world is also returned unless all 4 bounds provided
         get("/*/world", (request, response) -> {
+            System.out.println("reading world state");
             readLock.lock();
             try {
                 User user = authenticate(request);
@@ -176,6 +177,7 @@ public class Main {
             }
             if (count < 0)
                 halt(406, "Not acceptable--negative count");
+            System.out.println(count);
 
             //TODO: need synchronization?
             sim.advance(count);
@@ -210,8 +212,6 @@ public class Main {
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        System.out.println(sim.getTimesteps());
-                        System.out.println(sim.getCurrent_version_number());
                         sim.advance(1);
                     }
                 }, 0, (int) ((1 / rate) * 1000));
@@ -229,10 +229,11 @@ public class Main {
                 .setPrettyPrinting().create();
         JsonObject root = worldGson.toJsonTree(sim).getAsJsonObject();
         root.addProperty("rate", rate);
+
         int update_since;
         try{
             update_since = Integer.parseInt(request.queryParams("update_since"));
-            root.addProperty("update_since", request.queryParams("update_since"));
+            root.addProperty("update_since", Integer.parseInt(request.queryParams("update_since")));
         }
         catch(NumberFormatException e){
             update_since = -1;
@@ -262,12 +263,10 @@ public class Main {
         }
         else {
             for (Coordinate c : sim.getDiffs(update_since)) {
-                //System.out.println(sim.getDiffs(update_since));
                 if(c.getRow() >= from_row && c.getRow() <= to_row &&
                         c.getCol() >= from_col && c.getCol() <= to_col) {
-                    System.out.println(sim.changes);
+
                     Entity e = sim.getEntityAt(c);
-                    System.out.println(e);
                     JsonObject cJo = getCoordAsJson(user, entityGson, c.getCol(), c.getRow(), e);
                     critterArray.add(cJo);
                 }
@@ -287,7 +286,6 @@ public class Main {
         if(e == null)
             e = new Nothing(i,j);
         JsonObject cJo = entityGson.toJsonTree(e, Entity.class).getAsJsonObject(); //JsonElement of the critter thing
-        System.out.println(cJo);
         if (e instanceof Critter) {
             censorCritter(user, (Critter) e, cJo);
         }

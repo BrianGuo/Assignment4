@@ -432,13 +432,11 @@ public class Simulator {
 						} else if (getEntityAt(i, j) == null && old[i][j] == null) {
 							continue;
 						} else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
+
+
 							//this should work unless we get a collision...
 							//also check for nulls
 							differences.add(new Coordinate(i, j));
-
-
-							System.out.println("old:" + old[i][j]);
-							System.out.println("new:" + getEntityAt(i, j));
 						}
 					}
 
@@ -503,8 +501,6 @@ public class Simulator {
 		try{
 			HashSet<Integer> deadCritters = new HashSet<>();
 			for(int i = step; i < critterDeaths.size(); i++){
-				System.out.println("i:" + i);
-				System.out.println("step:" + step);
 				for(int j = 0; j < critterDeaths.get(i).size(); j++){
 					deadCritters.add(critterDeaths.get(i).get(j));
 				}

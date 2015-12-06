@@ -18,9 +18,9 @@ public class WorldSerializer implements JsonSerializer<Simulator>{
         JsonObject object = new JsonObject();
 
         String name = simulator.world.name;
-        String rows = String.valueOf(simulator.world.getRows());
-        String cols = String.valueOf(simulator.world.getColumns());
-        String population = String.valueOf(simulator.getNumCritters());
+        int rows = simulator.world.getRows();
+        int cols = simulator.world.getColumns();
+        int population = simulator.getNumCritters();
 
         object.addProperty("name", name);
         object.addProperty("rows", rows);
