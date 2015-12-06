@@ -75,6 +75,28 @@ public class Simulator {
 	 */
 	public void advance(int n){
 		writeLock.lock();
+
+		String cur1 = "";
+		for(int i= 0; i < old.length; i++){
+			for(int j = 0; j < old.length; j++){
+				cur1 += old[i][j];
+			}
+			cur1 += "\n";
+		}
+		System.out.println(cur1);
+
+		String cur2 = "";
+		for(int i= 0; i < old.length; i++){
+			for(int j = 0; j < old.length; j++){
+				cur2 += old[i][j];
+			}
+			cur2 += "\n";
+		}
+		System.out.println(cur2);
+		System.out.println("-------------");
+
+		System.out.println(Arrays.toString(old));
+		System.out.println(Arrays.toString(world.getMap()));
 		try {
 			if (hasWorld()) {
 				for (int i = 0; i < n; i++) {
@@ -90,8 +112,9 @@ public class Simulator {
 						world.judge(c);
 					}
 					timesteps++;
-					old = world.getMap();
+
 					update();
+					//old = world.getMap();
 				}
 			} else {
 				System.out.println("You haven't loaded a world");
@@ -427,24 +450,49 @@ public class Simulator {
 			for (int i = 0; i < world.getColumns(); i++) {
 				for (int j = 0; j < world.getRows(); j++) {
 					if(world.inBounds(i,j)) {
-
 						if (i >= old.length || j >= old[0].length) { //out of bounds
 							differences.add(new Coordinate(i, j));
-						} else if (getEntityAt(i, j) == null && old[i][j] == null) {
+						}
+						else if (getEntityAt(i, j) == null && old[i][j] == null) {
 							continue;
-						} else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
+						}
+						else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
 
-
+							System.out.println("old:" + old[i][j]);
+							System.out.println("new:" + getEntityAt(i,j));
 							//this should work unless we get a collision...
 							//also check for nulls
 							differences.add(new Coordinate(i, j));
+						}
+						else{
+							if(getEntityAt(i,j) instanceof Critter){
+								differences.add(new Coordinate(i,j));
+							}
+							System.out.println("old:" + old[i][j]);
+							System.out.println("new:" + getEntityAt(i,j));
+						}
+						if(old.length > 5){
+							System.out.println("old44:" + old[5][4]);
+							System.out.println("new44:" + getEntityAt(5,4));
 						}
 					}
 
 				}
 			}
-			old = world.getMap();
+			System.out.println("oldWorld:" + Arrays.toString(old));
 
+			old = new Entity[world.getColumns()][world.getRows()];
+			for(int i=0; i<old.length; i++)
+				for(int j=0; j<old[i].length; j++)
+					old[i][j]=world.getMap()[i][j];
+
+
+
+			if(old.length > 5){
+				old[4][4] = null;
+				System.out.println(world.getMap()[4][4]);
+			}
+			System.out.println("newWorld:" + Arrays.toString(old));
 
 			return differences;
 		}
