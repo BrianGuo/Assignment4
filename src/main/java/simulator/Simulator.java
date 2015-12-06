@@ -33,7 +33,6 @@ public class Simulator {
 	private final Lock writeLock = readWriteLock.writeLock();
 	private int timesteps;
 
-
 	/**
 	 * Regular Constructor Used entirely for testing purposes
 	 * This shouldn't be used

@@ -4,12 +4,15 @@ import static spark.Spark.*;
 import com.google.gson.*;
 import com.google.gson.stream.MalformedJsonException;
 import exceptions.SyntaxError;
+import interpret.CritterInterpreter;
+import parse.ParserFactory;
 import simulator.Simulator;
 import world.Critter;
 import world.CritterSerializer;
 import world.Factory;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,6 +24,7 @@ public class Main {
 
     static Simulator sim = new Simulator();
     static final Timer timer = new Timer();
+    static private double rate;
 
     /**
      * Gets a logged-in user by session_id.
@@ -34,7 +38,7 @@ public class Main {
     public static void main(String[] args) {
         Gson gson = new Gson();
         Security.init();
-        sim.setWorld(Factory.getRandomWorld());
+        sim = new Simulator(Factory.getRandomWorld(), new CritterInterpreter());
 
         get("/*/hello", (request, response) -> "Hello World");
 
@@ -72,19 +76,7 @@ public class Main {
             //JsonObject result = new JsonObject();
             JsonArray critterArray = new JsonArray();
             //result.add(critterArray);
-            int session_id;
-            try {
-                session_id = Integer.parseInt(request.queryParams("session_id"));
-            }
-            catch (NumberFormatException e){
-                halt(401, "Illegal session_id"); //ex.  session_id of "Q"
-                return "Unauthorized";
-            }
-
-            User user = users.get(session_id);
-            if(user == null)
-                halt(401, "Invalid session_id"); //ex. session_id of "-1", which will never happen
-
+            User user = authenticate(request);
             for(Critter c: sim.world.getCritters().values()){
                 JsonElement cJ = critterGson.toJsonTree(c); //JsonElement of the critter thing
                 JsonObject cJo = cJ.getAsJsonObject();
@@ -107,7 +99,8 @@ public class Main {
                 }
             }, 0, 1000);
 */
-            return session_id;
+            //TODO: complete
+            return "hi";
         });
 
         post("/*/world", (request, response) -> {
@@ -129,7 +122,53 @@ public class Main {
             //return "hi";
         });
 
+        get("/*/world", (request, response) -> {
+            //TODO: FINISH
+            return "hi";
+        });
+
+
+        post("/*/step", (request, response) -> {
+            User user = authenticate(request);
+
+            if (!Security.authorize(user, "write")) {
+                halt(401, "Unauthorized");
+            }
+            if (rate != 0.0) {
+                halt(406, "World currently running continuously");
+            }
+            Map<String, Double> m = gson.fromJson(request.body(), Map.class);
+            int count;
+            if (m!= null && m.containsKey("count")) {
+                count = m.get("count").intValue();
+            }
+            else{
+                count = 1;
+            }
+            if (count <= 0) count = 1;
+
+
+            sim.advance(count);
+
+            return sim.getTimesteps() + sim.getCurrent_version_number();
+        });
+
     }
 
 
+    private static User authenticate(spark.Request request) {
+        int session_id = -1;
+        try {
+            session_id = Integer.parseInt(request.queryParams("session_id"));
+        } catch (NumberFormatException e) {
+            halt(400, "Illegal session_id");
+
+        }
+        User user = users.get(session_id);
+
+        if (user == null) {
+            halt(401, "User not found");
+        }
+        return user;
+    }
 }
