@@ -152,7 +152,7 @@ public class Controller extends java.util.Observable {
         	CloseableHttpResponse response = httpclient.execute(get);
         	HttpEntity ent =  response.getEntity();
         	Gson gson = new GsonBuilder().create();
-        	System.out.println(response);
+        	response.close();
         	System.out.println("^^");
         	WorldState section = gson.fromJson(EntityUtils.toString(ent), WorldState.class);
         	if (section.getState().size() > 0) {
@@ -177,6 +177,7 @@ public class Controller extends java.util.Observable {
         	}
         	else
         		return null;
+        	
         }
         catch(Exception e) {
         	System.out.println("Didn't work");
@@ -239,6 +240,7 @@ public class Controller extends java.util.Observable {
         	setChanged();
         	notifyObservers();
         	reader.close();
+        	response.close();
         	
         }
         catch(FileNotFoundException e){
@@ -290,7 +292,7 @@ public class Controller extends java.util.Observable {
             StringEntity myEntity = new StringEntity(critterGson.toJson(inputVar),ContentType.APPLICATION_JSON);
             post.setEntity(myEntity);
             try{
-            	httpclient.execute(post);
+            	CloseableHttpResponse response = httpclient.execute(post);
             }
             catch(Exception e) {
             	System.out.println("didn't work");
@@ -365,10 +367,13 @@ public class Controller extends java.util.Observable {
             }
             
             try{
-            	httpclient.execute(post);
+            	CloseableHttpResponse response = httpclient.execute(post);
+            	response.close();
             	setChanged();
             	notifyObservers();
             	System.out.println("completed");
+            	
+            	
             }
             catch(Exception e) {
             	System.out.println("didn't work");
@@ -423,7 +428,8 @@ public class Controller extends java.util.Observable {
 	    			break;
 	    		}
 	    	}
-	    	state.setRefactored(state2);;
+	    	state.setRefactored(state2);
+	    	response.close();
 	    	return state;
     	}
     	catch(Exception e) {
@@ -445,10 +451,10 @@ public class Controller extends java.util.Observable {
 	    	post.setEntity(params);
 			System.out.println(2);
 	    	CloseableHttpResponse response = httpclient.execute(post);
-			response.close();
 			System.out.println(3);
 	    	setChanged();
 	    	notifyObservers();
+	    	response.close();
 	    	System.out.println("got here 2");
     	}
     	catch(Exception e) {

@@ -95,8 +95,11 @@ public class HexWorld extends ScrollPane implements Observer {
 		}
 		ArrayList<Entity> diff = m.getRefactored();
 		double HexWidth = p.getWidth()/cols;
-		for (Entity e: diff)
+		for (Entity e: diff){
+			WorldHex p2 = world[e.getCol()][e.getRow()];
+			p.getChildren().remove(p2);
 			drawHex(e.getCol(),e.getRow(),HexWidth, e);
+		}
 		
 	}
 

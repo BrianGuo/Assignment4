@@ -68,9 +68,9 @@ public class Functions extends Accordion {
 			}
 		});
 		p.widthProperty().addListener((observable, old, newNum) -> {
-            t.setX(p.getWidth() / 2 - 55);
-            b.setLayoutX(p.getWidth() / 2 - 30);
-            file.setLayoutX(p.getWidth()/2 - 80);
+            t.setX(p.getWidth() / 2 - 75);
+            b.setLayoutX(p.getWidth() / 2 - 50);
+            file.setLayoutX(p.getWidth()/2 - 110);
         });
 		p.getChildren().add(b);
 		p.getChildren().add(file);
@@ -111,7 +111,7 @@ public class Functions extends Accordion {
 
 		});
 		TextField f2 = new TextField();
-		f2.setMaxWidth(50);
+		f2.setMaxWidth(40);
 		f2.setText("1");
 		b2.setOnAction(evt -> controller.addRandomEntity(evt, f2.getText()));
 		AnchorPane.setTopAnchor(b2, 120.0);
@@ -121,11 +121,11 @@ public class Functions extends Accordion {
 		p.getChildren().add(f2);
 		AnchorPane.setTopAnchor(f2, 120.0);
 		p.widthProperty().addListener((observable, old, newNum) -> {
-            t.setX(p.getWidth() / 2 - 55);
-            b.setLayoutX(p.getWidth() / 2 - 30);
-            b2.setLayoutX(p.getWidth()/2 - 100);
-            file.setLayoutX(p.getWidth()/2 - 80);
-            f2.setLayoutX(b2.getLayoutX() + 140.0);
+            t.setX(p.getWidth() / 2 - 85);
+            b.setLayoutX(p.getWidth() / 2 - 55);
+            b2.setLayoutX(p.getWidth()/2 - 120);
+            file.setLayoutX(p.getWidth()/2 - 110);
+            f2.setLayoutX(b2.getLayoutX() + 170.0);
         });
 		System.out.println(p.getChildren());
 		return p;
