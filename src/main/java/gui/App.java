@@ -37,12 +37,12 @@ public class App extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("Hi");
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Test.fxml"));
-		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
+		/*Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.out.println("Handler caught exception: " + throwable.getMessage());
 			System.out.println(throwable.getCause());
 			System.out.println(throwable.toString());
 			defaultHandler(throwable);
-		});
+		});*/
 		try{
 			//TODO mvc pls.
 			Controller controller = new Controller();//
@@ -61,7 +61,7 @@ public class App extends Application {
 
 
 			World w = Factory.getRandomWorld();
-			controller.setWorld(w);
+			//controller.setWorld(w);
 			Dialog<ArrayList<String>> dialog = new Dialog<>();
 			dialog.setTitle("Login Dialog");
 			dialog.setHeaderText("Please log in");
@@ -100,14 +100,12 @@ public class App extends Application {
 			Optional<ArrayList<String>> result = dialog.showAndWait();
 			controller.validate(result);
 		
-			HexWorld worldPane = new HexWorld(6,8, controller);
-
-			controller.addObserver(worldPane);
+			
 			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));*/
 
 
-			left.getItems().set(0, worldPane);
+			
 			left.setDividerPosition(0, 0.7);
 
 			TabPane pane3 = (TabPane) left.getItems().get(1);
@@ -118,6 +116,10 @@ public class App extends Application {
 			right.getItems().set(1, new Functions(primaryStage, controller));
 			SpecificInfo spec = new SpecificInfo(controller);
 			right.getItems().set(0, spec);
+			HexWorld worldPane = new HexWorld(6,8, controller);
+
+			controller.addObserver(worldPane);
+			left.getItems().set(0, worldPane);
 		}
 			catch(Exception e) {
 				e.printStackTrace();
