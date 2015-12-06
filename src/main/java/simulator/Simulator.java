@@ -514,7 +514,7 @@ public class Simulator {
 					deadCritters.add(i);
 				}
 			}
-			oldCritters = world.getCritters();
+			oldCritters = new HashMap<>(world.getCritters());
 			return deadCritters;
 		}
 		finally {
