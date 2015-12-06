@@ -128,7 +128,8 @@ public class GenInfo extends TabPane implements Observer{
 			}
 			
 		}*/
-		WorldState m = controller.updateWorld(updateSince);
+		WorldState m = controller.updateWorld();
+		System.out.println(m.getCols());
 		updateTimesteps(m.getTimestep());
 		updateCritters(m.getPopulation());
 	}

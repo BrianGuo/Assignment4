@@ -32,7 +32,6 @@ public class HexWorld extends ScrollPane implements Observer {
 	Image critterImage;
 	Image rockImage;
 	Image foodImage;
-	int lastUpdate;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
@@ -62,10 +61,10 @@ public class HexWorld extends ScrollPane implements Observer {
 
 		}
 		setContent(p);
-		HexPane(0);
+		HexPane();
 		setVvalue(1.0);
 		setHvalue(0.0);
-		lastUpdate = 0;
+		
 	}
 	/*@Override
 	public boolean isResizable() {
@@ -75,9 +74,8 @@ public class HexWorld extends ScrollPane implements Observer {
 	
 	
 	
-	public void HexPane(int updateSince){
-		WorldState m = controller.updateWorld(updateSince);
-		p.getChildren().clear();
+	public void HexPane(){
+		WorldState m = controller.updateWorld();
 		if (m.getCols()!= this.cols || m.getRows() != this.rows){
 			this.cols = m.getCols();
 			this.rows = m.getRows();
@@ -99,7 +97,7 @@ public class HexWorld extends ScrollPane implements Observer {
 		double HexWidth = p.getWidth()/cols;
 		for (Entity e: diff)
 			drawHex(e.getCol(),e.getRow(),HexWidth, e);
-		lastUpdate = m.getCurrentVersion();
+		
 	}
 
 	public void drawHex(int col, int row, double HexWidth, Entity e) {
@@ -173,7 +171,6 @@ public class HexWorld extends ScrollPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		p.setMinHeight(p.getHeight());
-		p.getChildren().clear();
-		HexPane(lastUpdate);
+		HexPane();
 	}
 }
