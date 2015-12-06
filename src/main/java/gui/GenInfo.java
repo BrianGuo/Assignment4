@@ -2,6 +2,7 @@ package gui;
 
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,6 +23,7 @@ public class GenInfo extends TabPane implements Observer{
 	Controller controller;
 	SimpleIntegerProperty timesteps = new SimpleIntegerProperty(0);
 	SimpleIntegerProperty numCritters = new SimpleIntegerProperty(0);
+	int updateSince;
 
 	StringBinding status = new StringBinding(){
 		{
@@ -40,7 +42,7 @@ public class GenInfo extends TabPane implements Observer{
 	//...why does a TabPane also handle a single tab?...
 	
 	public GenInfo(Controller c) {
-
+		updateSince = 0;
 		controller = c;
 		timesteps.set(0);
 		numCritters.set(0);
@@ -113,7 +115,7 @@ public class GenInfo extends TabPane implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		updateTimesteps(controller.sim.getCurrent_version_number());
+		/*updateTimesteps(controller.sim.getCurrent_version_number());
 		updateCritters(controller.sim.getNumCritters());
 		if (!(controller.sim.world.equals( this.world))) {
 			addWorldTab(controller.sim.world);
@@ -125,6 +127,9 @@ public class GenInfo extends TabPane implements Observer{
 				this.critter = (Critter)controller.loaded;
 			}
 			
-		}
+		}*/
+		Map m = controller.updateWorld(updateSince);
+		updateTimesteps(Integer.parseInt((String)m.get("current_timestep")));
+		updateCritters(Integer.parseInt((String)m.get("population")));
 	}
 }

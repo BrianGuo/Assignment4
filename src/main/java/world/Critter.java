@@ -20,6 +20,7 @@ public class Critter extends Entity{
 	Critter lover;
 	int creator;
 	int id;
+	int recentlyExecutedRule;
 
 
 	static Random r = new Random();
@@ -49,7 +50,12 @@ public class Critter extends Entity{
 
 
 
-
+	/**
+	 * Returns the memory of this critter
+	 */
+	public int[] getMemory() {
+		return attributes;
+	}
 	//TODO: is synchronization on the set enough?
 
 	/**
@@ -61,7 +67,7 @@ public class Critter extends Entity{
 	static boolean updateIdList(int newId){
 		return usedIDs.add(newId);
 	}
-
+	
 	//need synchronization in case 2 clients add w/ same ID
 	static final Set<Integer> usedIDs = Collections.synchronizedSet(new HashSet<Integer>());
 
@@ -554,7 +560,12 @@ public class Critter extends Entity{
 
 		return lover;
 	}
-
+	public void setRecentlyExecutedRule(int n) {
+		recentlyExecutedRule = n;
+	}
+	public int getRecentlyExecutedRule() {
+		return recentlyExecutedRule;
+	}
 	public ArrayList<String> properties(){
 		ArrayList<String> ary = new ArrayList<>();
 		ary.add("Type: Critter");

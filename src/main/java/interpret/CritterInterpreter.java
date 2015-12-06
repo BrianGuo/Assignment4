@@ -47,6 +47,7 @@ public class CritterInterpreter implements Interpreter {
 				}
 				if (com.getAction() != null){
 					cr.setLastRule(r);
+					cr.setRecentlyExecutedRule(current);
 					return new CritterOutcome(cr,com.getAction().getToken().getType(),com.getAction().getNum());
 				}
 				else{

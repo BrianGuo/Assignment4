@@ -24,8 +24,8 @@ public class SensorTest {
         w = Factory.getWorld(new FileReader("world.txt"));
         c1 = Factory.getCritter("example_critter.txt", "4", "5", "2", w.constants);
         c2 = Factory.getCritter("example_critter.txt", "5", "5", "5", w.constants);
-        w.add(c1);
-        w.add(c2);
+        //w.add(c1);
+        //w.add(c2);
 
     }
 	@Test

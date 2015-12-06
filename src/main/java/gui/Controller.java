@@ -19,21 +19,41 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import simulator.Simulator;
 import world.Coordinate;
 import world.Critter;
 import world.Entity;
 import world.Factory;
+import world.Food;
+import world.NoEntity;
+import world.Rock;
 import world.World;
+import world.WorldConstants;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Random;
+import org.apache.http.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.client.entity.*;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Controller extends java.util.Observable {
 	Random r = new Random();
@@ -47,6 +67,12 @@ public class Controller extends java.util.Observable {
     String loadedEntity = "";
     final Timeline simTimeline;
     final Timeline UITimeline;
+    CloseableHttpClient httpclient = HttpClients.createDefault();
+    int sessionID;
+    int lastTimestep;
+    String serverURL;
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    
 
     public Controller(){
         sim = new Simulator(new CritterInterpreter());
@@ -66,7 +92,32 @@ public class Controller extends java.util.Observable {
 
         })*/
     }
-
+    
+    public void setServerURL(String s) {
+    	serverURL = s;
+    }
+    
+    public void validate(Optional<ArrayList<String>> session) {
+    	try{
+    		serverURL = session.get().get(0);
+	    	HttpPost post = new HttpPost("http://" + serverURL + "/login");
+	    	StringEntity ent = new StringEntity("{\"level\":" + session.get().get(1) + "," + "\"password\":" + session.get().get(2) + "}", ContentType.APPLICATION_JSON);
+	    	System.out.println(ent.getContent().read());
+	    	post.setEntity(ent);
+	    	CloseableHttpResponse response = httpclient.execute(post);
+	    	System.out.println(response.toString());
+	    	HttpEntity e = response.getEntity();
+	    	Gson gson = new GsonBuilder().create();
+	    	Map map = gson.fromJson(EntityUtils.toString(e), Map.class);
+	    	System.out.println(map.get("session_id"));
+	    	sessionID =  Integer.parseInt((String) map.get("session_id"));
+	    	System.out.println(sessionID);
+    	}
+    	catch(Exception e) {
+    		System.out.println("didn't work");
+    		e.printStackTrace();
+    	}
+    }
 
     /**
      * Gets the coordinates of the hex clicked on the map.
@@ -81,16 +132,39 @@ public class Controller extends java.util.Observable {
 
     public void handleFocusClick(MouseEvent event){
         Coordinate c = handleHexClick(event);
-        focused.setValue(getEntityAt(c));
+        /*focused.setValue(getEntityAt(c));
         setChanged();
         notifyObservers();
         System.out.println("Checkpoint1");
         System.out.println(c);
-        System.out.println(focused);
+        System.out.println(focused);*/
     }
 
     public Entity getEntityAt(Coordinate c){
-        return sim.getEntityAt(c);
+        //return sim.getEntityAt(c);
+    	HttpGet get = new HttpGet("http://localhost:4567/CritterWorld/world?update_since" + lastTimestep + "&"
+    	        + "from_row=" + c.getRow() + "&"
+    	        + "to_row=" + c.getRow() + "&"
+    	        + "from_col" + c.getCol() + "&"
+    	        + "to_col" + c.getCol() + "&" 
+    	        + "session_id" + sessionID);
+        try{
+        	CloseableHttpResponse response = httpclient.execute(get);
+        	HttpEntity ent =  response.getEntity();
+        	Gson gson = new GsonBuilder().create();
+        	System.out.print(response);
+        	WorldState section = gson.fromJson(ent.toString(), WorldState.class);
+        	if (section.getState().length > 0) {
+        		return section.getState()[0];
+        	}
+        	else
+        		return null;
+        }
+        catch(Exception e) {
+        	System.out.println("Didn't work");
+        	e.printStackTrace();
+        	return null;
+        }
     }
 
     /**
@@ -98,9 +172,6 @@ public class Controller extends java.util.Observable {
      * @param event The MouseEvent originating from the clicked hex
      */
     public void addEntityClick(MouseEvent event){
-        if(!sim.hasWorld()){
-            throw new IllegalOperationException("You must load a world first.");
-        }
         if(loaded != null){
         	Coordinate c = handleHexClick(event);
         	try {
@@ -126,10 +197,18 @@ public class Controller extends java.util.Observable {
      */
     public void loadWorld(File file){
         try {
-            sim.parseWorld(new FileReader(file));
+            /*sim.parseWorld(new FileReader(file));
             this.loadedWorld = sim.world;
             setChanged();
-            notifyObservers();
+            notifyObservers();*/
+        	FileReader f = new FileReader(file);
+        	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/world?session_id" + sessionID);
+        	FileEntity fileEnt = new FileEntity(file,ContentType.APPLICATION_JSON);
+        	post.setEntity(fileEnt);
+        	CloseableHttpResponse response = httpclient.execute(post);
+        	
+        	
         }
         catch(FileNotFoundException e){
             System.out.println("File not found"); //shouldn't happen
@@ -137,6 +216,11 @@ public class Controller extends java.util.Observable {
         catch(NoSuchElementException e){
             throw new NoSuchElementException("Error while parsing file.");
         }
+        catch(Exception e ) {
+        	System.out.println("didn't work");
+        	e.printStackTrace();
+        }
+        
     }
 
     /**
@@ -164,16 +248,31 @@ public class Controller extends java.util.Observable {
      */
     public void addEntity(Coordinate coordinate, WorldHex w){
         if (loaded instanceof Critter){
-        	System.out.println(coordinate + "HI");
         	loadCritter(loadedEntity);
-        	loaded.move(coordinate);
+        	//loaded.move(coordinate);
+        	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/critters?session_id=" + sessionID);
+            NewCritterPositions inputVar = new NewCritterPositions((Critter)loaded);
+            Coordinate[] positions = new Coordinate[]{coordinate};
+            inputVar.setPositions(positions);
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(NewCritterPositions.class, new NewCritterSerializer()).setPrettyPrinting().create();
+            StringEntity myEntity = new StringEntity(critterGson.toJson(inputVar),ContentType.APPLICATION_JSON);
+            post.setEntity(myEntity);
+            try{
+            	httpclient.execute(post);
+            }
+            catch(Exception e) {
+            	System.out.println("didn't work");
+            	e.printStackTrace();
+            }
         }
         else
         	loaded.setLocation(coordinate);
-        if(sim.getEntityAt(coordinate) != null) return;
-        sim.addEntity(loaded);
-        setChanged();
-        notifyObservers();
+        //if(sim.getEntityAt(coordinate) != null) return;
+        //sim.addEntity(loaded);
+        //setChanged();
+        //notifyObservers();
+        
+       
     }
 
     /**
@@ -210,10 +309,23 @@ public class Controller extends java.util.Observable {
             }
 		    for(int i = 0; i < numTimes; i++ ) {
 			    sim.addRandomEntity(loaded);
-			        loadCritter(loadedEntity);
-			        setChanged();
-			        notifyObservers();
+		        loadCritter(loadedEntity);
+		        setChanged();
+		        notifyObservers();
 		    }
+		    HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/critters?session_id=" + sessionID);
+            NewCritterPositions inputVar = new NewCritterPositions((Critter)loaded);
+            inputVar.setNum(numTimes);
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(NewCritterPositions.class, new NewCritterSerializer()).setPrettyPrinting().create();
+            StringEntity myEntity = new StringEntity(critterGson.toJson(inputVar),ContentType.APPLICATION_JSON);
+            post.setEntity(myEntity);
+            try{
+            	httpclient.execute(post);
+            }
+            catch(Exception e) {
+            	System.out.println("didn't work");
+            	e.printStackTrace();
+            }
 	    }
     }
 
@@ -222,10 +334,60 @@ public class Controller extends java.util.Observable {
         return sim.world.name;
     }
 
+    public Map updateWorld(int updateSince) {
+    	try{
+	    	HttpGet get = new HttpGet("http://" + serverURL + "/CritterWorld/world?session_id=" + sessionID + "&update_since=" + updateSince);
+	    	CloseableHttpResponse response = httpclient.execute(get);
+	    	HttpEntity e = response.getEntity();
+	    	Map map = gson.fromJson(EntityUtils.toString(e), Map.class);
+	    	Map[] entities = (Map[]) map.get("state");
+	    	ArrayList<Entity> state = new ArrayList<Entity>();
+	    	for (Map m : entities) {
+	    		int row = Integer.parseInt((String)m.get("row"));
+	    		int col = Integer.parseInt((String)m.get("col"));
+	    		switch((String) m.get("type")){
+	    		case "rock":
+	    			Rock r = new Rock(col, row, null);
+	    			state.add(r);
+	    			break;
+	    		case "food":
+	    			Food f = new Food(col, row, Integer.parseInt((String)m.get("value")), null);
+	    			state.add(f);
+	    			break;
+	    		case "critter":
+	    			Critter cr = new Critter((int[])m.get("mem"), (int)m.get("direction"), (String)m.get("species_id"), new Coordinate((int)m.get("col"), (int)m.get("row")), null, null);
+	    			state.add(cr);
+	    			break;
+	    		case "nothing":
+	    			state.add(new NoEntity((int)m.get("col"), (int)m.get("row")));
+	    			break;
+	    		default:
+	    			break;
+	    		}
+	    	}
+	    	map.put("diff", state);
+	    	return map;
+    	}
+    	catch(Exception e) {
+    		System.out.println("didn't work");
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
     public void advance(int n){
-        sim.advance(n);
+        /*sim.advance(n);
         setChanged();
-        notifyObservers();
+        notifyObservers();*/
+    	try{
+	    	HttpPost post = new HttpPost("http://localhost:4567/CritterWorld/world?session_id=" + sessionID);
+	    	StringEntity params = new StringEntity("{\"count\":"+ n + "}", ContentType.APPLICATION_JSON);
+	    	httpclient.execute(post);
+    	}
+    	catch(Exception e) {
+    		System.out.println("Did not work");
+    		e.printStackTrace();
+    	}
+        
     }
 
     /**
