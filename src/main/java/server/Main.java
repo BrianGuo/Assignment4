@@ -77,14 +77,14 @@ public class Main {
         });
 
         get("/*/critters", (request, response) -> {
-            Gson critterGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
                     .setPrettyPrinting().create();
             //JsonObject result = new JsonObject();
             JsonArray critterArray = new JsonArray();
             //result.add(critterArray);
             User user = authenticate(request);
             for(Critter c: sim.world.getCritters().values()){
-                JsonObject cJo = critterGson.toJsonTree(c).getAsJsonObject(); //JsonElement of the critter thing
+                JsonObject cJo = critterGson.toJsonTree(c, Critter.class).getAsJsonObject(); //JsonElement of the critter thing
                 censorCritter(user, c, cJo);
                 critterArray.add(cJo);
             }
@@ -110,7 +110,7 @@ public class Main {
                     .setPrettyPrinting().create();
             response.status(200);
             response.type("application/json");
-            
+
             if(wanted == null){
                 return gson.toJson(new JsonObject());
             }
