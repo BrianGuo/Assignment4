@@ -121,32 +121,36 @@ public class Main {
         });
 
         //when update_since is negative, the entire world is returned.
+        //entire world is also returned unless all 4 bounds provided
         get("/*/world", (request, response) -> {
             readLock.lock();
             try {
                 User user = authenticate(request);
+                int from_row, to_row, from_col, to_col;
+                Set<String> qP = request.queryParams();
 
-                try{
-                    int from_row = Integer.parseInt(request.queryParams("from_row"));
-                    int to_row = Integer.parseInt(request.queryParams("to_row"));
-                    int from_col = Integer.parseInt(request.queryParams("from_col"));
-                    int to_col = Integer.parseInt(request.queryParams("to_col"));
+                if (qP.contains("from_row") && qP.contains("to_row") && qP.contains("from_col") && qP
+                        .contains("to_col")) {
 
-
+                    try {
+                        from_row = Integer.parseInt(request.queryParams("from_row"));
+                        to_row = Integer.parseInt(request.queryParams("to_row"));
+                        from_col = Integer.parseInt(request.queryParams("from_col"));
+                        to_col = Integer.parseInt(request.queryParams("to_col"));
+                    } catch (NumberFormatException e) {
+                        halt(400, "Invalid bounds provided");
+                        return "Invalid";
+                    }
+                    return handleWorldStatus(gson, request, response, user, from_row, to_row, from_col, to_col);
                 }
-                catch(NumberFormatException e){
-                    halt(401, "Invalid bounds provided");
-                    return "Invalid";
+                else {
+                    return handleWorldStatus(gson, request, response, user, 0, sim.getWorldRows(), 0, sim.getWorldColumns());
                 }
-
-                //if(from_row >= 0 && )
-
-
-                return handleWorldStatus(gson, request, response, user, 0, sim.getWorldRows(), 0, sim.getWorldColumns());
             }
             finally{
                 readLock.unlock();
             }
+
         });
 
 
@@ -257,7 +261,7 @@ public class Main {
             for (Coordinate c : sim.getDiffs(update_since)) {
                 //System.out.println(sim.getDiffs(update_since));
                 if(c.getRow() >= from_row && c.getRow() <= to_row &&
-                        c.getCol() >= from_col && c.getRow() <= to_col) {
+                        c.getCol() >= from_col && c.getCol() <= to_col) {
                     System.out.println(sim.changes);
                     Entity e = sim.getEntityAt(c);
                     System.out.println(e);
