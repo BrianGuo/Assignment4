@@ -20,6 +20,7 @@ public class Critter extends Entity{
 	Critter lover;
 	int creator;
 	int id;
+	int recentlyExecutedRule;
 
 
 	static Random r = new Random();
@@ -559,7 +560,12 @@ public class Critter extends Entity{
 
 		return lover;
 	}
-
+	public void setRecentlyExecutedRule(int n) {
+		recentlyExecutedRule = n;
+	}
+	public int getRecentlyExecutedRule() {
+		return recentlyExecutedRule;
+	}
 	public ArrayList<String> properties(){
 		ArrayList<String> ary = new ArrayList<>();
 		ary.add("Type: Critter");

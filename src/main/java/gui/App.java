@@ -22,6 +22,7 @@ import world.Factory;
 import world.World;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class App extends Application {
@@ -61,7 +62,7 @@ public class App extends Application {
 
 			World w = Factory.getRandomWorld();
 			controller.setWorld(w);
-			Dialog<Pair<String,String>> dialog = new Dialog<>();
+			Dialog<ArrayList<String>> dialog = new Dialog<>();
 			dialog.setTitle("Login Dialog");
 			dialog.setHeaderText("Please log in");
 			ButtonType loginButtonType = new ButtonType("Login", ButtonData.OK_DONE);
@@ -71,24 +72,32 @@ public class App extends Application {
 			grid.setHgap(10);
 			grid.setVgap(10);
 			grid.setPadding(new Insets(20, 150, 10, 10));
+			TextField serverURL = new TextField();
+			serverURL.setPromptText("URL");
 			TextField level = new TextField();
 			level.setPromptText("level");
 			PasswordField password = new PasswordField();
 			password.setPromptText("Password");
-			grid.add(new Label("level:"), 0, 0);
-			grid.add(level, 1, 0);
-			grid.add(new Label("Password:"), 0, 1);
-			grid.add(password, 1, 1);
+			grid.add(new Label("URL"),0,0);
+			grid.add(serverURL, 1, 0);
+			grid.add(new Label("level:"), 0, 1);
+			grid.add(level, 1, 1);
+			grid.add(new Label("Password:"), 0, 2);
+			grid.add(password, 1, 2);
 			//Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
 			//loginButton.setDisable(true);
 			dialog.getDialogPane().setContent(grid);
 			dialog.setResultConverter(dialogButton -> {
 			    if (dialogButton == loginButtonType) {
-			        return new Pair<>(level.getText(), password.getText());
+			    	ArrayList<String> result = new ArrayList<String>();
+			    	result.add(serverURL.getText());
+			    	result.add(level.getText());
+			    	result.add(password.getText());
+			        return result;
 			    }
 			    return null;
 			});
-			Optional<Pair<String,String>> result = dialog.showAndWait();
+			Optional<ArrayList<String>> result = dialog.showAndWait();
 			controller.validate(result);
 		
 			HexWorld worldPane = new HexWorld(6,8, controller);
