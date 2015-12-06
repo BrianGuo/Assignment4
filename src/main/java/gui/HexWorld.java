@@ -77,6 +77,7 @@ public class HexWorld extends ScrollPane implements Observer {
 	
 	public void HexPane(int updateSince){
 		WorldState m = controller.updateWorld(updateSince);
+		p.getChildren().clear();
 		if (m.getCols()!= this.cols || m.getRows() != this.rows){
 			this.cols = m.getCols();
 			this.rows = m.getRows();
@@ -172,6 +173,7 @@ public class HexWorld extends ScrollPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		p.setMinHeight(p.getHeight());
+		p.getChildren().clear();
 		HexPane(lastUpdate);
 	}
 }

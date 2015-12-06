@@ -17,6 +17,7 @@ import javafx.scene.text.TextFlow;
 import javafx.scene.text.Font;
 import world.Critter;
 import world.Entity;
+import world.Nothing;
 import javafx.scene.image.ImageView;
 
 import java.io.BufferedReader;
@@ -81,7 +82,7 @@ public class SpecificInfo extends AnchorPane implements Observer{
 	public void update(java.util.Observable o, Object arg) {
 		Entity e = controller.focused.getValue();
 		File imagefile = null;
-		if(e != null) {
+		if(e != null && !(e instanceof Nothing)) { 
 			switch (e.getClass().toString()) {
 				case "class world.Critter":
 					imagefile = new File("critter.png");

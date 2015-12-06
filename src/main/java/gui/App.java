@@ -103,7 +103,10 @@ public class App extends Application {
 			
 			/*worldPane.widthProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));
 			worldPane.heightProperty().addListener(evt -> worldPane.HexPane(worldPane.cols,worldPane.rows));*/
+			HexWorld worldPane = new HexWorld(6,8, controller);
 
+			controller.addObserver(worldPane);
+			left.getItems().set(0, worldPane);
 
 			
 			left.setDividerPosition(0, 0.7);
@@ -116,10 +119,7 @@ public class App extends Application {
 			right.getItems().set(1, new Functions(primaryStage, controller));
 			SpecificInfo spec = new SpecificInfo(controller);
 			right.getItems().set(0, spec);
-			HexWorld worldPane = new HexWorld(6,8, controller);
-
-			controller.addObserver(worldPane);
-			left.getItems().set(0, worldPane);
+			
 		}
 			catch(Exception e) {
 				e.printStackTrace();

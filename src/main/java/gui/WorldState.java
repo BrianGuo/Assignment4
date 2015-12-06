@@ -14,11 +14,13 @@ public class WorldState {
 	private int rows;
 	private int cols;
 	private int population;
-	private HexEntity[] state;
-	private int[] dead_critters;
+	private ArrayList<HexEntity> state;
+	private ArrayList<Integer> dead_critters;
 	private ArrayList<Entity> refactored;
 	
-	public HexEntity[] getState() {
+	public WorldState(){}
+	
+	public ArrayList<HexEntity> getState() {
 		return state;
 	}
 	
