@@ -8,8 +8,8 @@ import java.util.ArrayList;
  * Represents something in the world.
  */
 abstract public class Entity {
-    protected Coordinate location;
-    protected final WorldConstants constants;
+    protected transient Coordinate location;
+    protected transient final WorldConstants constants;
 
     /**
      * What the Entity looks like when printed to the console

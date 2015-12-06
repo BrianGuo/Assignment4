@@ -6,26 +6,26 @@ import exceptions.IllegalCoordinateException;
 import java.util.ArrayList;
 
 /**
- * amt is always > 0
+ * value is always > 0
  */
 public class Food extends Entity{
-    private int amt; //amount of food remaining
+    private int value; //amount of food remaining
 
     public int hashCode(){
-        return 2112 + amt * 1597; //hopefully won't conflict with any critter hashcodes
+        return 2112 + value * 1597; //hopefully won't conflict with any critter hashcodes
     }
 
-    private boolean isConsumed = false;
+    private transient boolean isConsumed = false;
     @Override
     public String toString(){
         return "F";
     }
 
-    public int getAmt() {
-    	return amt;
+    public int getValue() {
+    	return value;
     }
     public int appearance(){
-        return -1* amt - 1;
+        return -1* value - 1;
     }
 
     /**
@@ -42,7 +42,7 @@ public class Food extends Entity{
         if(amt <= 0){
             throw new IllegalArgumentException();
         }
-        this.amt = amt;
+        this.value = amt;
     }
 
     public boolean isConsumed() {
@@ -51,17 +51,17 @@ public class Food extends Entity{
 
     /**
      * Precondition: amount > 0
-     * Consumes up to {@code amount} food, but not more than amt left.
-     * If amount >= amt (would consume all the food), sets isConsumed to true.
+     * Consumes up to {@code amount} food, but not more than value left.
+     * If amount >= value (would consume all the food), sets isConsumed to true.
      * @param amount Amount of food to eat.
      * @return the actual amount of food consumed
      */
     public int consume(int amount){
         assert(amount > 0);
         assert(!isConsumed); //we shouldn't run into concurrency problems, so this should be false
-        amount = Math.min(amount, amt);
-        amt -= amount;
-        if(amt <= 0){
+        amount = Math.min(amount, value);
+        value -= amount;
+        if(value <= 0){
             isConsumed = true;
         }
         return amount;
@@ -70,7 +70,7 @@ public class Food extends Entity{
     public ArrayList<String> properties(){
         ArrayList<String> ary = new ArrayList<>();
         ary.add("Type: Food");
-        ary.add("Food left: " + amt);
+        ary.add("Food left: " + value);
         return ary;
     }
 }
