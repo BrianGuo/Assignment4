@@ -23,7 +23,7 @@ public class GenInfo extends TabPane implements Observer{
 	Controller controller;
 	SimpleIntegerProperty timesteps = new SimpleIntegerProperty(0);
 	SimpleIntegerProperty numCritters = new SimpleIntegerProperty(0);
-	int updateSince;
+	int current_version;
 
 	StringBinding status = new StringBinding(){
 		{
@@ -42,7 +42,7 @@ public class GenInfo extends TabPane implements Observer{
 	//...why does a TabPane also handle a single tab?...
 	
 	public GenInfo(Controller c) {
-		updateSince = 0;
+		current_version= 0;
 		controller = c;
 		timesteps.set(0);
 		numCritters.set(0);
@@ -128,9 +128,10 @@ public class GenInfo extends TabPane implements Observer{
 			}
 			
 		}*/
-		WorldState m = controller.updateWorld();
+		WorldState m = controller.updateWorld(current_version);
 		System.out.println(m.getCols());
 		updateTimesteps(m.getTimestep());
 		updateCritters(m.getPopulation());
+		current_version = m.getCurrentVersion();
 	}
 }

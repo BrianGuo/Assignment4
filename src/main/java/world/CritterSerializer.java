@@ -33,7 +33,7 @@ public class CritterSerializer implements JsonSerializer<Critter> {
 
         JsonArray e = new JsonArray();
         for(int i: memory){
-            e.add(i);
+            e.add(new JsonPrimitive(i));;
         }
         object.add("mem", e);
         object.addProperty("recently_executed_rule", recently_executed_rule);

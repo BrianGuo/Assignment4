@@ -32,6 +32,7 @@ public class HexWorld extends ScrollPane implements Observer {
 	Image critterImage;
 	Image rockImage;
 	Image foodImage;
+	int current_version = 0;
 
 	public HexWorld(int c, int r, Controller controller){
 		rows = r;
@@ -75,8 +76,9 @@ public class HexWorld extends ScrollPane implements Observer {
 	
 	
 	public void HexPane(){
-		WorldState m = controller.updateWorld();
+		WorldState m = controller.updateWorld(current_version);
 		if (m.getCols()!= this.cols || m.getRows() != this.rows){
+			this.current_version = m.getCurrentVersion();
 			this.cols = m.getCols();
 			this.rows = m.getRows();
 			world = new WorldHex[cols][rows];
@@ -162,7 +164,7 @@ public class HexWorld extends ScrollPane implements Observer {
 		P2.setOnMouseClicked((event) -> {
 			if (event.isStillSincePress()) {
 				if (event.getButton() == MouseButton.PRIMARY)
-					controller.handleFocusClick(event);
+					controller.handleFocusClick(event, current_version);
 				else if (event.getButton() == MouseButton.SECONDARY)
 					controller.addEntityClick(event);
 			}

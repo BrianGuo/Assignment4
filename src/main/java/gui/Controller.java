@@ -58,7 +58,7 @@ public class Controller extends java.util.Observable {
     final Timeline UITimeline;
     CloseableHttpClient httpclient = HttpClients.createDefault();
     int sessionID;
-    int lastVersion;
+    //int lastVersion;
     String serverURL;
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     WorldConstants constants;
@@ -130,9 +130,9 @@ public class Controller extends java.util.Observable {
         return clicked.getCoordinate();
     }
 
-    public void handleFocusClick(MouseEvent event){
+    public void handleFocusClick(MouseEvent event, int lastVersion){
         Coordinate c = handleHexClick(event);
-        focused.setValue(getEntityAt(c));
+        focused.setValue(getEntityAt(c, lastVersion));
         setChanged();
         /*
         System.out.println("Checkpoint1");
@@ -140,7 +140,7 @@ public class Controller extends java.util.Observable {
         System.out.println(focused);*/
     }
 
-    public Entity getEntityAt(Coordinate c){
+    public Entity getEntityAt(Coordinate c, int lastVersion){
         //return sim.getEntityAt(c);
     	HttpGet get = new HttpGet(serverURL + "/CritterWorld/world?update_since=" + lastVersion + "&"
     	        + "from_row=" + c.getRow() + "&"
@@ -155,6 +155,8 @@ public class Controller extends java.util.Observable {
         	response.close();
         	System.out.println("^^");
         	WorldState section = gson.fromJson(EntityUtils.toString(ent), WorldState.class);
+        	setChanged();
+        	notifyObservers();
         	if (section.getState().size() > 0) {
         		HexEntity h = section.getState().get(0);
         		int row = h.getRow();
@@ -388,7 +390,7 @@ public class Controller extends java.util.Observable {
         return sim.world.name;
     }
 
-    public WorldState updateWorld() {
+    public WorldState updateWorld(int lastVersion) {
     	try{
 	    	HttpGet get = new HttpGet(serverURL + "/CritterWorld/world?session_id=" + sessionID + "&update_since=" + lastVersion);
 	    	CloseableHttpResponse response = httpclient.execute(get);
@@ -402,7 +404,6 @@ public class Controller extends java.util.Observable {
 	    	System.out.println(state.getTimestep() + "this is the number of timeSteps");
 	    	ArrayList<HexEntity> entities =  state.getState();
 	    	ArrayList<Entity> state2 = new ArrayList<Entity>();
-	    	lastVersion = state.getCurrentVersion();
 	    	for (HexEntity m : entities) {
 	    		System.out.println(m.getType());
 	    		int row = m.getRow();
@@ -451,10 +452,11 @@ public class Controller extends java.util.Observable {
 	    	post.setEntity(params);
 			System.out.println(2);
 	    	CloseableHttpResponse response = httpclient.execute(post);
+	    	response.close();
 			System.out.println(3);
 	    	setChanged();
 	    	notifyObservers();
-	    	response.close();
+	    	
 	    	System.out.println("got here 2");
     	}
     	catch(Exception e) {
