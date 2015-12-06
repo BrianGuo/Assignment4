@@ -100,7 +100,7 @@ public class CritterTest {
         c2.consumeEnergy(450);
         Food newFood = c2.serve(100, Sensor.coordAheadAt(c2.getLocation(),c2.getDirection(), w, 1));
         assertTrue(newFood.getCol() ==5);
-        assertEquals(50 - c2.size(), newFood.getAmt());
+        assertEquals(50 - c2.size(), newFood.getValue());
         w.add(newFood);
         assertTrue(w.hexAt(5, 4) instanceof Food);
     }

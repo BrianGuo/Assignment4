@@ -2,15 +2,13 @@ package server;
 
 import static spark.Spark.*;
 import com.google.gson.*;
-import com.google.gson.stream.MalformedJsonException;
+//import com.google.gson.
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import parse.ParserFactory;
 import simulator.Simulator;
 import simulator.WorldSerializer;
-import world.Critter;
-import world.CritterSerializer;
-import world.Factory;
+import world.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,7 +79,7 @@ public class Main {
         });
 
         get("/*/critters", (request, response) -> {
-            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
                     .setPrettyPrinting().create();
             //JsonObject result = new JsonObject();
             JsonArray critterArray = new JsonArray();
@@ -150,8 +148,29 @@ public class Main {
 
                 root.add("dead_critters", gson.toJsonTree(sim.getObituaries(update_since).toArray()));
 
+
+                /*RuntimeTypeAdapterFactory<Entity> adapter =
+                        RuntimeTypeAdapterFactory
+                                .of(Entity.class)
+                                .registerSubtype(Rock.class)
+                                .registerSubtype(Critter.class)
+                                .registerSubtype(Food.class)
+                                .registerSubtype(Nothing.class);
+
+                Gson gson2 = new GsonBuilder().registerTypeAdapterFactory(adapter).setPrettyPrinting().create();
+*/
+                Gson entityGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+                        .setPrettyPrinting().disableHtmlEscaping().create();
+
+                System.out.println(entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
+                        ,Entity.class));
+
+
+                response.type("application/json");
+                return entityGson.toJson(Factory.getCritter("example_critter.txt", sim.world.constants)
+                        ,Entity.class).replace("\\n", "\n");
                 //TODO: FINISH
-                return "hi";
+                //return "hi";
             }
             finally{
                 readLock.unlock();

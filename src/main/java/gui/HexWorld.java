@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -18,10 +17,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
-import world.Coordinate;
 import world.Critter;
 import world.Entity;
-import world.NoEntity;
+import world.Nothing;
 
 public class HexWorld extends ScrollPane implements Observer {
 	
@@ -132,7 +130,7 @@ public class HexWorld extends ScrollPane implements Observer {
 			total[2 * n + 1] = cornersY[n];
 		}
 		WorldHex P2 = new WorldHex(total);
-		if (e == null || e instanceof NoEntity)
+		if (e == null || e instanceof Nothing)
 			P2.setFill(Paint.valueOf("White"));
 		else{
 			double rotate = 0;

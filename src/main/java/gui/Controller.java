@@ -2,34 +2,18 @@ package gui;
 
 
 import exceptions.IllegalOperationException;
-import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.ImagePattern;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import simulator.Simulator;
-import world.Coordinate;
-import world.Critter;
-import world.Entity;
-import world.Factory;
-import world.Food;
-import world.NoEntity;
-import world.Rock;
-import world.World;
-import world.WorldConstants;
+import world.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -359,7 +343,7 @@ public class Controller extends java.util.Observable {
 	    			state.add(cr);
 	    			break;
 	    		case "nothing":
-	    			state.add(new NoEntity((int)m.get("col"), (int)m.get("row")));
+	    			state.add(new Nothing((int)m.get("col"), (int)m.get("row")));
 	    			break;
 	    		default:
 	    			break;

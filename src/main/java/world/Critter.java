@@ -18,7 +18,7 @@ public class Critter extends Entity{
 	int[] attributes;
 	Rule LastRule;
 	Critter lover;
-	int creator;
+	int creator = -1;
 	int id;
 	int recentlyExecutedRule;
 

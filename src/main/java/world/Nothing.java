@@ -2,9 +2,9 @@ package world;
 
 import java.util.ArrayList;
 
-public class NoEntity extends Entity {
+public class Nothing extends Entity {
 
-	public NoEntity(int c, int r){
+	public Nothing(int c, int r){
 		location = new Coordinate(c,r);
 	}
 	@Override
