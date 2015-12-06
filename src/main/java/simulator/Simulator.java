@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import exceptions.MissingElementException;
@@ -16,7 +15,6 @@ import interpret.*;
 import interpret.CritterInterpreter;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
@@ -25,16 +23,16 @@ public class Simulator {
 	
 	Interpreter interpreter;
 	public World world;
-	int timesteps;
+	int current_version_number;
 	Entity[][] old;
+	ArrayList<ArrayList<Integer>> critterDeaths = new ArrayList<>();
+	HashMap<Integer, Critter> oldCritters = new HashMap<>();
 	ArrayList<ArrayList<Coordinate>> changes;
 	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	private final Lock readLock = readWriteLock.readLock();
 	private final Lock writeLock = readWriteLock.writeLock();
+	private int timesteps;
 
-
-
-	
 	/**
 	 * Regular Constructor Used entirely for testing purposes
 	 * This shouldn't be used
@@ -52,8 +50,9 @@ public class Simulator {
 		world = w;
 		if (interpreter != null)
 			((CritterInterpreter)interpreter).setWorld(world);
-		timesteps = 0;
+		current_version_number = 0;
 		old = new Entity[getWorldColumns()][getWorldRows()];
+		oldCritters = new HashMap<>();
 		changes = new ArrayList<>();
 	}
 	
@@ -63,13 +62,13 @@ public class Simulator {
 	 */
 	public Simulator (Interpreter i) {
 		interpreter = i;
-		timesteps = 0;
+		current_version_number = 0;
 		changes = new ArrayList<>();
 	}
 
 	/**
-	 * advances the world a number of timesteps
-	 * @param n   the number of timesteps to advance the world
+	 * advances the world a number of current_version_number
+	 * @param n   the number of current_version_number to advance the world
 	 */
 	public void advance(int n){
 		writeLock.lock();
@@ -88,12 +87,11 @@ public class Simulator {
 						world.judge(c);
 					}
 					timesteps++;
+					update();
 				}
 			} else {
 				System.out.println("You haven't loaded a world");
 			}
-			changes.add(diffWorld());
-			old = world.getMap();
 		}
 		finally{
 			writeLock.unlock();
@@ -107,10 +105,17 @@ public class Simulator {
 	 */
 	public void setWorld(World w){
 		//TODO: does this need a lock?
-		world = w;
-		if (interpreter != null)
-			((CritterInterpreter)interpreter).setWorld(w);
-		old = new Entity[getWorldColumns()][getWorldRows()];
+		writeLock.lock();
+		try {
+
+			world = w;
+			if (interpreter != null)
+				((CritterInterpreter) interpreter).setWorld(w);
+			update();
+		}
+		finally{
+			writeLock.unlock();
+		}
 	}
 	
 	/**
@@ -142,27 +147,20 @@ public class Simulator {
 	}
 
 	public void parseWorld(Reader f) throws FileNotFoundException{
-		//try {
-			this.world = Factory.getWorld(f);
+		this.world = Factory.getWorld(f);
+		writeLock.lock(); //should work because Reentrant lock
+		try {
+
 			if (interpreter != null)
 				((CritterInterpreter) interpreter).setWorld(world);
-			old = new Entity[getWorldColumns()][getWorldRows()];
-//		}
-		/*
-		catch (SyntaxError e) {
-			System.out.println("Your world file has syntax errors");
+			changes.add(diffWorld()); //has a readlock
+			critterDeaths.add(diffObituaries());
+			//old = new Entity[getWorldColumns()][getWorldRows()]; //if the size of the world has changed, any empty node changes will NOT be included in the diff.
+			//oldCritters = world.getCritters();
 		}
-		*/
-		/*
-		catch(NoSuchElementException e) {
-			System.out.println("There's something REALLY off about your file");
+		finally {
+			writeLock.unlock();
 		}
-		*/
-		/*
-		catch (FileNotFoundException e) {
-			System.out.println("Your File Was Not Found");
-		}
-		*/
 	}
 
 	/**
@@ -175,13 +173,13 @@ public class Simulator {
 	}
 
 	/**
-	 * Returns the timesteps field
-	 * @return   the number of timesteps taken
+	 * Returns the current_version_number field
+	 * @return   the number of current_version_number taken
 	 */
-	public int getTimesteps() {
+	public int getCurrent_version_number() {
 		readLock.lock();
 		try {
-			return timesteps;
+			return current_version_number;
 		}
 		finally{
 			readLock.unlock();
@@ -233,9 +231,16 @@ public class Simulator {
 	 * @return # of cols in the world, or 0 if world == null
 	 */
 	public int getWorldColumns(){
-		if(hasWorld())
-			return world.getColumns();
-		return 0;
+		writeLock.lock();
+		try {
+
+			if (hasWorld())
+				return world.getColumns();
+			return 0;
+		}
+		finally {
+			writeLock.unlock();
+		}
 	}
 
 	/**
@@ -243,9 +248,16 @@ public class Simulator {
 	 * @return # of rows in the world, or 0 if world == null
 	 */
 	public int getWorldRows(){
-		if(hasWorld())
-			return world.getRows();
-		return 0;
+		writeLock.lock();
+		try {
+
+			if (hasWorld())
+				return world.getRows();
+			return 0;
+		}
+		finally {
+			writeLock.unlock();
+		}
 	}
 
 
@@ -266,6 +278,7 @@ public class Simulator {
 				Critter c = Factory.getCritter(filename, world.constants);
 				world.addRandom(c);
 			}
+
 		}
 		finally{
 			writeLock.unlock();
@@ -352,10 +365,20 @@ public class Simulator {
 		writeLock.lock();
 		try{
 			world.add(entity);
+			update();
 		}
 		finally {
 			writeLock.unlock();
 		}
+	}
+
+	/**
+	 * Updates the diffs of the world and the timestep.
+	 */
+	private void update() {
+		changes.add(diffWorld());
+		critterDeaths.add(diffObituaries());
+		current_version_number++;
 	}
 
 	/**
@@ -388,34 +411,68 @@ public class Simulator {
 	}
 
 	/**
-	 * Finds all the differences that have happened between time steps and displays them.
+	 * Finds all coordinates with differences that have happened between time steps and displays them.
 	 * @return An ArrayList containing coordinates of every difference
 	 */
 	public ArrayList<Coordinate> diffWorld(){
-		//TODO: need lock here?
-		//readLock.lock();
-		//try {
-		ArrayList<Coordinate> differences = new ArrayList<>();
-		for (int i = 0; i < world.getColumns(); i++) {
-			for (int j = 0; j < world.getRows(); j++) {
-				if (getEntityAt(i, j) == null && old[i][j] == null)
-					continue;
-				else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
-					//this should work unless we get a collision...
-					//also check for nulls
-					differences.add(new Coordinate(i, j));
+		readLock.lock();
+		try {
+			ArrayList<Coordinate> differences = new ArrayList<>();
+
+
+			for (int i = 0; i < world.getColumns(); i++) {
+				for (int j = 0; j < world.getRows(); j++) {
+
+					if(i >= old.length || j >= old[0].length){ //out of bounds
+						differences.add(new Coordinate(i,j));
+					}
+					else if (getEntityAt(i, j) == null && old[i][j] == null) {
+						continue;
+					}
+					else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
+						//this should work unless we get a collision...
+						//also check for nulls
+						differences.add(new Coordinate(i, j));
+					}
+
 				}
-				;
 			}
+			old = world.getMap();
+
+
+			return differences;
 		}
-		old = world.getMap();
-		return differences;
-		//}
-		//finally{
-//			readLock.unlock();
-		//}
+		finally{
+			readLock.unlock();
+		}
 	}
-	//TODO: JSON!
+
+	/**
+	 * Finds all the critters that have died between time steps and returns them.
+	 * @return ArrayList of IDs of all critters that have died.
+	 */
+	public ArrayList<Integer> diffObituaries(){
+		readLock.lock();
+		try {
+			ArrayList<Integer> deadCritters = new ArrayList<>();
+			for (int i : oldCritters.keySet()) {
+				if (!world.getCritters().containsKey(i)) {
+					deadCritters.add(i);
+				}
+			}
+			oldCritters = world.getCritters();
+			return deadCritters;
+		}
+		finally {
+			readLock.unlock();
+		}
+	}
+
+	/**
+	 * Returns a set of every coordinate that has had a change since {@param step} and now
+	 * @param step update_since
+	 * @return Set of every coordinate changed since update_since
+	 */
 	public Set<Coordinate> getDiffs(int step){
 		readLock.lock();
 		try {
@@ -434,4 +491,23 @@ public class Simulator {
 		}
 	}
 
+	public Set<Integer> getObituaries(int step){
+		readLock.lock();
+		try{
+			HashSet<Integer> deadCritters = new HashSet<>();
+			for(int i = step; i < critterDeaths.size(); i++){
+				for(int j = 0; j < critterDeaths.get(i).size(); j++){
+					deadCritters.add(critterDeaths.get(i).get(j));
+				}
+			}
+			return deadCritters;
+		}
+		finally {
+			readLock.unlock();
+		}
+	}
+
+	public int getTimesteps() {
+		return timesteps;
+	}
 }

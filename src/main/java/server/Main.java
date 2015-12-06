@@ -4,11 +4,15 @@ import static spark.Spark.*;
 import com.google.gson.*;
 import com.google.gson.stream.MalformedJsonException;
 import exceptions.SyntaxError;
+import interpret.CritterInterpreter;
+import parse.ParserFactory;
 import simulator.Simulator;
 import world.Critter;
 import world.CritterSerializer;
+import world.Factory;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,7 +23,8 @@ public class Main {
     static HashMap<Integer, User> users = new HashMap<>();
 
     static Simulator sim = new Simulator();
-    static final Timer timer = new Timer();
+    static Timer timer = new Timer();
+    static private double rate;
 
     /**
      * Gets a logged-in user by session_id.
@@ -33,11 +38,12 @@ public class Main {
     public static void main(String[] args) {
         Gson gson = new Gson();
         Security.init();
+        sim = new Simulator(Factory.getRandomWorld(), new CritterInterpreter());
 
-        get("/hello", (request, response) -> "Hello World");
+        get("/*/hello", (request, response) -> "Hello World");
 
         //Done
-        post("/login", (request, response) ->{
+        post("/*/login", (request, response) ->{
             Gson userGson = new GsonBuilder().registerTypeAdapter(User.class, new UserSerializer())
                     .setPrettyPrinting().create();
             User user;
@@ -64,30 +70,19 @@ public class Main {
 
         });
 
-        get("/critters", (request, response) -> {
+        get("/*/critters", (request, response) -> {
             Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
                     .setPrettyPrinting().create();
             //JsonObject result = new JsonObject();
             JsonArray critterArray = new JsonArray();
             //result.add(critterArray);
-            int session_id;
-            try {
-                session_id = Integer.parseInt(request.queryParams("session_id"));
-            }
-            catch (NumberFormatException e){
-                halt(401, "Illegal session_id"); //ex.  session_id of "Q"
-                return "Unauthorized";
-            }
-
-            User user = users.get(session_id);
-            if(user == null)
-                halt(401, "Invalid session_id"); //ex. session_id of "-1", which will never happen
-
+            User user = authenticate(request);
             for(Critter c: sim.world.getCritters().values()){
                 JsonElement cJ = critterGson.toJsonTree(c); //JsonElement of the critter thing
                 JsonObject cJo = cJ.getAsJsonObject();
                 if(!Security.authorize(user, c)){
                     cJo.remove("recently_executed_rule");
+                    cJo.remove("program");
                 }
                 critterArray.add(cJo);
             }
@@ -97,17 +92,13 @@ public class Main {
 
             //return critterArray;
             /*
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    sim.advance(1);
-                }
-            }, 0, 1000);
+
 */
-            return session_id;
+            //TODO: complete
+            return "hi";
         });
 
-        post("/world", (request, response) -> {
+        post("/*/world", (request, response) -> {
             WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
             if(worldDef.description == null){
                 halt(400, "Invalid JSON format");
@@ -126,7 +117,93 @@ public class Main {
             //return "hi";
         });
 
+        get("/*/world", (request, response) -> {
+            //TODO: FINISH
+            return "hi";
+        });
+
+
+        post("/*/step", (request, response) -> {
+            User user = authenticate(request);
+
+            if (!Security.authorize(user, "write")) {
+                halt(401, "Unauthorized");
+            }
+            if (rate != 0.0) {
+                halt(406, "World currently running continuously");
+            }
+            Map<String, Double> m = gson.fromJson(request.body(), Map.class);
+            int count;
+            if (m!= null && m.containsKey("count")) {
+                count = m.get("count").intValue();
+            }
+            else{
+                count = 1;
+            }
+            if (count < 0)
+                halt(406, "Not acceptable--negative count");
+
+            //TODO: need synchronization?
+            sim.advance(count);
+            response.type("text/plain");
+
+            return "Ok";
+        });
+
+        post("/*/run", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "write")){
+                halt(401, "Unauthorized");
+            }
+            Map<String, Double> m = gson.fromJson(request.body(), Map.class);
+            double simRate;
+            if(m!= null && m.containsKey("rate")){
+                simRate = m.get("rate");
+                if(simRate < 0){
+                    halt(406);
+                }
+            }
+            else{
+                halt(406, "No rate specified");
+                return "invalid";
+            }
+
+            rate = simRate;
+
+            timer.cancel();
+            if(rate > 0) {
+                timer = new Timer();
+
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        System.out.println(sim.getTimesteps());
+                        System.out.println(sim.getCurrent_version_number());
+                        sim.advance(1);
+                    }
+                }, 0, (int) ((1 / rate) * 1000));
+            }
+            response.type("text/plain");
+            return "Ok";
+        });
+
+
     }
 
 
+    private static User authenticate(spark.Request request) {
+        int session_id = -1;
+        try {
+            session_id = Integer.parseInt(request.queryParams("session_id"));
+        } catch (NumberFormatException e) {
+            halt(400, "Illegal session_id");
+
+        }
+        User user = users.get(session_id);
+
+        if (user == null) {
+            halt(401, "User not found");
+        }
+        return user;
+    }
 }

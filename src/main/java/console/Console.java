@@ -1,7 +1,6 @@
 package console;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Scanner;
 
 import exceptions.SyntaxError;
@@ -150,7 +149,7 @@ public class Console {
      * map of the simulation.
      */
     private void worldInfo() {
-        System.out.println("Timesteps: " +sim.getTimesteps());
+        System.out.println("Timesteps: " +sim.getCurrent_version_number());
         System.out.println("Number of Critters: " + sim.getNumCritters());
         sim.hexWorld();
     }
