@@ -161,7 +161,10 @@ public class Controller extends java.util.Observable {
         	HttpEntity ent =  response.getEntity();
         	Gson gson = new GsonBuilder().create();
         	System.out.println("^^");
-        	WorldState section = gson.fromJson(EntityUtils.toString(ent), WorldState.class);
+        	String e = EntityUtils.toString(ent);
+        	System.out.println(e);
+        	System.out.println("Right here^^");
+        	WorldState section = gson.fromJson(e , WorldState.class);
         	response.close();
         	ArrayList<HexEntity> entities = section.getState();
         	ArrayList<Entity> state2 = new ArrayList<Entity>();

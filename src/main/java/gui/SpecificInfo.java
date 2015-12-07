@@ -89,7 +89,8 @@ public class SpecificInfo extends AnchorPane implements Observer{
 	public void update(java.util.Observable o, Object arg) {
 		WorldState e = controller.focused.getValue();
 		File imagefile = null;
-		if(e.getRefactored().size() > 0) { 
+		if(e.getRefactored().size() > 0 && !(e.getRefactored().get(0) instanceof Nothing)) { 
+			
 			switch (e.getRefactored().get(0).getClass().toString()) {
 				case "class world.Critter":
 					imagefile = new File("critter.png");
