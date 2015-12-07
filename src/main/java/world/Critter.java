@@ -468,7 +468,7 @@ public class Critter extends Entity{
 		if (!isDead && babyLocation != null){
 			Critter baby = new Critter(newAttributes,
 					(int)(Math.random() * 6), this.species, babyLocation,
-					this.constants, this.p);
+					this.constants, this.p, -1);
 			baby.mutate();
 			return baby;
 		}
@@ -526,7 +526,7 @@ public class Critter extends Entity{
 		String newSpecies = thisSpecies + otherSpecies;
 		Critter baby = new Critter(newAttributes,
 				(int) (Math.random() * 6), newSpecies,
-				babyLocation, constants, newProgram);
+				babyLocation, constants, newProgram, -1);
 
 		//in an act of pure love, the parents can spend the last of their energy to ensure their child
 		//has a chance at experiencing the world
