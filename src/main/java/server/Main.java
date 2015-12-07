@@ -188,9 +188,11 @@ public class Main {
                 //ja.add(gson.toJsonTree(newIDs));
                 jo.addProperty("species_id", species_id);
                 jo.add("ids", gson.toJsonTree(newIDs));
+                response.type("application/json");
                 return jo;
             }
-            catch(Exception e){
+            catch(NumberFormatException | ClassCastException | NullPointerException | ArrayIndexOutOfBoundsException e){
+                e.printStackTrace();
                 halt(400, "Invalid body");
                 return "no";
             }

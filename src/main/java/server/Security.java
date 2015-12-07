@@ -2,6 +2,11 @@ package server;
 
 import world.Critter;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,9 +68,28 @@ public class Security {
     //read from web.xml
     public static void init(){
         //TODO: INTEGRATE WITH STARTUP
-        levels.put("admin", "admin");
-        levels.put("read", "read");
-        levels.put("write", "write");
+        ArrayList<String> passwords = new ArrayList<>();
+        try {
+            BufferedReader f = new BufferedReader(new FileReader("passwords.txt"));
+            levels.put("admin", f.readLine());
+            levels.put("write", f.readLine());
+            levels.put("read", f.readLine());
+            System.out.println("Initialized passwords to those in passwords.txt.");
+            System.out.println("admin:" + levels.get("admin"));
+            System.out.println("write:" + levels.get("write"));
+            System.out.println("read:" + levels.get("read"));
+        }
+        catch(IOException e){
+            levels.clear();
+            levels.put("admin", "admin");
+            levels.put("write", "read");
+            levels.put("read", "write");
+            System.out.println("Initialized passwords to default");
+            System.out.println("admin:" + levels.get("admin"));
+            System.out.println("write:" + levels.get("write"));
+            System.out.println("read:" + levels.get("read"));
+
+        }
 
     }
 
