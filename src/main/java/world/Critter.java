@@ -18,9 +18,10 @@ public class Critter extends Entity{
 	int[] attributes;
 	Rule LastRule;
 	Critter lover;
-	int creator = -1;
+	public int creator = -1;
 	int id;
 	int recentlyExecutedRule;
+	private static final Object lock = new Object();
 
 
 	static Random r = new Random();
@@ -39,8 +40,11 @@ public class Critter extends Entity{
 	public boolean setId(int id) {
 		synchronized(usedIDs) {
 			if (!usedIDs.contains(id)){
+				System.out.println("usedIDs:" + usedIDs);
+				System.out.println("current id:" + id);
 				this.id = id;
 				updateIdList(id);
+
 				return true;
 			}
 		}
@@ -109,8 +113,11 @@ public class Critter extends Entity{
 		super(constants);
 		int next;
 		do{
-			next = r.nextInt();
-			setId(next);
+			synchronized (lock) {
+				next = r.nextInt();
+				System.out.println("next:" + next);
+				setId(next);
+			}
 		}
 		while(!usedIDs.contains(next));
 		//in hindsight, this means giving setId a boolean return value was useless
@@ -463,7 +470,7 @@ public class Critter extends Entity{
 		if (!isDead && babyLocation != null){
 			Critter baby = new Critter(newAttributes,
 					(int)(Math.random() * 6), this.species, babyLocation,
-					this.constants, this.p);
+					this.constants, this.p, -1);
 			baby.mutate();
 			return baby;
 		}
@@ -521,7 +528,7 @@ public class Critter extends Entity{
 		String newSpecies = thisSpecies + otherSpecies;
 		Critter baby = new Critter(newAttributes,
 				(int) (Math.random() * 6), newSpecies,
-				babyLocation, constants, newProgram);
+				babyLocation, constants, newProgram, -1);
 
 		//in an act of pure love, the parents can spend the last of their energy to ensure their child
 		//has a chance at experiencing the world

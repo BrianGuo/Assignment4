@@ -358,14 +358,15 @@ public class World{
 
 
 
-    public void addRandom(Entity e){
+    public Entity addRandom(Entity e){
         try{
         	Coordinate c = getRandomUnoccupiedLocation();
             e.location.move(c.getCol(),c.getRow());
-            add(e);
+            return add(e);
         }
         catch(IllegalCoordinateException ex){
             //this shouldn't happen
+            return null;
         }
     }
 

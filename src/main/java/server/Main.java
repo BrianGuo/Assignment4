@@ -1,16 +1,22 @@
 package server;
 
 import static spark.Spark.*;
+
+import ast.Program;
 import com.google.gson.*;
 //import com.google.gson.
+import com.google.gson.internal.LinkedTreeMap;
 import exceptions.SyntaxError;
 import interpret.CritterInterpreter;
+import parse.Parser;
+import parse.ParserFactory;
 import simulator.Simulator;
 import simulator.WorldSerializer;
 import spark.Request;
 import spark.Response;
 import world.*;
 
+import java.io.StringReader;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -77,30 +83,192 @@ public class Main {
         });
 
         get("/*/critters", (request, response) -> {
-            Gson critterGson = new GsonBuilder().registerTypeAdapter(Entity.class, new EntitySerializer())
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
                     .setPrettyPrinting().create();
             //JsonObject result = new JsonObject();
             JsonArray critterArray = new JsonArray();
             //result.add(critterArray);
             User user = authenticate(request);
             for(Critter c: sim.world.getCritters().values()){
-                JsonObject cJo = critterGson.toJsonTree(c).getAsJsonObject(); //JsonElement of the critter thing
+                JsonObject cJo = critterGson.toJsonTree(c, Critter.class).getAsJsonObject(); //JsonElement of the critter thing
                 censorCritter(user, c, cJo);
                 critterArray.add(cJo);
             }
             response.type("application/json");
             response.status(201);
-
-
-            //return critterArray;
-            /*
-
-*/
-            //TODO: complete
-            return "hi";
+            return critterArray;
         });
 
+        get("/*/critter", (request, response) -> {
+            User user = authenticate(request);
+            int id;
+            try {
+                System.out.println(request.queryParams("id"));
+                id = Integer.parseInt(request.queryParams("id"));
+            }
+            catch(NumberFormatException e){
+                halt(400, "Invalid id provided");
+                return "no";
+            }
+            Critter wanted = sim.world.getCritters().get(id);
+
+            Gson critterGson = new GsonBuilder().registerTypeAdapter(Critter.class, new CritterSerializer())
+                    .setPrettyPrinting().create();
+            response.status(200);
+            response.type("application/json");
+
+            if(wanted == null){
+                return gson.toJson(new JsonObject());
+            }
+            JsonObject cJo = critterGson.toJsonTree(wanted, Critter.class).getAsJsonObject();
+            censorCritter(user, wanted, cJo);
+
+            return gson.toJson(cJo);
+        });
+
+        post("/*/critters", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "write")){
+                halt(401, "Unauthorized");
+                return "no";
+            }
+            try{
+                Map<String, Object> map = gson.fromJson(request.body(), Map.class);
+                System.out.println(map.get("mem"));
+                String species_id = (String) map.get("species_id");
+                String program = (String) map.get("program");
+
+                ArrayList<Double> mem = (ArrayList<Double>) map.get("mem");
+                int[] newmem = new int[mem.size()];
+                for(int i = 0; i < mem.size(); i++){
+                    newmem[i] = mem.get(i).intValue();
+                }
+
+                ArrayList<Coordinate> positions = new ArrayList<>();
+                ArrayList<Critter> newCritters = new ArrayList<>();
+                Parser p = ParserFactory.getParser();
+                Program prog = p.parse(new StringReader(program));
+                ArrayList<Integer> newIDs = new ArrayList<>();
+
+                if (map.containsKey("positions")) {
+                    ArrayList<Object> clist = (ArrayList<Object>) map.get("positions");
+                    for (Object aClist : clist) {
+                        Coordinate c = gson.fromJson(gson.toJson(aClist), Coordinate.class);
+                        positions.add(c);
+                    }
+
+                    for (Coordinate c : positions) {
+
+                        newCritters.add(new Critter(newmem, (int) (Math.random() * 5), species_id, c, sim.world.constants,
+                                prog, user.getSession_id()));
+                    }
+                    for (Critter c : newCritters) {
+                        Critter added = (Critter) sim.addEntity(c);
+                        if(added != null) newIDs.add(added.getId());
+                    }
+                }
+                else {
+                    int num = ((Double) map.get("num")).intValue();
+                    if(num <= 0){
+                        halt(400, "Invalid number of critters specified");
+                    }
+                    System.out.println(num);
+                    for (int i = 0; i < num; i++) {
+                        newCritters.add(new Critter(newmem, (int) (Math.random() * 5), species_id,
+                                new Coordinate(0, 0), sim.world.constants, prog, user.getSession_id()));
+                    }
+                    for (Critter c : newCritters) {
+                        Critter added = (Critter) sim.addRandomEntity(c);
+                        if(added != null) newIDs.add(added.getId());
+                    }
+                }
+
+                JsonObject jo = new JsonObject();
+                //JsonArray ja = new JsonArray();
+                //ja.add(gson.toJsonTree(newIDs));
+                jo.addProperty("species_id", species_id);
+                jo.add("ids", gson.toJsonTree(newIDs));
+                return jo;
+            }
+            catch(Exception e){
+                halt(400, "Invalid body");
+                return "no";
+            }
+
+        });
+
+        post("/*/create_entity", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "write")) {
+                halt(401, "Unauthorized");
+                return "no";
+
+            }
+            try {
+
+                Map map = gson.fromJson(request.body(), Map.class);
+                System.out.println(map.get("row").getClass());
+                int row = ((Double) map.get("row")).intValue();
+                int col = ((Double) map.get("col")).intValue();
+                String type = (String) map.get("type");
+                Entity added;
+                switch(type){
+                    case "food":
+                        int amount = ((Double) map.get("amount")).intValue();
+                        added = new Food(col, row, amount, sim.world.constants);
+                        break;
+                    case "rock":
+                        added = new Rock(col, row, sim.world.constants);
+                        break;
+                    default:
+                        halt(400, "Type not recognized.");
+                        return "no";
+                }
+                Entity actuallyAdded = sim.addEntity(added);
+                if(actuallyAdded == null){
+                    halt(406, "Location is occupied.");
+                }
+                response.type("text/plain");
+                return "Ok";
+
+            }
+            catch(NumberFormatException | NullPointerException | ClassCastException e){
+                halt(400, "Bad body");
+                return "not ok";
+            }
+
+        });
+
+        delete("/*/critter", (request, response) ->{
+            try {
+                User user = authenticate(request);
+                int id = Integer.parseInt(request.queryParams("id"));
+                Critter target = sim.world.getCritters().get(id);
+                if(target == null){
+                    halt(400, "Critter does not exist");
+                }
+                if (Security.authorize(user, target)) {
+                    sim.world.kill(target);
+                    halt(204);
+                }
+                else{
+                    halt(401, "Not authorized");
+                }
+            }
+            catch(NumberFormatException | NullPointerException | ClassCastException e) {
+                halt(400, "Invalid params");
+            }
+
+
+        return "";
+    });
+
         post("/*/world", (request, response) -> {
+            User user = authenticate(request);
+            if(!Security.authorize(user, "admin")){
+                halt(401, "Only an admin can create a new world");
+                return "no";
+            }
             WorldDef worldDef = gson.fromJson(request.body(), WorldDef.class);
             if(worldDef == null || worldDef.description == null){
                 halt(400, "Invalid JSON format");
@@ -125,7 +293,6 @@ public class Main {
         //when update_since is negative, the entire world is returned.
         //entire world is also returned unless all 4 bounds provided
         get("/*/world", (request, response) -> {
-            System.out.println("reading world state");
             readLock.lock();
             try {
                 User user = authenticate(request);

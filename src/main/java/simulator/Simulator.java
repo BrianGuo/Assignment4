@@ -317,10 +317,10 @@ public class Simulator {
 	 * Had to create a new function since putCritterRandomly...only works on critters...and with strings.
 	 * @param entity Entity to be added
 	 */
-	public void addRandomEntity(Entity entity){
+	public Entity addRandomEntity(Entity entity){
 		writeLock.lock();
 		try {
-			world.addRandom(entity);
+			return world.addRandom(entity);
 		}
 		finally {
 			writeLock.unlock();
@@ -387,12 +387,14 @@ public class Simulator {
 	/**
 	 * Adds an entity to the world
 	 * @param entity Entity to be added, with the correct coordinate
+	 * @return the Entity added if successful, null if unsuccessful
 	 */
-	public void addEntity(Entity entity){
+	public Entity addEntity(Entity entity){
 		writeLock.lock();
 		try{
-			world.add(entity);
+			Entity added = world.add(entity);
 			update();
+			return added;
 		}
 		finally {
 			writeLock.unlock();
@@ -514,7 +516,7 @@ public class Simulator {
 					deadCritters.add(i);
 				}
 			}
-			oldCritters = world.getCritters();
+			oldCritters = new HashMap<>(world.getCritters());
 			return deadCritters;
 		}
 		finally {
