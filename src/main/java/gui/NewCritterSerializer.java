@@ -23,7 +23,11 @@ public class NewCritterSerializer implements JsonSerializer<NewCritterPositions>
 			object.addProperty("species_id", species_id);
 		}
         object.addProperty("program", critter.getProgram().toString());
-        object.addProperty("mem", Arrays.toString(critter.getMemory()));
+        JsonArray mem = new JsonArray();
+        for (int i: critter.getMemory()){
+        	mem.add(new JsonPrimitive(i));
+        }
+        object.add("mem", mem);
         if (critterObject.getPositions() != null) {
         	Coordinate[] positions = critterObject.getPositions();
         	JsonArray arr = new JsonArray();
