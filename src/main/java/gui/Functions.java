@@ -141,7 +141,7 @@ public class Functions extends Accordion {
 			ToggleButton rockButton = new ToggleButton("",imgv);
 			rockButton.setOnAction(action -> {
 				if (rockButton.isSelected())
-					controller.loaded = new Rock(0, 0, controller.sim.world.constants);
+					controller.loaded = new Rock(0, 0, controller.constants);
 				else
 					controller.loadCritter(controller.loadedEntity);
 			});

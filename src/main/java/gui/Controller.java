@@ -150,7 +150,7 @@ public class Controller extends java.util.Observable {
 
     public WorldState getEntityAt(Coordinate c, int lastVersion){
         //return sim.getEntityAt(c);
-    	HttpGet get = new HttpGet(serverURL + "/CritterWorld/world?update_since=" + lastVersion + "&"
+    	HttpGet get = new HttpGet(serverURL + "/CritterWorld/world?" 
     	        + "from_row=" + c.getRow() + "&"
     	        + "to_row=" + c.getRow() + "&"
     	        + "from_col=" + c.getCol() + "&"
@@ -335,6 +335,8 @@ public class Controller extends java.util.Observable {
             post.setEntity(myEntity);
             try{
             	CloseableHttpResponse response = httpclient.execute(post);
+            	System.out.println("Entity Click Response:" + response);
+            	response.close();
             }
             catch(Exception e) {
             	System.out.println("didn't work");
