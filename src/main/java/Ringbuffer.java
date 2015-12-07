@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,6 +12,12 @@ public class Ringbuffer<T> implements BlockingQueue<T>{
 	private int tail;
 	private int remainingCapacity;
 	
+	public Ringbuffer( int n) {
+		queue = (T[]) new Object[n];
+		remainingCapacity = n;
+		head = 0;
+		tail = 1;
+	}
 	private class RingIterator<T> implements Iterator<T> {
 		
 		private int head;
@@ -177,6 +184,8 @@ public class Ringbuffer<T> implements BlockingQueue<T>{
 	@Override
 	public boolean contains(Object o) {
 		for (int i = head; i< tail; i++ ){
+			if (queue[i%queue.length] == null)
+				return false;
 			if (queue[i%queue.length].equals(o))
 				return true;
 		}
