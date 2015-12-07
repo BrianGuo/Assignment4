@@ -154,7 +154,9 @@ public class Critter extends Entity{
 		else
 			return null;
 	}
-	
+	public int getIndexLastRule() {
+		return recentlyExecutedRule;
+	}
 	public void setLastRule(Rule r) {
 		LastRule = r;
 	}
@@ -574,9 +576,10 @@ public class Critter extends Entity{
 		for(int i = 0; i < attributes.length; i++){
 			ary.add("mem[" + i + "]: " + attributes[i]);
 		}
-		ary.add("Complexity: " + complexity());
-		ary.add("Last rule: " + ((getLastRule() == null) ? "No rules executed" : getLastRule()));
-		ary.add("Program: \n" + getProgram());
+		//ary.add("Complexity: " + complexity());
+		ary.add("Last rule: " + getProgram().getRules().get(getIndexLastRule()).toString());
+		//ary.add("Recently Executed Rule:" + getIndexLastRule());
+		//ary.add("Program: \n" + getProgram());
 		return ary;
 	}
 

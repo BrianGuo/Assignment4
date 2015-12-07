@@ -87,10 +87,10 @@ public class SpecificInfo extends AnchorPane implements Observer{
 	}
 	
 	public void update(java.util.Observable o, Object arg) {
-		Entity e = controller.focused.getValue();
+		WorldState e = controller.focused.getValue();
 		File imagefile = null;
-		if(e != null && !(e instanceof Nothing)) { 
-			switch (e.getClass().toString()) {
+		if(e.getRefactored().size() > 0) { 
+			switch (e.getRefactored().get(0).getClass().toString()) {
 				case "class world.Critter":
 					imagefile = new File("critter.png");
 					break;
@@ -116,7 +116,7 @@ public class SpecificInfo extends AnchorPane implements Observer{
 
 
 			info.getChildren().clear();
-			for (String s : e.properties()) {
+			for (String s : e.getRefactored().get(0).properties()) {
 				Text t = new Text();
 				int n = s.indexOf(":");
 				t.setFont(Font.font("System", FontWeight.BOLD, 14.0));
@@ -136,13 +136,13 @@ public class SpecificInfo extends AnchorPane implements Observer{
 		}
 	}
 
-	private class PropertyBinding extends ObjectBinding<Entity>{
+	private class PropertyBinding extends ObjectBinding<WorldState>{
 		public PropertyBinding(){
 			super();
 			super.bind(controller.focused);
 		}
 		@Override
-		protected Entity computeValue() {
+		protected WorldState computeValue() {
 			
 			if(controller.focused.getValue() != null) {
 				return controller.focused.getValue();

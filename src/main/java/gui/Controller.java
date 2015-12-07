@@ -12,6 +12,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
+import parse.Parser;
+import parse.ParserFactory;
 import simulator.Simulator;
 import world.*;
 
@@ -21,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -36,6 +40,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.*;
 
 import com.google.gson.Gson;
@@ -43,6 +48,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
+import ast.Program;
 
 public class Controller extends java.util.Observable {
 	Random r = new Random();
@@ -52,7 +59,7 @@ public class Controller extends java.util.Observable {
     //Entity focused;
     Entity loaded;
     World loadedWorld;
-    ObjectProperty<Entity> focused; //gdi this doesn't work
+    ObjectProperty<WorldState> focused; //gdi this doesn't work
     String loadedEntity = "";
     final Timeline simTimeline;
     final Timeline UITimeline;
@@ -134,13 +141,14 @@ public class Controller extends java.util.Observable {
         Coordinate c = handleHexClick(event);
         focused.setValue(getEntityAt(c, lastVersion));
         setChanged();
+        notifyObservers();
         /*
         System.out.println("Checkpoint1");
         System.out.println(c);
         System.out.println(focused);*/
     }
 
-    public Entity getEntityAt(Coordinate c, int lastVersion){
+    public WorldState getEntityAt(Coordinate c, int lastVersion){
         //return sim.getEntityAt(c);
     	HttpGet get = new HttpGet(serverURL + "/CritterWorld/world?update_since=" + lastVersion + "&"
     	        + "from_row=" + c.getRow() + "&"
@@ -152,12 +160,41 @@ public class Controller extends java.util.Observable {
         	CloseableHttpResponse response = httpclient.execute(get);
         	HttpEntity ent =  response.getEntity();
         	Gson gson = new GsonBuilder().create();
-        	response.close();
         	System.out.println("^^");
         	WorldState section = gson.fromJson(EntityUtils.toString(ent), WorldState.class);
-        	setChanged();
-        	notifyObservers();
-        	if (section.getState().size() > 0) {
+        	response.close();
+        	ArrayList<HexEntity> entities = section.getState();
+        	ArrayList<Entity> state2 = new ArrayList<Entity>();
+	    	for (HexEntity m : entities) {
+	    		int row = m.getRow();
+	    		int col = m.getCol();
+	    		switch(m.getType()){
+	    		case "rock":
+	    			Rock r = new Rock(col, row, null);
+	    			state2.add(r);
+	    			break;
+	    		case "food":
+	    			Food f = new Food(col, row, m.getValue(), null);
+	    			state2.add(f);
+	    			break;
+	    		case "critter":
+	    			System.out.println(m.getMem());
+	    			Parser parser = ParserFactory.getParser();
+	    			Program p = parser.parse(new StringReader(m.getProgram()));
+	    			Critter cr = new Critter(m.getMem(), m.getDirection(), m.getSpecID(), new Coordinate(col, row),null, p);
+	    			state2.add(cr);
+	    			break;
+	    		case "nothing":
+	    			state2.add(new Nothing(m.getCol(), m.getRow()));
+	    			break;
+	    		default:
+	    			break;
+	    		}
+	    	}
+	    	section.setRefactored(state2);
+	    	return section;
+        	
+        	/*if (section.getState().size() > 0) {
         		HexEntity h = section.getState().get(0);
         		int row = h.getRow();
         		int col = h.getCol();
@@ -178,7 +215,7 @@ public class Controller extends java.util.Observable {
 	    		}
         	}
         	else
-        		return null;
+        		return null;*/
         	
         }
         catch(Exception e) {
@@ -301,8 +338,29 @@ public class Controller extends java.util.Observable {
             	e.printStackTrace();
             }
         }
-        else
+        else if (loaded instanceof Food || loaded instanceof Rock){
         	loaded.setLocation(coordinate);
+        	HttpPost post = new HttpPost(serverURL + "/CritterWorld/world/create_entity?session_id=" + sessionID);
+        	JsonObject jo = new JsonObject();
+        	jo.addProperty("row", coordinate.getRow());
+        	jo.addProperty("col", coordinate.getCol());
+        	if (loaded instanceof Food){
+        		jo.addProperty("type", "food");
+        		jo.addProperty("amount", ((Food) loaded).getValue());
+        	}
+        	else
+        		jo.addProperty("type", "rock");
+        	try {
+				StringEntity myEntity = new StringEntity (gson.toJson(jo));
+				post.setEntity(myEntity);
+				CloseableHttpResponse response = httpclient.execute(post);
+				response.close();
+				setChanged();
+				notifyObservers();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
         //if(sim.getEntityAt(coordinate) != null) return;
         //sim.addEntity(loaded);
         setChanged();
@@ -405,7 +463,6 @@ public class Controller extends java.util.Observable {
 	    	ArrayList<HexEntity> entities =  state.getState();
 	    	ArrayList<Entity> state2 = new ArrayList<Entity>();
 	    	for (HexEntity m : entities) {
-	    		System.out.println(m.getType());
 	    		int row = m.getRow();
 	    		int col = m.getCol();
 	    		switch(m.getType()){
@@ -475,7 +532,8 @@ public class Controller extends java.util.Observable {
         	HttpPost post = new HttpPost(serverURL + "/CritterWorld/run?session_id=" + sessionID);
         	StringEntity entity = new StringEntity("{\"rate\":" + speed + "}");
             post.setEntity(entity);
-            httpclient.execute(post);
+            CloseableHttpResponse response = httpclient.execute(post);
+            response.close();
         }
         catch(Exception e) {
         	System.out.println("Didn't work");

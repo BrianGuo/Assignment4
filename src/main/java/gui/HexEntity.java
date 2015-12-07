@@ -15,6 +15,7 @@ public class HexEntity {
 	private int direction;
 	private int[] mem;
 	private int recently_executed_rule;
+	private String program;
 	
 
 	public int getRow(){
@@ -48,5 +49,8 @@ public class HexEntity {
 		return recently_executed_rule;
 	}
 	
+	public String getProgram() {
+		return program;
+	}
 	
 }

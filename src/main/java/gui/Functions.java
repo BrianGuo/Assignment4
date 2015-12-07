@@ -182,7 +182,7 @@ public class Functions extends Accordion {
 			    	else {
 			    		try{
 			    			foodnum = Integer.parseInt(foodcount.getText());
-			    			controller.loaded = new Food(0, 0,foodnum, controller.sim.world.constants);
+			    			controller.loaded = new Food(0, 0,foodnum, controller.constants);
 			    		}
 			    		catch(NumberFormatException e) {
 			    			Alert alert = new Alert(Alert.AlertType.ERROR);
