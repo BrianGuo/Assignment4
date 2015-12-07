@@ -160,7 +160,6 @@ public class Controller extends java.util.Observable {
         	CloseableHttpResponse response = httpclient.execute(get);
         	HttpEntity ent =  response.getEntity();
         	Gson gson = new GsonBuilder().create();
-        	System.out.println("^^");
         	String e = EntityUtils.toString(ent);
         	System.out.println(e);
         	System.out.println("Right here^^");
@@ -185,6 +184,8 @@ public class Controller extends java.util.Observable {
 	    			Parser parser = ParserFactory.getParser();
 	    			Program p = parser.parse(new StringReader(m.getProgram()));
 	    			Critter cr = new Critter(m.getMem(), m.getDirection(), m.getSpecID(), new Coordinate(col, row),null, p);
+	    			int n = m.getRecentlyExecutedRule();
+	    			cr.setRecentlyExecutedRule(n);
 	    			state2.add(cr);
 	    			break;
 	    		case "nothing":

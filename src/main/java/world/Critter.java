@@ -575,6 +575,8 @@ public class Critter extends Entity{
 	public int getRecentlyExecutedRule() {
 		return recentlyExecutedRule;
 	}
+	
+	
 	public ArrayList<String> properties(){
 		ArrayList<String> ary = new ArrayList<>();
 		ary.add("Type: Critter");
