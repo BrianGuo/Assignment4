@@ -197,7 +197,7 @@ public class Main {
 
         });
 
-        post("/*/create_entity", (request, response) -> {
+        post("/*/world/create_entity", (request, response) -> {
             User user = authenticate(request);
             if(!Security.authorize(user, "write")) {
                 halt(401, "Unauthorized");
