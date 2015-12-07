@@ -211,11 +211,6 @@ public class Main {
                 int row = ((Double) map.get("row")).intValue();
                 int col = ((Double) map.get("col")).intValue();
                 String type = (String) map.get("type");
-
-                System.out.println(row);
-                System.out.println(col);
-                System.out.println(type);
-
                 Entity added;
                 switch(type){
                     case "food":
@@ -237,12 +232,36 @@ public class Main {
                 return "Ok";
 
             }
-            catch(Exception e){
+            catch(NumberFormatException | NullPointerException | ClassCastException e){
                 halt(400, "Bad body");
                 return "not ok";
             }
 
         });
+
+        delete("/*/critter", (request, response) ->{
+            try {
+                User user = authenticate(request);
+                int id = Integer.parseInt(request.queryParams("id"));
+                Critter target = sim.world.getCritters().get(id);
+                if(target == null){
+                    halt(400, "Critter does not exist");
+                }
+                if (Security.authorize(user, target)) {
+                    sim.world.kill(target);
+                    halt(204);
+                }
+                else{
+                    halt(401, "Not authorized");
+                }
+            }
+            catch(NumberFormatException | NullPointerException | ClassCastException e) {
+                halt(400, "Invalid params");
+            }
+
+
+        return "";
+    });
 
         post("/*/world", (request, response) -> {
             User user = authenticate(request);
