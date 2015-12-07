@@ -3,8 +3,10 @@ package gui;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import world.Coordinate;
@@ -24,12 +26,14 @@ public class NewCritterSerializer implements JsonSerializer<NewCritterPositions>
         object.addProperty("mem", Arrays.toString(critter.getMemory()));
         if (critterObject.getPositions() != null) {
         	Coordinate[] positions = critterObject.getPositions();
-        	String result = "[";
+        	JsonArray arr = new JsonArray();
         	for (Coordinate coordinate : positions) {
-        		result += "{\"row\":" + coordinate.getRow() + "," + "\"col\":" + coordinate.getCol() + "},";
+        		JsonObject object2 = new JsonObject();
+        		object2.add("row", new JsonPrimitive(coordinate.getRow()));
+        		object2.add("col", new JsonPrimitive(coordinate.getCol()));
+        		arr.add(object2);
         	}
-        	result += "]";
-        	object.addProperty("positions", result);
+        	object.add("positions", arr);
         }
         else if (critterObject.getNum() > 0){
         	object.addProperty("num", critterObject.getNum());

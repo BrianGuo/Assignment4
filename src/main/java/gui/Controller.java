@@ -330,10 +330,13 @@ public class Controller extends java.util.Observable {
             NewCritterPositions inputVar = new NewCritterPositions((Critter)loaded);
             Coordinate[] positions = new Coordinate[]{coordinate};
             inputVar.setPositions(positions);
-            Gson critterGson = new GsonBuilder().registerTypeAdapter(NewCritterPositions.class, new NewCritterSerializer()).setPrettyPrinting().create();
+            Gson critterGson = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(NewCritterPositions.class, new NewCritterSerializer()).setPrettyPrinting().create();
+            
             StringEntity myEntity = new StringEntity(critterGson.toJson(inputVar),ContentType.APPLICATION_JSON);
+            
             post.setEntity(myEntity);
             try{
+            	System.out.println("My Json:" + EntityUtils.toString(myEntity) );
             	CloseableHttpResponse response = httpclient.execute(post);
             	System.out.println("Entity Click Response:" + response);
             	response.close();
