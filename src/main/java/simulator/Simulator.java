@@ -83,7 +83,6 @@ public class Simulator {
 			}
 			cur1 += "\n";
 		}
-		System.out.println(cur1);
 
 		String cur2 = "";
 		for(int i= 0; i < old.length; i++){
@@ -92,11 +91,6 @@ public class Simulator {
 			}
 			cur2 += "\n";
 		}
-		System.out.println(cur2);
-		System.out.println("-------------");
-
-		System.out.println(Arrays.toString(old));
-		System.out.println(Arrays.toString(world.getMap()));
 		try {
 			if (hasWorld()) {
 				for (int i = 0; i < n; i++) {
@@ -446,7 +440,7 @@ public class Simulator {
 	public ArrayList<Coordinate> diffWorld(){
 		readLock.lock();
 		try {
-			ArrayList<Coordinate> differences = new ArrayList<>();
+			Set<Coordinate> differences = new HashSet<>();
 
 
 			for (int i = 0; i < world.getColumns(); i++) {
@@ -460,8 +454,6 @@ public class Simulator {
 						}
 						else if (getEntityAt(i, j) != old[i][j] || !(getEntityAt(i, j).equals(old[i][j]))) {
 
-							System.out.println("old:" + old[i][j]);
-							System.out.println("new:" + getEntityAt(i,j));
 							//this should work unless we get a collision...
 							//also check for nulls
 							differences.add(new Coordinate(i, j));
@@ -470,18 +462,16 @@ public class Simulator {
 							if(getEntityAt(i,j) instanceof Critter){
 								differences.add(new Coordinate(i,j));
 							}
-							System.out.println("old:" + old[i][j]);
-							System.out.println("new:" + getEntityAt(i,j));
+
 						}
 						if(old.length > 5){
-							System.out.println("old44:" + old[5][4]);
-							System.out.println("new44:" + getEntityAt(5,4));
+
 						}
 					}
 
 				}
 			}
-			System.out.println("oldWorld:" + Arrays.toString(old));
+
 
 			old = new Entity[world.getColumns()][world.getRows()];
 			for(int i=0; i<old.length; i++)
@@ -492,11 +482,10 @@ public class Simulator {
 
 			if(old.length > 5){
 				old[4][4] = null;
-				System.out.println(world.getMap()[4][4]);
 			}
-			System.out.println("newWorld:" + Arrays.toString(old));
 
-			return differences;
+
+			return new ArrayList<Coordinate>(differences);
 		}
 		finally{
 			readLock.unlock();
@@ -535,6 +524,10 @@ public class Simulator {
 			HashSet<Coordinate> diffCoords = new HashSet<>();
 			for (int i = step; i < changes.size(); i++) {
 				for (int j = 0; j < changes.get(i).size(); j++) {
+					System.out.println("diffCoords:" + diffCoords);
+					System.out.println("current coord:" + changes.get(i).get(j));
+					System.out.println(diffCoords.contains(new Coordinate(4,4)));
+
 					diffCoords.add(changes.get(i).get(j));
 				}
 

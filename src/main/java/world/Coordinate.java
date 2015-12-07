@@ -54,4 +54,19 @@ public class Coordinate {
     	return "[" + col +","+ row + "]";
     }
 
+    @Override
+    public int hashCode(){
+        //from http://stackoverflow.com/a/22826582
+        int tmp = ( row +  ((col+1)/2));
+        return col +  ( tmp * tmp);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Coordinate){
+            return ((Coordinate) o).row == this.row && ((Coordinate) o).col == this.col;
+        }
+        return false;
+    }
+
 }
